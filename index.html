@@ -133,7 +133,7 @@
         </div>
       </div>
 
-      <!-- WORKOUT TABS (APENAS 5 TREINOS: A, B, C, D, E) -->
+      <!-- WORKOUT TABS (5 TREINOS: A, B, C, D, E) -->
       <div id="workoutTabsHeader" class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
         <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">Treino A</button>
         <button onclick="selectWorkoutTab('B')" id="tab-B" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">Treino B</button>
@@ -153,7 +153,7 @@
             <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
               <span>Executando Treino <span class="currentWorkoutLabel text-brand-400">A</span></span>
             </h3>
-            <p class="text-xs text-slate-400">Marque concluídos, ajuste repetições/cargas e use o descanso</p>
+            <p class="text-xs text-slate-400">Marque as séries realizadas, ajuste repetições/cargas e use o descanso</p>
           </div>
         </div>
 
@@ -199,7 +199,7 @@
             <i class="ph-bold ph-chart-line-up text-brand-400"></i>
             <span>Desempenho & Histórico</span>
           </h3>
-          <p class="text-xs text-slate-400">Acompanhe os treinos realizados organizados por data</p>
+          <p class="text-xs text-slate-400">Acompanhe e gerencie os treinos realizados organizados por data</p>
         </div>
 
         <div id="performanceHistoryList" class="space-y-3">
@@ -209,7 +209,7 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO INFERIOR POR TELAS (3 TELAS) -->
+    <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 max-w-md mx-auto">
       <div class="grid grid-cols-3 p-2 gap-1.5">
         <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition">
@@ -306,8 +306,8 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Séries</label>
-              <input type="text" id="exSeries" placeholder="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Nº de Séries</label>
+              <input type="number" id="exSeries" min="1" max="10" placeholder="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Repetições Alvo</label>
@@ -315,9 +315,21 @@
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
-            <input type="text" id="exWeight" placeholder="25kg cada lado" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
+              <input type="text" id="exWeight" placeholder="25kg cada lado" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Descanso (Segundos)</label>
+              <select id="exRestTime" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-brand-300 text-sm focus:outline-none focus:border-brand-500">
+                <option value="30">30 segundos</option>
+                <option value="45">45 segundos</option>
+                <option value="60" selected>60 segundos</option>
+                <option value="90">90 segundos</option>
+                <option value="120">120 segundos</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -326,8 +338,8 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Observação / Descanso</label>
-            <input type="text" id="exObs" placeholder="Ex: Descanso 60s" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Observação Geral</label>
+            <input type="text" id="exObs" placeholder="Ex: Manter escapulas fechadas" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
 
           <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
@@ -401,11 +413,11 @@
     let currentTab = 'A';
     let currentView = 'execute'; // 'execute', 'edit' ou 'performance'
     let currentSessionLogs = {};
-    let activeTimers = {}; // Guarda interval do cronômetro por exercício
+    let activeTimers = {}; 
     
     let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
     
-    // Apenas 5 treinos: A, B, C, D, E
+    // 5 treinos: A, B, C, D, E
     let workouts = { A: [], B: [], C: [], D: [], E: [] };
     let history = [];
 
@@ -503,9 +515,10 @@
         const list = Array.isArray(w?.[k]) ? w[k] : [];
         cleanW[k] = list.map(item => ({
           name: String(item?.name || ""),
-          series: String(item?.series || ""),
+          series: String(item?.series || "3"),
           reps: String(item?.reps || ""),
           weight: String(item?.weight || ""),
+          restTime: String(item?.restTime || "60"),
           link: String(item?.link || ""),
           obs: String(item?.obs || "")
         }));
@@ -557,7 +570,7 @@
       workouts = cleanWorkoutsData;
     }
 
-    // Trocar Telas do App (Executar, Editar, Desempenho)
+    // Trocar Telas do App
     window.switchView = (view) => {
       currentView = view;
       const vExec = document.getElementById('viewExecute');
@@ -590,7 +603,7 @@
         btnEdit.className = activeClass;
       } else if (view === 'performance') {
         vPerf.classList.remove('hidden');
-        tabsHeader.classList.add('hidden'); // Oculta abas A-E no histórico
+        tabsHeader.classList.add('hidden');
         btnPerf.className = activeClass;
         renderPerformanceHistory();
       }
@@ -634,7 +647,7 @@
       renderExercises();
     };
 
-    // Renderizar Exercícios (Tela Execução e Edição)
+    // Renderizar Exercícios
     function renderExercises() {
       if (currentView === 'performance') return;
 
@@ -652,20 +665,36 @@
         `;
       } else {
         execListContainer.innerHTML = currentList.map((item, index) => {
-          const log = currentSessionLogs[index] || { 
-            done: false, 
-            weight: item.weight || '', 
-            repsDone: item.reps || '' 
-          };
+          const numSeries = parseInt(item.series) || 1;
+          
+          if (!currentSessionLogs[index]) {
+            currentSessionLogs[index] = {
+              seriesDone: new Array(numSeries).fill(false),
+              weight: item.weight || '',
+              repsDone: item.reps || ''
+            };
+          }
+
+          const log = currentSessionLogs[index];
+          const restSeconds = parseInt(item.restTime) || 60;
+
+          // Gerar checkboxes para cada série
+          let seriesCheckboxesHtml = '';
+          for (let s = 0; s < numSeries; s++) {
+            const isChecked = log.seriesDone[s] || false;
+            seriesCheckboxesHtml += `
+              <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer hover:border-brand-500/50 transition">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${index}, ${s})" class="w-4 h-4 accent-brand-500 rounded cursor-pointer">
+                <span class="text-xs font-semibold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">Série ${s + 1}</span>
+              </label>
+            `;
+          }
 
           return `
-            <div class="glass-card rounded-2xl p-4 border ${log.done ? 'border-brand-500/50 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-3">
+            <div class="glass-card rounded-2xl p-4 border border-slate-800/80 transition space-y-3">
               <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleExerciseDone(${index})">
-                  <input type="checkbox" ${log.done ? 'checked' : ''} class="w-5 h-5 accent-brand-500 rounded-lg cursor-pointer pointer-events-none">
-                  <h4 class="font-bold text-sm ${log.done ? 'line-through text-slate-500' : 'text-white'}">${item.name}</h4>
-                </div>
-                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x séries</span>
+                <h4 class="font-bold text-white text-base">${item.name}</h4>
+                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${numSeries}x séries</span>
               </div>
 
               ${item.link ? `
@@ -677,25 +706,33 @@
                 </div>
               ` : ''}
 
-              <!-- CAMPOS DE REPETIÇÕES FEITAS E CARGA -->
+              <!-- CHECKBOXES DAS SÉRIES INDIVIDUAIS -->
+              <div class="pt-1">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1.5">Conclusão por Série:</p>
+                <div class="flex flex-wrap gap-2">
+                  ${seriesCheckboxesHtml}
+                </div>
+              </div>
+
+              <!-- CAMPOS DE REPETIÇÕES E CARGA -->
               <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
                 <div>
                   <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Reps Feitas</label>
                   <input type="text" value="${log.repsDone}" onchange="updateSessionReps(${index}, this.value)" placeholder="${item.reps || '10-12'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga de Hoje</label>
+                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga Hoje</label>
                   <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || '20kg'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold focus:outline-none focus:border-brand-500">
                 </div>
               </div>
 
-              <!-- CRONÔMETRO DE DESCANSO -->
-              <div class="flex items-center justify-between pt-1">
-                <button onclick="startRestTimer(${index}, 60)" class="inline-flex items-center space-x-1.5 text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-700 transition">
-                  <i class="ph-bold ph-timer text-brand-400 text-sm"></i>
-                  <span>Descanso (60s)</span>
+              <!-- CRONÔMETRO DE DESCANSO (FONTE MAIOR E TEMPO CONFIGURÁVEL) -->
+              <div class="flex items-center justify-between pt-2 border-t border-slate-800/40">
+                <button onclick="startRestTimer(${index}, ${restSeconds})" class="inline-flex items-center space-x-2 text-xs text-slate-200 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 transition font-semibold">
+                  <i class="ph-bold ph-timer text-brand-400 text-base"></i>
+                  <span>Descanso (${restSeconds}s)</span>
                 </button>
-                <span id="timer-display-${index}" class="text-xs font-mono font-bold text-brand-400 hidden">01:00</span>
+                <span id="timer-display-${index}" class="text-base font-mono font-extrabold text-brand-400 hidden">00:00</span>
               </div>
             </div>
           `;
@@ -718,8 +755,9 @@
             <div class="space-y-1 flex-1 pr-3">
               <h4 class="font-bold text-white text-sm">${item.name}</h4>
               <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series} séries</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series || 3} séries</span>
                 <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-400">${item.restTime || 60}s desc.</span>
                 ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
               </div>
               ${item.link ? `
@@ -753,7 +791,7 @@
         clearInterval(activeTimers[index]);
       }
 
-      let timeLeft = seconds;
+      let timeLeft = parseInt(seconds) || 60;
       displayEl.classList.remove('hidden');
 
       const updateTimerText = () => {
@@ -776,32 +814,22 @@
       }, 1000);
     };
 
-    // FUNÇÕES DE LOGS DO TREINO
-    window.toggleExerciseDone = (index) => {
-      if (!currentSessionLogs[index]) {
-        currentSessionLogs[index] = { 
-          done: true, 
-          weight: workouts[currentTab][index]?.weight || '',
-          repsDone: workouts[currentTab][index]?.reps || '' 
-        };
-      } else {
-        currentSessionLogs[index].done = !currentSessionLogs[index].done;
+    // LOGS DO TREINO
+    window.toggleSerieDone = (exIndex, serieIndex) => {
+      if (currentSessionLogs[exIndex] && currentSessionLogs[exIndex].seriesDone) {
+        currentSessionLogs[exIndex].seriesDone[serieIndex] = !currentSessionLogs[exIndex].seriesDone[serieIndex];
+        renderExercises();
       }
-      renderExercises();
     };
 
     window.updateSessionWeight = (index, value) => {
-      if (!currentSessionLogs[index]) {
-        currentSessionLogs[index] = { done: false, weight: value, repsDone: workouts[currentTab][index]?.reps || '' };
-      } else {
+      if (currentSessionLogs[index]) {
         currentSessionLogs[index].weight = value;
       }
     };
 
     window.updateSessionReps = (index, value) => {
-      if (!currentSessionLogs[index]) {
-        currentSessionLogs[index] = { done: false, weight: workouts[currentTab][index]?.weight || '', repsDone: value };
-      } else {
+      if (currentSessionLogs[index]) {
         currentSessionLogs[index].repsDone = value;
       }
     };
@@ -819,20 +847,27 @@
         dateFormatted: formattedDate,
         dateIso: now.toISOString(),
         workoutTab: currentTab,
-        exercises: (workouts[currentTab] || []).map((ex, idx) => ({
-          name: ex.name,
-          series: ex.series,
-          repsTarget: ex.reps,
-          repsDone: currentSessionLogs[idx]?.repsDone || ex.reps || '-',
-          weightUsed: currentSessionLogs[idx]?.weight || ex.weight || '0kg',
-          completed: !!currentSessionLogs[idx]?.done
-        }))
+        exercises: (workouts[currentTab] || []).map((ex, idx) => {
+          const log = currentSessionLogs[idx];
+          const completedSeriesCount = log?.seriesDone ? log.seriesDone.filter(Boolean).length : 0;
+          const totalSeries = parseInt(ex.series) || 1;
+
+          return {
+            name: ex.name,
+            seriesTotal: totalSeries,
+            seriesCompleted: completedSeriesCount,
+            repsTarget: ex.reps,
+            repsDone: log?.repsDone || ex.reps || '-',
+            weightUsed: log?.weight || ex.weight || '0kg',
+            completed: completedSeriesCount > 0
+          };
+        })
       };
 
       try {
         history.unshift(sessionEntry);
         await saveUserData();
-        alert("Treino finalizado e gravado na tela de Desempenho com sucesso!");
+        alert("Treino finalizado e gravado na tela de Desempenho!");
         currentSessionLogs = {};
         renderExercises();
       } catch (err) {
@@ -840,7 +875,7 @@
       }
     };
 
-    // RENDER TELA DE DESEMPENHO E HISTÓRICO POR DATA
+    // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
     function renderPerformanceHistory() {
       const perfContainer = document.getElementById('performanceHistoryList');
 
@@ -855,14 +890,20 @@
         return;
       }
 
-      perfContainer.innerHTML = history.map((session) => `
+      perfContainer.innerHTML = history.map((session, historyIndex) => `
         <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
           <div class="flex items-center justify-between pb-2 border-b border-slate-800">
             <div class="flex items-center space-x-2">
               <span class="bg-brand-500 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">Treino ${session.workoutTab}</span>
               <span class="text-xs text-slate-400 font-medium">${session.dateFormatted}</span>
             </div>
-            <span class="text-xs text-brand-400 font-bold">${session.exercises?.filter(e => e.completed).length || 0}/${session.exercises?.length || 0} feitos</span>
+            
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-brand-400 font-bold">${session.exercises?.filter(e => e.completed).length || 0}/${session.exercises?.length || 0} feitos</span>
+              <button onclick="deleteHistorySession(${historyIndex})" class="w-7 h-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition" title="Apagar Registro">
+                <i class="ph-bold ph-trash text-xs"></i>
+              </button>
+            </div>
           </div>
 
           <div class="space-y-2">
@@ -873,7 +914,7 @@
                   <span class="${ex.completed ? 'text-white font-medium' : 'text-slate-500'} truncate">${ex.name}</span>
                 </div>
                 <div class="flex items-center space-x-2 shrink-0">
-                  <span class="text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.repsDone} reps</span>
+                  <span class="text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.seriesCompleted || 0}/${ex.seriesTotal || 3} sér.</span>
                   <span class="text-brand-300 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.weightUsed}</span>
                 </div>
               </div>
@@ -883,7 +924,20 @@
       `).join('');
     }
 
-    // PROFIL MODAL & ACTIONS
+    // EXCLUIR TREINO DO HISTÓRICO
+    window.deleteHistorySession = async (historyIndex) => {
+      if (confirm("Deseja realmente apagar o registro deste treino do histórico?")) {
+        history.splice(historyIndex, 1);
+        try {
+          await saveUserData();
+          renderPerformanceHistory();
+        } catch (err) {
+          alert("Erro ao excluir histórico: " + err.message);
+        }
+      }
+    };
+
+    // PROFIL MODAL
     window.openProfileModal = () => {
       updateProfileHeader();
       document.getElementById('profileModal').classList.remove('hidden');
@@ -953,7 +1007,7 @@
       reader.readAsDataURL(file);
     };
 
-    // EXERCISE MODAL ACTIONS
+    // EXERCISE MODAL
     window.openExerciseModal = (index = -1) => {
       const modal = document.getElementById('exerciseModal');
       const title = document.getElementById('exerciseModalTitle');
@@ -964,17 +1018,19 @@
         title.textContent = "Editar Exercício";
         const item = workouts[currentTab][index];
         document.getElementById('exName').value = item.name || "";
-        document.getElementById('exSeries').value = item.series || "";
+        document.getElementById('exSeries').value = item.series || "3";
         document.getElementById('exReps').value = item.reps || "";
         document.getElementById('exWeight').value = item.weight || "";
+        document.getElementById('exRestTime').value = item.restTime || "60";
         document.getElementById('exLink').value = item.link || "";
         document.getElementById('exObs').value = item.obs || "";
       } else {
         title.textContent = "Novo Exercício";
         document.getElementById('exName').value = "";
-        document.getElementById('exSeries').value = "";
+        document.getElementById('exSeries').value = "3";
         document.getElementById('exReps').value = "";
         document.getElementById('exWeight').value = "";
+        document.getElementById('exRestTime').value = "60";
         document.getElementById('exLink').value = "";
         document.getElementById('exObs').value = "";
       }
@@ -992,9 +1048,10 @@
 
       const exerciseData = {
         name: document.getElementById('exName').value,
-        series: document.getElementById('exSeries').value,
+        series: document.getElementById('exSeries').value || "3",
         reps: document.getElementById('exReps').value,
         weight: document.getElementById('exWeight').value,
+        restTime: document.getElementById('exRestTime').value || "60",
         link: document.getElementById('exLink').value,
         obs: document.getElementById('exObs').value
       };
