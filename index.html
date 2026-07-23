@@ -133,15 +133,13 @@
         </div>
       </div>
 
-      <!-- WORKOUT TABS (A, B, C, D, E, F, G) -->
-      <div class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
-        <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">A</button>
-        <button onclick="selectWorkoutTab('B')" id="tab-B" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">B</button>
-        <button onclick="selectWorkoutTab('C')" id="tab-C" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">C</button>
-        <button onclick="selectWorkoutTab('D')" id="tab-D" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">D</button>
-        <button onclick="selectWorkoutTab('E')" id="tab-E" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">E</button>
-        <button onclick="selectWorkoutTab('F')" id="tab-F" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">F</button>
-        <button onclick="selectWorkoutTab('G')" id="tab-G" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">G</button>
+      <!-- WORKOUT TABS (APENAS 5 TREINOS: A, B, C, D, E) -->
+      <div id="workoutTabsHeader" class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
+        <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">Treino A</button>
+        <button onclick="selectWorkoutTab('B')" id="tab-B" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">Treino B</button>
+        <button onclick="selectWorkoutTab('C')" id="tab-C" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">Treino C</button>
+        <button onclick="selectWorkoutTab('D')" id="tab-D" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">Treino D</button>
+        <button onclick="selectWorkoutTab('E')" id="tab-E" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">Treino E</button>
       </div>
     </header>
 
@@ -155,7 +153,7 @@
             <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
               <span>Executando Treino <span class="currentWorkoutLabel text-brand-400">A</span></span>
             </h3>
-            <p class="text-xs text-slate-400">Marque os exercícios concluídos e ajuste as cargas do dia</p>
+            <p class="text-xs text-slate-400">Marque concluídos, ajuste repetições/cargas e use o descanso</p>
           </div>
         </div>
 
@@ -194,18 +192,37 @@
         </div>
       </section>
 
+      <!-- TELA 3: DESEMPENHO E HISTÓRICO POR DATA -->
+      <section id="viewPerformance" class="space-y-4 hidden">
+        <div>
+          <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+            <i class="ph-bold ph-chart-line-up text-brand-400"></i>
+            <span>Desempenho & Histórico</span>
+          </h3>
+          <p class="text-xs text-slate-400">Acompanhe os treinos realizados organizados por data</p>
+        </div>
+
+        <div id="performanceHistoryList" class="space-y-3">
+          <!-- Renderizado Dinamicamente -->
+        </div>
+      </section>
+
     </main>
 
-    <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
+    <!-- NAVEGAÇÃO INFERIOR POR TELAS (3 TELAS) -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 max-w-md mx-auto">
-      <div class="grid grid-cols-2 p-2 gap-2">
+      <div class="grid grid-cols-3 p-2 gap-1.5">
         <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition">
-          <i class="ph-bold ph-play-circle text-xl mb-0.5"></i>
-          <span>Executar Treino</span>
+          <i class="ph-bold ph-play-circle text-lg mb-0.5"></i>
+          <span>Treinar</span>
         </button>
         <button id="navEditBtn" onclick="switchView('edit')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition">
-          <i class="ph-bold ph-pencil-line text-xl mb-0.5"></i>
-          <span>Criar / Editar Ficha</span>
+          <i class="ph-bold ph-pencil-line text-lg mb-0.5"></i>
+          <span>Editar Ficha</span>
+        </button>
+        <button id="navPerformanceBtn" onclick="switchView('performance')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition">
+          <i class="ph-bold ph-chart-bar text-lg mb-0.5"></i>
+          <span>Desempenho</span>
         </button>
       </div>
     </nav>
@@ -223,7 +240,6 @@
         </div>
 
         <form onsubmit="saveUserProfile(event)" class="space-y-4">
-          <!-- Photo Selector -->
           <div class="flex flex-col items-center">
             <div class="relative group cursor-pointer" onclick="document.getElementById('photoInput').click()">
               <img id="profileModalImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-20 h-20 rounded-full object-cover border-2 border-brand-500 shadow-lg">
@@ -294,7 +310,7 @@
               <input type="text" id="exSeries" placeholder="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Repetições</label>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Repetições Alvo</label>
               <input type="text" id="exReps" placeholder="10-12" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
             </div>
           </div>
@@ -305,7 +321,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Link do Vídeo / Demonstração (URL)</label>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Link do Vídeo / Execução (URL)</label>
             <input type="url" id="exLink" placeholder="https://youtube.com/watch?v=..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
 
@@ -352,7 +368,6 @@
         measurementId: "G-6CR9J6DWZZ"
     };
 
-    // Inicialização do Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -384,21 +399,14 @@
     let currentUser = null;
     let isRegisterMode = false;
     let currentTab = 'A';
-    let currentView = 'execute'; // 'execute' ou 'edit'
+    let currentView = 'execute'; // 'execute', 'edit' ou 'performance'
     let currentSessionLogs = {};
+    let activeTimers = {}; // Guarda interval do cronômetro por exercício
     
-    let userProfile = {
-      name: "",
-      age: "",
-      height: "",
-      weight: "",
-      photo: ""
-    };
-
-    let workouts = {
-      A: [], B: [], C: [], D: [], E: [], F: [], G: []
-    };
-
+    let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
+    
+    // Apenas 5 treinos: A, B, C, D, E
+    let workouts = { A: [], B: [], C: [], D: [], E: [] };
     let history = [];
 
     const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
@@ -416,7 +424,6 @@
       }
     });
 
-    // Populate Presets Select
     function populatePresetsDropdown() {
       const select = document.getElementById('exPresetSelect');
       select.innerHTML = '<option value="">-- Escolha um exercício ou digite abaixo --</option>' +
@@ -428,13 +435,10 @@
       const selected = presetExercisesList[parseInt(index)];
       if (selected) {
         document.getElementById('exName').value = selected.name;
-        if (selected.link) {
-          document.getElementById('exLink').value = selected.link;
-        }
+        if (selected.link) document.getElementById('exLink').value = selected.link;
       }
     };
 
-    // Toggle Auth Mode
     window.toggleAuthMode = () => {
       isRegisterMode = !isRegisterMode;
       const subtitle = document.getElementById('authSubtitle');
@@ -452,7 +456,6 @@
       }
     };
 
-    // Auth Handler
     window.handleAuth = async (e) => {
       e.preventDefault();
       const email = document.getElementById('authEmail').value.trim();
@@ -476,14 +479,12 @@
       }
     };
 
-    // Logout
     window.logout = async () => {
       if (confirm("Deseja realmente sair da sua conta?")) {
         await signOut(auth);
       }
     };
 
-    // SANITIZAÇÃO DE DADOS
     function sanitizeProfile(prof) {
       return {
         name: String(prof?.name || ""),
@@ -495,7 +496,7 @@
     }
 
     function sanitizeWorkouts(w) {
-      const keys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+      const keys = ['A', 'B', 'C', 'D', 'E'];
       const cleanW = {};
       
       keys.forEach(k => {
@@ -513,7 +514,6 @@
       return cleanW;
     }
 
-    // Load User Data
     async function loadUserData() {
       if (!currentUser) return;
 
@@ -540,12 +540,10 @@
       }
     }
 
-    // Save Data to Firestore
     async function saveUserData() {
       if (!currentUser) return;
 
       const userDocRef = doc(db, "users", currentUser.uid);
-      
       const cleanProfileData = sanitizeProfile(userProfile);
       const cleanWorkoutsData = sanitizeWorkouts(workouts);
 
@@ -559,30 +557,47 @@
       workouts = cleanWorkoutsData;
     }
 
-    // Alternar Telas (Executar vs Editar)
+    // Trocar Telas do App (Executar, Editar, Desempenho)
     window.switchView = (view) => {
       currentView = view;
       const vExec = document.getElementById('viewExecute');
       const vEdit = document.getElementById('viewEdit');
+      const vPerf = document.getElementById('viewPerformance');
+      const tabsHeader = document.getElementById('workoutTabsHeader');
+
       const btnExec = document.getElementById('navExecuteBtn');
       const btnEdit = document.getElementById('navEditBtn');
+      const btnPerf = document.getElementById('navPerformanceBtn');
+
+      const activeClass = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
+      const inactiveClass = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
+
+      vExec.classList.add('hidden');
+      vEdit.classList.add('hidden');
+      vPerf.classList.add('hidden');
+
+      btnExec.className = inactiveClass;
+      btnEdit.className = inactiveClass;
+      btnPerf.className = inactiveClass;
 
       if (view === 'execute') {
         vExec.classList.remove('hidden');
-        vEdit.classList.add('hidden');
-        btnExec.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
-        btnEdit.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
-      } else {
-        vExec.classList.add('hidden');
+        tabsHeader.classList.remove('hidden');
+        btnExec.className = activeClass;
+      } else if (view === 'edit') {
         vEdit.classList.remove('hidden');
-        btnEdit.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
-        btnExec.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
+        tabsHeader.classList.remove('hidden');
+        btnEdit.className = activeClass;
+      } else if (view === 'performance') {
+        vPerf.classList.remove('hidden');
+        tabsHeader.classList.add('hidden'); // Oculta abas A-E no histórico
+        btnPerf.className = activeClass;
+        renderPerformanceHistory();
       }
 
       renderExercises();
     };
 
-    // UI Updates
     function updateProfileHeader() {
       const nameHeader = document.getElementById('userNameHeader');
       const avatarHeader = document.getElementById('userAvatarHeader');
@@ -601,7 +616,6 @@
       document.getElementById('profWeight').value = userProfile.weight || "";
     }
 
-    // Tab Switch (A, B, C...)
     window.selectWorkoutTab = (tab) => {
       currentTab = tab;
       currentSessionLogs = {};
@@ -609,34 +623,41 @@
       document.querySelectorAll('.currentWorkoutLabel').forEach(el => el.textContent = tab);
 
       document.querySelectorAll('.workout-tab').forEach(btn => {
-        btn.className = "workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white";
+        btn.className = "workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white";
       });
 
       const activeBtn = document.getElementById(`tab-${tab}`);
       if (activeBtn) {
-        activeBtn.className = "workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20";
+        activeBtn.className = "workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20";
       }
 
       renderExercises();
     };
 
-    // Render Exercises
+    // Renderizar Exercícios (Tela Execução e Edição)
     function renderExercises() {
+      if (currentView === 'performance') return;
+
       const currentList = workouts[currentTab] || [];
 
-      // 1. RENDER TELA EXECUÇÃO
+      // 1. RENDER EXECUÇÃO
       const execListContainer = document.getElementById('executeExerciseList');
       if (currentList.length === 0) {
         execListContainer.innerHTML = `
           <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
             <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Nenhum exercício na ficha do Treino ${currentTab}</p>
-            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Criar / Editar Ficha" abaixo para cadastrar.</p>
+            <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
+            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Editar Ficha" abaixo para cadastrar.</p>
           </div>
         `;
       } else {
         execListContainer.innerHTML = currentList.map((item, index) => {
-          const log = currentSessionLogs[index] || { done: false, weight: item.weight || '' };
+          const log = currentSessionLogs[index] || { 
+            done: false, 
+            weight: item.weight || '', 
+            repsDone: item.reps || '' 
+          };
+
           return `
             <div class="glass-card rounded-2xl p-4 border ${log.done ? 'border-brand-500/50 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-3">
               <div class="flex items-center justify-between">
@@ -644,11 +665,11 @@
                   <input type="checkbox" ${log.done ? 'checked' : ''} class="w-5 h-5 accent-brand-500 rounded-lg cursor-pointer pointer-events-none">
                   <h4 class="font-bold text-sm ${log.done ? 'line-through text-slate-500' : 'text-white'}">${item.name}</h4>
                 </div>
-                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x (${item.reps})</span>
+                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x séries</span>
               </div>
 
               ${item.link ? `
-                <div class="pt-1">
+                <div>
                   <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 px-2.5 py-1 rounded-lg border border-brand-500/20 font-medium transition">
                     <i class="ph-bold ph-video-camera text-sm"></i>
                     <span>Ver Exercício</span>
@@ -656,23 +677,39 @@
                 </div>
               ` : ''}
 
-              <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
-                <span class="text-xs text-slate-400">Carga praticada hoje:</span>
-                <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || 'Ex: 20kg'}" class="w-32 bg-slate-900 border border-slate-800 rounded-xl py-1 px-3 text-xs text-right text-brand-400 font-bold focus:outline-none focus:border-brand-500">
+              <!-- CAMPOS DE REPETIÇÕES FEITAS E CARGA -->
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
+                <div>
+                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Reps Feitas</label>
+                  <input type="text" value="${log.repsDone}" onchange="updateSessionReps(${index}, this.value)" placeholder="${item.reps || '10-12'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga de Hoje</label>
+                  <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || '20kg'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold focus:outline-none focus:border-brand-500">
+                </div>
+              </div>
+
+              <!-- CRONÔMETRO DE DESCANSO -->
+              <div class="flex items-center justify-between pt-1">
+                <button onclick="startRestTimer(${index}, 60)" class="inline-flex items-center space-x-1.5 text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-700 transition">
+                  <i class="ph-bold ph-timer text-brand-400 text-sm"></i>
+                  <span>Descanso (60s)</span>
+                </button>
+                <span id="timer-display-${index}" class="text-xs font-mono font-bold text-brand-400 hidden">01:00</span>
               </div>
             </div>
           `;
         }).join('');
       }
 
-      // 2. RENDER TELA CRIAÇÃO/EDIÇÃO
+      // 2. RENDER CRIAÇÃO/EDIÇÃO
       const editListContainer = document.getElementById('editExerciseList');
       if (currentList.length === 0) {
         editListContainer.innerHTML = `
           <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
             <i class="ph-bold ph-plus-circle text-4xl text-slate-600 mb-2"></i>
             <p class="text-slate-400 text-sm font-medium">Sua ficha do Treino ${currentTab} está vazia</p>
-            <p class="text-xs text-slate-500 mt-1">Clique em "+ Add Exercício" para começar a montar.</p>
+            <p class="text-xs text-slate-500 mt-1">Clique em "+ Add Exercício" para montar.</p>
           </div>
         `;
       } else {
@@ -707,10 +744,46 @@
       }
     }
 
-    // Ações do Modo Execução
+    // CRONÔMETRO DE DESCANSO
+    window.startRestTimer = (index, seconds) => {
+      const displayEl = document.getElementById(`timer-display-${index}`);
+      if (!displayEl) return;
+
+      if (activeTimers[index]) {
+        clearInterval(activeTimers[index]);
+      }
+
+      let timeLeft = seconds;
+      displayEl.classList.remove('hidden');
+
+      const updateTimerText = () => {
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        displayEl.textContent = `${m}:${s}`;
+      };
+
+      updateTimerText();
+
+      activeTimers[index] = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(activeTimers[index]);
+          displayEl.textContent = "Pronto!";
+          setTimeout(() => displayEl.classList.add('hidden'), 3000);
+        } else {
+          updateTimerText();
+        }
+      }, 1000);
+    };
+
+    // FUNÇÕES DE LOGS DO TREINO
     window.toggleExerciseDone = (index) => {
       if (!currentSessionLogs[index]) {
-        currentSessionLogs[index] = { done: true, weight: workouts[currentTab][index]?.weight || '' };
+        currentSessionLogs[index] = { 
+          done: true, 
+          weight: workouts[currentTab][index]?.weight || '',
+          repsDone: workouts[currentTab][index]?.reps || '' 
+        };
       } else {
         currentSessionLogs[index].done = !currentSessionLogs[index].done;
       }
@@ -719,22 +792,38 @@
 
     window.updateSessionWeight = (index, value) => {
       if (!currentSessionLogs[index]) {
-        currentSessionLogs[index] = { done: false, weight: value };
+        currentSessionLogs[index] = { done: false, weight: value, repsDone: workouts[currentTab][index]?.reps || '' };
       } else {
         currentSessionLogs[index].weight = value;
+      }
+    };
+
+    window.updateSessionReps = (index, value) => {
+      if (!currentSessionLogs[index]) {
+        currentSessionLogs[index] = { done: false, weight: workouts[currentTab][index]?.weight || '', repsDone: value };
+      } else {
+        currentSessionLogs[index].repsDone = value;
       }
     };
 
     window.finishCurrentSession = async () => {
       if (!currentUser) return;
 
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
       const sessionEntry = {
-        date: new Date().toISOString(),
+        id: Date.now(),
+        dateFormatted: formattedDate,
+        dateIso: now.toISOString(),
         workoutTab: currentTab,
         exercises: (workouts[currentTab] || []).map((ex, idx) => ({
           name: ex.name,
           series: ex.series,
-          reps: ex.reps,
+          repsTarget: ex.reps,
+          repsDone: currentSessionLogs[idx]?.repsDone || ex.reps || '-',
           weightUsed: currentSessionLogs[idx]?.weight || ex.weight || '0kg',
           completed: !!currentSessionLogs[idx]?.done
         }))
@@ -743,7 +832,7 @@
       try {
         history.unshift(sessionEntry);
         await saveUserData();
-        alert("Treino finalizado e gravado no histórico com sucesso!");
+        alert("Treino finalizado e gravado na tela de Desempenho com sucesso!");
         currentSessionLogs = {};
         renderExercises();
       } catch (err) {
@@ -751,7 +840,50 @@
       }
     };
 
-    // Profile Modal
+    // RENDER TELA DE DESEMPENHO E HISTÓRICO POR DATA
+    function renderPerformanceHistory() {
+      const perfContainer = document.getElementById('performanceHistoryList');
+
+      if (!history || history.length === 0) {
+        perfContainer.innerHTML = `
+          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
+            <i class="ph-bold ph-calendar-x text-4xl text-slate-600 mb-2"></i>
+            <p class="text-slate-400 text-sm font-medium">Nenhum treino registrado ainda</p>
+            <p class="text-xs text-slate-500 mt-1">Conclua um treino na aba "Treinar" para ver o histórico aqui.</p>
+          </div>
+        `;
+        return;
+      }
+
+      perfContainer.innerHTML = history.map((session) => `
+        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div class="flex items-center space-x-2">
+              <span class="bg-brand-500 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">Treino ${session.workoutTab}</span>
+              <span class="text-xs text-slate-400 font-medium">${session.dateFormatted}</span>
+            </div>
+            <span class="text-xs text-brand-400 font-bold">${session.exercises?.filter(e => e.completed).length || 0}/${session.exercises?.length || 0} feitos</span>
+          </div>
+
+          <div class="space-y-2">
+            ${(session.exercises || []).map(ex => `
+              <div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/40 last:border-none">
+                <div class="flex items-center space-x-2 truncate pr-2">
+                  <i class="ph-bold ${ex.completed ? 'ph-check-circle text-brand-400' : 'ph-circle text-slate-600'}"></i>
+                  <span class="${ex.completed ? 'text-white font-medium' : 'text-slate-500'} truncate">${ex.name}</span>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                  <span class="text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.repsDone} reps</span>
+                  <span class="text-brand-300 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.weightUsed}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // PROFIL MODAL & ACTIONS
     window.openProfileModal = () => {
       updateProfileHeader();
       document.getElementById('profileModal').classList.remove('hidden');
@@ -781,7 +913,6 @@
 
         alert("Perfil atualizado com sucesso!");
       } catch (err) {
-        console.error("Erro ao salvar perfil:", err);
         alert("Erro ao salvar perfil: " + err.message);
       } finally {
         btn.disabled = false;
@@ -789,7 +920,6 @@
       }
     };
 
-    // Photo Upload Handler
     window.handlePhotoUpload = (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -805,15 +935,9 @@
           let height = img.height;
 
           if (width > height) {
-            if (width > maxDim) {
-              height *= maxDim / width;
-              width = maxDim;
-            }
+            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
           } else {
-            if (height > maxDim) {
-              width *= maxDim / height;
-              height = maxDim;
-            }
+            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
           }
 
           canvas.width = width;
@@ -829,7 +953,7 @@
       reader.readAsDataURL(file);
     };
 
-    // Exercise Modal
+    // EXERCISE MODAL ACTIONS
     window.openExerciseModal = (index = -1) => {
       const modal = document.getElementById('exerciseModal');
       const title = document.getElementById('exerciseModalTitle');
@@ -862,7 +986,6 @@
       document.getElementById('exerciseModal').classList.add('hidden');
     };
 
-    // Save Exercise
     window.saveExercise = async (e) => {
       e.preventDefault();
       const index = parseInt(document.getElementById('exIndex').value);
@@ -893,7 +1016,6 @@
       }
     };
 
-    // Delete Exercise
     window.deleteExercise = async (index) => {
       if (confirm("Deseja remover este exercício?")) {
         workouts[currentTab].splice(index, 1);
