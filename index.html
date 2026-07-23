@@ -2,298 +2,272 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Meu Treino Pro</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981', /* Novo verde Esmeralda vibrante e moderno */
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              accent: '#00e676'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --bg: #121212;
-      --card: #1e1e1e;
-      --accent: #00e676;
-      --text: #ffffff;
-      --subtext: #a0a0a0;
-      --border: #333333;
-      --video-btn: #ff3d00;
-      --active-mode: #29b6f6;
-    }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 16px;
-      padding-bottom: 100px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
     }
-
-    /* Tela de Login */
-    #authContainer {
-      max-width: 400px;
-      margin: 40px auto;
-      background: var(--card);
-      padding: 24px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
-    .auth-title { text-align: center; color: var(--accent); margin-bottom: 20px; }
-    .auth-form { display: flex; flex-direction: column; gap: 12px; }
-    .btn-auth { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 8px; }
-    .auth-toggle { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--subtext); }
-    .auth-toggle span { color: var(--accent); cursor: pointer; text-decoration: underline; }
-
-    /* App Principal */
-    #appContainer { display: none; }
-
-    #timerBanner {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: #00c853;
-      color: #000;
-      font-weight: bold;
-      text-align: center;
-      padding: 10px;
-      font-size: 1.2rem;
-      z-index: 1000;
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
     }
-
-    /* Barra Superior do Perfil */
-    .user-profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card);
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      margin-bottom: 16px;
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
     }
-
-    .profile-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-    }
-
-    .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #333;
-      border: 2px solid var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: var(--accent);
-    }
-
-    .user-details strong { display: block; font-size: 0.95rem; }
-    .user-details span { font-size: 0.75rem; color: var(--subtext); }
-
-    .btn-logout {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: #ff5252;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 8px; }
-    h1 { font-size: 1.3rem; margin: 0; color: var(--accent); }
-
-    .controls-row { display: flex; gap: 8px; margin-bottom: 16px; }
-
-    select, button {
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      outline: none;
-    }
-
-    .btn-mode { flex: 1; font-weight: bold; background: #2a2a2a; cursor: pointer; }
-    .btn-mode.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-    .exercise-card {
-      background-color: var(--card);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-    }
-
-    .exercise-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .exercise-title { font-size: 1.1rem; font-weight: bold; width: 100%; background: transparent; border: none; color: var(--text); border-bottom: 1px dashed var(--border); padding-bottom: 4px; }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-    .field-group { display: flex; flex-direction: column; }
-    label { font-size: 0.75rem; color: var(--subtext); margin-bottom: 4px; text-transform: uppercase; }
-
-    input { background: #2a2a2a; border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 6px; font-size: 0.95rem; outline: none; }
-
-    .btn-video { display: inline-flex; align-items: center; background-color: var(--video-btn); color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
-    .checklist { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-    .check-btn { flex: 1; min-width: 60px; padding: 10px; background: #2a2a2a; border: 1px solid var(--border); color: var(--text); border-radius: 6px; text-align: center; cursor: pointer; font-weight: bold; }
-    .check-btn.done { background: var(--accent); color: #000; }
-
-    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 2000; padding: 20px; overflow-y: auto; }
-    .modal-content { background: var(--card); border-radius: 12px; padding: 16px; max-width: 500px; margin: 40px auto; }
-    .db-item { padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-
-    .timer-btn-group { display: flex; gap: 6px; margin-top: 6px; }
-    .timer-btn { background: #333; border: none; color: #fff; padding: 6px; border-radius: 4px; font-size: 0.75rem; flex: 1; cursor: pointer; }
-    .history-tag { font-size: 0.75rem; color: var(--active-mode); margin-top: 4px; }
-
-    .btn-add { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: #000; border: none; border-radius: 50px; padding: 14px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-    .btn-delete { background: transparent; color: #ff5252; border: none; font-size: 1.2rem; cursor: pointer; }
-    
-    .avatar-upload {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    
-    .avatar-large {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--accent);
-      background: #333;
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #059669;
+      border-radius: 4px;
     }
   </style>
 </head>
-<body>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
-  <!-- TELA DE AUTENTICAÇÃO -->
-  <div id="authContainer">
-    <h2 class="auth-title" id="authTitle">🏋️ Login do Atleta</h2>
-    <form class="auth-form" onsubmit="handleAuth(event)">
-      <div class="field-group">
-        <label>E-mail</label>
-        <input type="email" id="authEmail" required placeholder="seu@email.com">
+  <!-- APP CONTAINER -->
+  <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col relative pb-20">
+
+    <!-- LOGIN / REGISTER MODAL -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-center px-6 py-12">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-500/10 text-brand-400 mb-4 border border-brand-500/20 shadow-lg shadow-brand-500/10">
+          <i class="ph-bold ph-barbell text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white">Meu Treino Pro</h1>
+        <p class="text-slate-400 text-sm mt-1" id="authSubtitle">Acesse sua ficha de treinos personalizada</p>
       </div>
-      <div class="field-group">
-        <label>Senha</label>
-        <input type="password" id="authPassword" required placeholder="******">
+
+      <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mail</label>
+          <div class="relative">
+            <i class="ph-bold ph-envelope absolute left-4 top-3.5 text-slate-500"></i>
+            <input type="email" id="authEmail" required placeholder="seu@email.com" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha</label>
+          <div class="relative">
+            <i class="ph-bold ph-lock-key absolute left-4 top-3.5 text-slate-500"></i>
+            <input type="password" id="authPassword" required minlength="6" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
+          </div>
+        </div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/20 transition duration-200 flex items-center justify-center space-x-2 text-sm">
+          <span>Entrar no App</span>
+          <i class="ph-bold ph-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <button onclick="toggleAuthMode()" id="toggleAuthBtn" class="text-xs text-brand-400 hover:text-brand-300 font-medium transition">
+          Não tem uma conta? Cadastre-se
+        </button>
       </div>
-      <button type="submit" class="btn-auth" id="btnAuthSubmit">Entrar</button>
-    </form>
-    <div class="auth-toggle">
-      <span id="authToggleText" onclick="toggleAuthMode()">Não tem conta? Cadastre-se</span>
     </div>
-  </div>
 
-  <!-- APLICATIVO PRINCIPAL -->
-  <div id="appContainer">
-    <div id="timerBanner">⏱️ Descanso: <span id="timerClock">00:00</span></div>
+    <!-- MAIN APP HEADER -->
+    <header class="p-5 glass-card sticky top-0 z-30 border-b border-slate-800/80">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="openProfileModal()">
+          <div class="relative">
+            <img id="userAvatarHeader" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-12 h-12 rounded-full object-cover border-2 border-brand-500 p-0.5 shadow-md">
+            <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-brand-500 border-2 border-slate-900 rounded-full"></div>
+          </div>
+          <div>
+            <span class="text-xs font-medium text-slate-400 block">Bem-vindo(a)</span>
+            <h2 id="userNameHeader" class="text-base font-bold text-white truncate max-w-[160px]">Carregando...</h2>
+          </div>
+        </div>
 
-    <!-- Barra de Perfil -->
-    <div class="user-profile-header">
-      <div class="profile-info" onclick="openProfileModal()">
-        <img id="headerAvatar" class="avatar" src="" alt="Foto" style="display:none;">
-        <div id="headerAvatarPlaceholder" class="avatar">?</div>
-        <div class="user-details">
-          <strong id="headerUserName">Atleta</strong>
-          <span id="headerUserMetrics">Toque para editar perfil</span>
+        <div class="flex items-center space-x-2">
+          <button onclick="openProfileModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-center text-slate-300 transition">
+            <i class="ph-bold ph-user-gear text-lg"></i>
+          </button>
+          <button onclick="logout()" class="w-9 h-9 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition border border-red-500/20">
+            <i class="ph-bold ph-sign-out text-lg"></i>
+          </button>
         </div>
       </div>
-      <button class="btn-logout" onclick="logout()">Sair</button>
-    </div>
 
-    <header>
-      <h1>🏋️ Meu Treino</h1>
-      <select id="selectWorkout" onchange="changeWorkout()">
-        <option value="A">Treino A</option>
-        <option value="B">Treino B</option>
-        <option value="C">Treino C</option>
-        <option value="D">Treino D</option>
-        <option value="E">Treino E</option>
-        <option value="F">Treino F</option>
-        <option value="G">Treino G</option>
-      </select>
+      <!-- WORKOUT TABS (A, B, C, D, E, F, G) -->
+      <div class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
+        <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-slate-950 shadow-lg shadow-brand-500/20">A</button>
+        <button onclick="selectWorkoutTab('B')" id="tab-B" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">B</button>
+        <button onclick="selectWorkoutTab('C')" id="tab-C" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">C</button>
+        <button onclick="selectWorkoutTab('D')" id="tab-D" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">D</button>
+        <button onclick="selectWorkoutTab('E')" id="tab-E" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">E</button>
+        <button onclick="selectWorkoutTab('F')" id="tab-F" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">F</button>
+        <button onclick="selectWorkoutTab('G')" id="tab-G" class="workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white">G</button>
+      </div>
     </header>
 
-    <div class="controls-row">
-      <button id="btnModeEdit" class="btn-mode active" onclick="setMode('edit')">✏️ Montar</button>
-      <button id="btnModeActive" class="btn-mode" onclick="setMode('active')">🔥 Treinar</button>
-    </div>
-
-    <div id="exerciseList"></div>
-
-    <button class="btn-add" id="btnAddEx" onclick="openDatabase()">+ Adicionar Exercício</button>
-
-    <!-- Modal do Banco de Dados de Exercícios -->
-    <div id="dbModal" class="modal">
-      <div class="modal-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h3>Biblioteca de Exercícios</h3>
-          <button onclick="closeDatabase()" style="background:none; border:none; color:#fff; font-size:1.5rem;">✕</button>
+    <!-- CONTENT AREA -->
+    <main class="p-5 space-y-4 flex-1">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+            <span>Treino <span id="currentWorkoutLabel" class="text-brand-400">A</span></span>
+          </h3>
+          <p class="text-xs text-slate-400">Lista de exercícios da sua ficha atual</p>
         </div>
-        <select id="dbGroupFilter" onchange="renderDatabase()" style="width: 100%; margin-bottom: 12px;">
-          <option value="Todos">Todos os Grupos</option>
-          <option value="Peito">Peito</option>
-          <option value="Costas">Costas</option>
-          <option value="Pernas">Pernas</option>
-          <option value="Ombros">Ombros</option>
-          <option value="Bíceps">Bíceps</option>
-          <option value="Tríceps">Tríceps</option>
-          <option value="Abdômen">Abdômen</option>
-        </select>
-        <div id="dbList"></div>
+        <button onclick="openExerciseModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+          <i class="ph-bold ph-plus"></i>
+          <span>Add Exercício</span>
+        </button>
+      </div>
+
+      <!-- EXERCISES LIST -->
+      <div id="exerciseList" class="space-y-3">
+        <!-- Renderizado Dinamicamente -->
+      </div>
+    </main>
+
+    <!-- PROFILE MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-5 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+
+        <div class="text-center">
+          <h3 class="text-xl font-extrabold text-white">Editar Perfil</h3>
+          <p class="text-xs text-slate-400 mt-1">Atualize suas métricas e foto</p>
+        </div>
+
+        <form onsubmit="saveUserProfile(event)" class="space-y-4">
+          <!-- Photo Selector -->
+          <div class="flex flex-col items-center">
+            <div class="relative group cursor-pointer" onclick="document.getElementById('photoInput').click()">
+              <img id="profileModalImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-20 h-20 rounded-full object-cover border-2 border-brand-500 shadow-lg">
+              <div class="absolute inset-0 bg-slate-950/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <i class="ph-bold ph-camera text-white text-xl"></i>
+              </div>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+            <span class="text-[11px] text-slate-400 mt-1 cursor-pointer" onclick="document.getElementById('photoInput').click()">Toque para alterar a foto</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
+            <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Idade</label>
+              <input type="number" id="profAge" placeholder="25" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Altura (cm)</label>
+              <input type="number" id="profHeight" placeholder="175" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Peso (kg)</label>
+              <input type="number" step="0.1" id="profWeight" placeholder="70" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            </div>
+          </div>
+
+          <button type="submit" id="saveProfileBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
+            <i class="ph-bold ph-floppy-disk"></i>
+            <span>Salvar Perfil</span>
+          </button>
+        </form>
       </div>
     </div>
 
-    <!-- Modal Editar Perfil -->
-    <div id="profileModal" class="modal">
-      <div class="modal-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h3>Perfil do Atleta</h3>
-          <button onclick="closeProfileModal()" style="background:none; border:none; color:#fff; font-size:1.5rem;">✕</button>
-        </div>
-        
-        <div class="avatar-upload">
-          <img id="modalAvatarPreview" class="avatar-large" src="" style="display:none;">
-          <div id="modalAvatarPlaceholder" class="avatar-large" style="display:flex; align-items:center; justify-content:center; font-size:2rem; color:var(--accent);">?</div>
-          <input type="file" id="inputPhoto" accept="image/*" onchange="handlePhotoUpload(event)" style="font-size:0.8rem; width:100%;">
-        </div>
+    <!-- EXERCISE MODAL (ADD / EDIT) -->
+    <div id="exerciseModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-4">
+        <button onclick="closeExerciseModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
 
-        <form class="auth-form" onsubmit="saveUserProfile(event)">
-          <div class="field-group">
-            <label>Nome Completo</label>
-            <input type="text" id="profName" placeholder="Ex: Alexandre Merello">
+        <h3 id="exerciseModalTitle" class="text-xl font-extrabold text-white text-center">Novo Exercício</h3>
+
+        <form onsubmit="saveExercise(event)" class="space-y-3">
+          <input type="hidden" id="exIndex" value="-1">
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Nome do Exercício</label>
+            <input type="text" id="exName" required placeholder="Ex: Supino Reto" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
-          <div class="grid-2">
-            <div class="field-group">
-              <label>Idade</label>
-              <input type="number" id="profAge" placeholder="Ex: 30">
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Séries</label>
+              <input type="text" id="exSeries" placeholder="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
             </div>
-            <div class="field-group">
-              <label>Altura (cm)</label>
-              <input type="number" id="profHeight" placeholder="Ex: 175">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Repetições</label>
+              <input type="text" id="exReps" placeholder="10-12" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
             </div>
           </div>
-          <div class="field-group">
-            <label>Peso (kg)</label>
-            <input type="number" step="0.1" id="profWeight" placeholder="Ex: 75.5">
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Carga (kg)</label>
+            <input type="text" id="exWeight" placeholder="25kg cada lado" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
-          <button type="submit" class="btn-auth">Salvar Perfil</button>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Observação / Descanso</label>
+            <input type="text" id="exObs" placeholder="Ex: Descanso 60s" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+          </div>
+
+          <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
+            <i class="ph-bold ph-check-circle"></i>
+            <span>Salvar Exercício</span>
+          </button>
         </form>
       </div>
     </div>
 
   </div>
 
-  <!-- FIREBASE SDKs -->
+  <!-- FIREBASE SDKS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -310,8 +284,8 @@
       setDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // ⬇️ COLE AQUI SUA CONFIGURAÇÃO DO FIREBASE (COM A SUA APIKEY REAL)
-      const firebaseConfig = {
+    // INSIRA SUA CONFIGURAÇÃO DO FIREBASE AQUI
+    const firebaseConfig = {
         apiKey: "AIzaSyDjamnwcgG61PrwP08uP8RRJ_x99zALZ8A",
         authDomain: "treinoacademia-13aff.firebaseapp.com",
         projectId: "treinoacademia-13aff",
@@ -321,408 +295,391 @@
         measurementId: "G-6CR9J6DWZZ"
     };
 
+    // Inicialização do Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const exerciseDB = [
-      { group: 'Peito', name: 'Supino Reto com Barra' },
-      { group: 'Peito', name: 'Supino Inclinado com Halteres' },
-      { group: 'Peito', name: 'Crossover na Polia Alta' },
-      { group: 'Peito', name: 'Peck Deck / Voador' },
-      { group: 'Costas', name: 'Puxada Frontal na Polia' },
-      { group: 'Costas', name: 'Remada Curvada com Barra' },
-      { group: 'Costas', name: 'Remada Baixa Triângulo' },
-      { group: 'Pernas', name: 'Agachamento Livre com Barra' },
-      { group: 'Pernas', name: 'Leg Press 45°' },
-      { group: 'Pernas', name: 'Cadeira Extensora' },
-      { group: 'Pernas', name: 'Mesa Flexora' },
-      { group: 'Ombros', name: 'Desenvolvimento com Halteres' },
-      { group: 'Ombros', name: 'Elevação Lateral' },
-      { group: 'Bíceps', name: 'Rosca Direta com Barra' },
-      { group: 'Bíceps', name: 'Rosca Alternada com Halteres' },
-      { group: 'Tríceps', name: 'Tríceps Pulley / Corda' },
-      { group: 'Tríceps', name: 'Tríceps Testa' }
-    ];
-
+    // Estados do App
     let currentUser = null;
-    let currentWorkout = 'A';
-    let appMode = 'edit';
-    let timerInterval = null;
-    let isSignUp = false;
-
-    let userProfile = { name: '', age: '', height: '', weight: '', photo: '' };
-    let workouts = { A: [], B: [], C: [], D: [], E: [], F: [], G: [] };
-
-    // AUTENTICAÇÃO E SESSÃO
-    window.toggleAuthMode = () => {
-      isSignUp = !isSignUp;
-      document.getElementById('authTitle').textContent = isSignUp ? '📝 Novo Cadastro' : '🏋️ Login do Atleta';
-      document.getElementById('btnAuthSubmit').textContent = isSignUp ? 'Cadastrar' : 'Entrar';
-      document.getElementById('authToggleText').innerHTML = isSignUp ? 'Já tem conta? <span>Faça Login</span>' : 'Não tem conta? <span>Cadastre-se</span>';
+    let isRegisterMode = false;
+    let currentTab = 'A';
+    
+    let userProfile = {
+      name: "",
+      age: "",
+      height: "",
+      weight: "",
+      photo: ""
     };
 
-    window.handleAuth = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('authEmail').value;
-      const pass = document.getElementById('authPassword').value;
-
-      try {
-        if (isSignUp) {
-          await createUserWithEmailAndPassword(auth, email, pass);
-        } else {
-          await signInWithEmailAndPassword(auth, email, pass);
-        }
-      } catch (err) {
-        alert("Erro na autenticação: " + err.message);
-      }
+    let workouts = {
+      A: [], B: [], C: [], D: [], E: [], F: [], G: []
     };
 
-    window.logout = () => signOut(auth);
+    const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
 
+    // Observe Auth Changes
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('appContainer').style.display = 'block';
+        document.getElementById('authScreen').classList.add('hidden');
         await loadUserData();
       } else {
         currentUser = null;
-        document.getElementById('authContainer').style.display = 'block';
-        document.getElementById('appContainer').style.display = 'none';
+        document.getElementById('authScreen').classList.remove('hidden');
       }
     });
 
-    // CARREGAR E SALVAR DADOS NO FIRESTORE
-    async function loadUserData() {
-      if (!currentUser) return;
-      const userDocRef = doc(db, "users", currentUser.uid);
-      const docSnap = await getDoc(userDocRef);
+    // Toggle Auth Mode
+    window.toggleAuthMode = () => {
+      isRegisterMode = !isRegisterMode;
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleBtn = document.getElementById('toggleAuthBtn');
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        workouts = data.workouts || workouts;
-        userProfile = data.profile || userProfile;
+      if (isRegisterMode) {
+        subtitle.textContent = "Crie sua conta para salvar seus treinos";
+        submitBtn.querySelector('span').textContent = "Cadastrar Conta";
+        toggleBtn.textContent = "Já tem uma conta? Faça Login";
       } else {
-        workouts = { A: [], B: [], C: [], D: [], E: [], F: [], G: [] };
-        userProfile = { name: '', age: '', height: '', weight: '', photo: '' };
-        await setDoc(userDocRef, { workouts, profile: userProfile });
-      }
-      updateProfileHeader();
-      render();
-    }
-
-    async function saveUserData() {
-      if (!currentUser) return;
-      const userDocRef = doc(db, "users", currentUser.uid);
-      await setDoc(userDocRef, { workouts, profile: userProfile }, { merge: true });
-    }
-
-    // GESTÃO DE PERFIL
-    window.openProfileModal = () => {
-      document.getElementById('profName').value = userProfile.name || '';
-      document.getElementById('profAge').value = userProfile.age || '';
-      document.getElementById('profHeight').value = userProfile.height || '';
-      document.getElementById('profWeight').value = userProfile.weight || '';
-
-      const modalImg = document.getElementById('modalAvatarPreview');
-      const modalPlaceholder = document.getElementById('modalAvatarPlaceholder');
-
-      if (userProfile.photo) {
-        modalImg.src = userProfile.photo;
-        modalImg.style.display = 'block';
-        modalPlaceholder.style.display = 'none';
-      } else {
-        modalImg.style.display = 'none';
-        modalPlaceholder.style.display = 'flex';
-      }
-
-      document.getElementById('profileModal').style.display = 'block';
-    };
-
-    window.closeProfileModal = () => document.getElementById('profileModal').style.display = 'none';
-
-    window.handlePhotoUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          userProfile.photo = event.target.result; // Converte imagem em string Base64
-          document.getElementById('modalAvatarPreview').src = userProfile.photo;
-          document.getElementById('modalAvatarPreview').style.display = 'block';
-          document.getElementById('modalAvatarPlaceholder').style.display = 'none';
-        };
-        reader.readAsDataURL(file);
+        subtitle.textContent = "Acesse sua ficha de treinos personalizada";
+        submitBtn.querySelector('span').textContent = "Entrar no App";
+        toggleBtn.textContent = "Não tem uma conta? Cadastre-se";
       }
     };
 
-    window.saveUserProfile = async (e) => {
+    // Auth Handler
+    window.handleAuth = async (e) => {
       e.preventDefault();
-      
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = "Salvando...";
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const submitBtn = document.getElementById('authSubmitBtn');
+
       submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70');
 
       try {
-        // Garantimos que nenhum campo seja undefined, convertendo valores vazios para ""
-        userProfile.name = document.getElementById('profName').value || "";
-        userProfile.age = document.getElementById('profAge').value || "";
-        userProfile.height = document.getElementById('profHeight').value || "";
-        userProfile.weight = document.getElementById('profWeight').value || "";
-        userProfile.photo = userProfile.photo || "";
+        if (isRegisterMode) {
+          await createUserWithEmailAndPassword(auth, email, password);
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+      } catch (error) {
+        alert("Erro na autenticação: " + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70');
+      }
+    };
 
-        // Objeto limpo e estrito enviado ao Firestore para evitar propriedades undefined
-        const cleanProfile = {
-          name: String(userProfile.name),
-          age: String(userProfile.age),
-          height: String(userProfile.height),
-          weight: String(userProfile.weight),
-          photo: String(userProfile.photo)
-        };
+    // Logout
+    window.logout = async () => {
+      if (confirm("Deseja realmente sair da sua conta?")) {
+        await signOut(auth);
+      }
+    };
 
-        const cleanWorkouts = workouts || { A: [], B: [], C: [], D: [], E: [], F: [], G: [] };
+    // SANITIZAÇÃO ESTRITA DE DADOS
+    function sanitizeProfile(prof) {
+      return {
+        name: String(prof?.name || ""),
+        age: String(prof?.age || ""),
+        height: String(prof?.height || ""),
+        weight: String(prof?.weight || ""),
+        photo: String(prof?.photo || "")
+      };
+    }
 
-        if (!currentUser) throw new Error("Usuário não autenticado.");
+    function sanitizeWorkouts(w) {
+      const keys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+      const cleanW = {};
+      
+      keys.forEach(k => {
+        const list = Array.isArray(w?.[k]) ? w[k] : [];
+        cleanW[k] = list.map(item => ({
+          name: String(item?.name || ""),
+          series: String(item?.series || ""),
+          reps: String(item?.reps || ""),
+          weight: String(item?.weight || ""),
+          obs: String(item?.obs || "")
+        }));
+      });
 
+      return cleanW;
+    }
+
+    // Load User Data
+    async function loadUserData() {
+      if (!currentUser) return;
+
+      try {
         const userDocRef = doc(db, "users", currentUser.uid);
-        await setDoc(userDocRef, { 
-          workouts: cleanWorkouts, 
-          profile: cleanProfile 
-        }, { merge: true });
+        const docSnap = await getDoc(userDocRef);
 
-        // Atualiza a variável global interna com os dados limpos
-        userProfile = cleanProfile;
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          userProfile = sanitizeProfile(data.profile);
+          workouts = sanitizeWorkouts(data.workouts);
+        } else {
+          userProfile = sanitizeProfile({});
+          workouts = sanitizeWorkouts({});
+          await saveUserData();
+        }
 
         updateProfileHeader();
+        renderExercises();
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      }
+    }
+
+    // Save Data to Firestore
+    async function saveUserData() {
+      if (!currentUser) return;
+
+      const userDocRef = doc(db, "users", currentUser.uid);
+      
+      const cleanProfileData = sanitizeProfile(userProfile);
+      const cleanWorkoutsData = sanitizeWorkouts(workouts);
+
+      await setDoc(userDocRef, {
+        profile: cleanProfileData,
+        workouts: cleanWorkoutsData
+      }, { merge: true });
+
+      userProfile = cleanProfileData;
+      workouts = cleanWorkoutsData;
+    }
+
+    // UI Updates
+    function updateProfileHeader() {
+      const nameHeader = document.getElementById('userNameHeader');
+      const avatarHeader = document.getElementById('userAvatarHeader');
+      const avatarModal = document.getElementById('profileModalImg');
+
+      const displayName = userProfile.name.trim() !== "" ? userProfile.name : (currentUser.email ? currentUser.email.split('@')[0] : "Atleta");
+      const displayPhoto = userProfile.photo.trim() !== "" ? userProfile.photo : defaultAvatar;
+
+      nameHeader.textContent = displayName;
+      avatarHeader.src = displayPhoto;
+      avatarModal.src = displayPhoto;
+
+      document.getElementById('profName').value = userProfile.name || "";
+      document.getElementById('profAge').value = userProfile.age || "";
+      document.getElementById('profHeight').value = userProfile.height || "";
+      document.getElementById('profWeight').value = userProfile.weight || "";
+    }
+
+    // Tab Switch
+    window.selectWorkoutTab = (tab) => {
+      currentTab = tab;
+      document.getElementById('currentWorkoutLabel').textContent = tab;
+
+      document.querySelectorAll('.workout-tab').forEach(btn => {
+        btn.className = "workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white";
+      });
+
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      if (activeBtn) {
+        activeBtn.className = "workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-slate-950 shadow-lg shadow-brand-500/20";
+      }
+
+      renderExercises();
+    };
+
+    // Render Exercises
+    function renderExercises() {
+      const listContainer = document.getElementById('exerciseList');
+      const currentList = workouts[currentTab] || [];
+
+      if (currentList.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
+            <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
+            <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
+            <p class="text-xs text-slate-500 mt-1">Toque no botão "+ Add Exercício" para começar.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = currentList.map((item, index) => `
+        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
+          <div class="space-y-1 flex-1 pr-3">
+            <h4 class="font-bold text-white text-sm">${item.name}</h4>
+            <div class="flex items-center space-x-3 text-xs text-slate-400">
+              <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series} séries</span>
+              <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
+              ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
+            </div>
+            ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-1"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
+          </div>
+
+          <div class="flex items-center space-x-1">
+            <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+              <i class="ph-bold ph-pencil-simple text-sm"></i>
+            </button>
+            <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
+              <i class="ph-bold ph-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Profile Modal
+    window.openProfileModal = () => {
+      updateProfileHeader();
+      document.getElementById('profileModal').classList.remove('hidden');
+    };
+
+    window.closeProfileModal = () => {
+      document.getElementById('profileModal').classList.add('hidden');
+    };
+
+    // Save Profile Fix
+    window.saveUserProfile = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveProfileBtn');
+      const originalHtml = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Salvando...</span>`;
+
+      try {
+        userProfile.name = document.getElementById('profName').value;
+        userProfile.age = document.getElementById('profAge').value;
+        userProfile.height = document.getElementById('profHeight').value;
+        userProfile.weight = document.getElementById('profWeight').value;
+
+        await saveUserData();
+        updateProfileHeader();
         closeProfileModal();
-        
-        alert("Perfil salvo com sucesso!");
+
+        alert("Perfil atualizado com sucesso!");
       } catch (err) {
         console.error("Erro ao salvar perfil:", err);
         alert("Erro ao salvar perfil: " + err.message);
       } finally {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
       }
     };
 
-    function updateProfileHeader() {
-      const headerImg = document.getElementById('headerAvatar');
-      const headerPlaceholder = document.getElementById('headerAvatarPlaceholder');
+    // Photo Upload Handler (Resized base64)
+    window.handlePhotoUpload = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      document.getElementById('headerUserName').textContent = userProfile.name || currentUser.email.split('@')[0];
-      
-      let metrics = [];
-      if (userProfile.weight) metrics.push(`${userProfile.weight}kg`);
-      if (userProfile.height) metrics.push(`${userProfile.height}cm`);
-      if (userProfile.age) metrics.push(`${userProfile.age} anos`);
-      
-      document.getElementById('headerUserMetrics').textContent = metrics.length ? metrics.join(' • ') : 'Toque para editar perfil';
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxDim = 300;
+          let width = img.width;
+          let height = img.height;
 
-      if (userProfile.photo) {
-        headerImg.src = userProfile.photo;
-        headerImg.style.display = 'block';
-        headerPlaceholder.style.display = 'none';
-      } else {
-        headerImg.style.display = 'none';
-        headerPlaceholder.style.display = 'flex';
-        headerPlaceholder.textContent = (userProfile.name || 'A').charAt(0).toUpperCase();
-      }
-    }
-
-    // LÓGICA DE TREINOS
-    window.setMode = (mode) => {
-      appMode = mode;
-      document.getElementById('btnModeEdit').classList.toggle('active', mode === 'edit');
-      document.getElementById('btnModeActive').classList.toggle('active', mode === 'active');
-      document.getElementById('btnAddEx').style.display = mode === 'edit' ? 'block' : 'none';
-      render();
-    };
-
-    function render() {
-      const list = document.getElementById('exerciseList');
-      list.innerHTML = '';
-      const currentList = workouts[currentWorkout] || [];
-
-      currentList.forEach((ex, index) => {
-        const card = document.createElement('div');
-        card.className = 'exercise-card';
-        const videoBtn = ex.video ? `<a href="${ex.video}" target="_blank" class="btn-video">▶ Vídeo</a>` : '';
-        const historyText = ex.lastWeight ? `<div class="history-tag">📈 Carga anterior: ${ex.lastWeight} (${ex.lastDate || 'Recente'})</div>` : '';
-
-        if (appMode === 'edit') {
-          card.innerHTML = `
-            <div class="exercise-header">
-              <input type="text" class="exercise-title" value="${ex.name}" placeholder="Nome do Exercício" onchange="updateEx(${index}, 'name', this.value)">
-              ${videoBtn}
-              <button class="btn-delete" onclick="removeEx(${index})">✕</button>
-            </div>
-            <div class="grid-2">
-              <div class="field-group">
-                <label>Carga Atual</label>
-                <input type="text" value="${ex.weight || ''}" placeholder="Ex: 20kg" onchange="updateWeight(${index}, this.value)">
-                ${historyText}
-              </div>
-              <div class="field-group">
-                <label>Repetições</label>
-                <input type="text" value="${ex.reps || ''}" placeholder="Ex: 3x10" onchange="updateEx(${index}, 'reps', this.value)">
-              </div>
-            </div>
-            <div class="grid-2">
-              <div class="field-group">
-                <label>Ritmo</label>
-                <input type="text" value="${ex.tempo || ''}" placeholder="Ex: 2010" onchange="updateEx(${index}, 'tempo', this.value)">
-              </div>
-              <div class="field-group">
-                <label>Descanso Ideal</label>
-                <input type="text" value="${ex.rest || ''}" placeholder="Ex: 60s" onchange="updateEx(${index}, 'rest', this.value)">
-              </div>
-            </div>
-            <div class="field-group" style="margin-top:8px;">
-              <label>Link do Vídeo (URL)</label>
-              <input type="url" value="${ex.video || ''}" placeholder="https://youtube.com/..." onchange="updateVideoUrl(${index}, this.value)">
-            </div>
-            <div class="field-group" style="margin-top:8px;">
-              <label>Observações</label>
-              <input type="text" value="${ex.obs || ''}" placeholder="Ex: Banco no nível 3" onchange="updateEx(${index}, 'obs', this.value)">
-            </div>
-          `;
-        } else {
-          let setsHtml = '';
-          const totalSets = parseInt(ex.reps) || 3;
-          ex.completedSets = ex.completedSets || [];
-
-          for (let i = 0; i < totalSets; i++) {
-            const isDone = ex.completedSets[i] ? 'done' : '';
-            setsHtml += `<div class="check-btn ${isDone}" onclick="toggleSet(${index}, ${i})">Série ${i + 1}</div>`;
+          if (width > height) {
+            if (width > maxDim) {
+              height *= maxDim / width;
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width *= maxDim / height;
+              height = maxDim;
+            }
           }
 
-          card.innerHTML = `
-            <div class="exercise-header">
-              <strong style="font-size:1.1rem;">${ex.name}</strong>
-              ${videoBtn}
-            </div>
-            <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:8px;">
-              <strong>Carga:</strong> ${ex.weight || 'Sem carga'} | <strong>Reps:</strong> ${ex.reps || '-'} | <strong>Ritmo:</strong> ${ex.tempo || '-'}
-            </div>
-            ${ex.obs ? `<div style="font-size:0.85rem; color:#ffd54f; margin-bottom:8px;">📌 ${ex.obs}</div>` : ''}
-            
-            <label>Marcar Séries Concluídas:</label>
-            <div class="checklist">${setsHtml}</div>
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
 
-            <div style="margin-top:12px;">
-              <label>Iniciar Descanso Cronometrado:</label>
-              <div class="timer-btn-group">
-                <button class="timer-btn" onclick="startTimer(30)">30s</button>
-                <button class="timer-btn" onclick="startTimer(60)">60s</button>
-                <button class="timer-btn" onclick="startTimer(90)">90s</button>
-                <button class="timer-btn" onclick="startTimer(120)">120s</button>
-              </div>
-            </div>
-          `;
-        }
-        list.appendChild(card);
-      });
-    }
-
-    window.updateEx = (index, field, value) => {
-      workouts[currentWorkout][index][field] = value;
-      saveUserData();
-    };
-
-    window.updateWeight = (index, newWeight) => {
-      const ex = workouts[currentWorkout][index];
-      if (ex.weight && ex.weight !== newWeight) {
-        ex.lastWeight = ex.weight;
-        ex.lastDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-      }
-      ex.weight = newWeight;
-      saveUserData();
-      render();
-    };
-
-    window.updateVideoUrl = (index, newUrl) => {
-      workouts[currentWorkout][index].video = newUrl;
-      saveUserData();
-      render();
-    };
-
-    window.toggleSet = (exIndex, setIndex) => {
-      const ex = workouts[currentWorkout][exIndex];
-      ex.completedSets = ex.completedSets || [];
-      ex.completedSets[setIndex] = !ex.completedSets[setIndex];
-      saveUserData();
-      render();
-    };
-
-    window.changeWorkout = () => {
-      currentWorkout = document.getElementById('selectWorkout').value;
-      render();
-    };
-
-    window.removeEx = (index) => {
-      workouts[currentWorkout].splice(index, 1);
-      saveUserData();
-      render();
-    };
-
-    window.openDatabase = () => {
-      document.getElementById('dbModal').style.display = 'block';
-      renderDatabase();
-    };
-
-    window.closeDatabase = () => document.getElementById('dbModal').style.display = 'none';
-
-    window.renderDatabase = () => {
-      const filter = document.getElementById('dbGroupFilter').value;
-      const dbList = document.getElementById('dbList');
-      dbList.innerHTML = '';
-      const filtered = filter === 'Todos' ? exerciseDB : exerciseDB.filter(e => e.group === filter);
-
-      filtered.forEach(ex => {
-        const item = document.createElement('div');
-        item.className = 'db-item';
-        item.innerHTML = `<div><strong>${ex.name}</strong><div style="font-size:0.75rem; color:var(--subtext);">${ex.group}</div></div><span style="color:var(--accent); font-weight:bold;">+ Add</span>`;
-        item.onclick = () => selectExerciseFromDB(ex);
-        dbList.appendChild(item);
-      });
-    };
-
-    function selectExerciseFromDB(ex) {
-      if (!workouts[currentWorkout]) workouts[currentWorkout] = [];
-      workouts[currentWorkout].push({ name: ex.name, video: '', reps: '3x10', tempo: '2010', rest: '60s', weight: '', obs: '' });
-      saveUserData();
-      closeDatabase();
-      render();
-    }
-
-    window.startTimer = (seconds) => {
-      clearInterval(timerInterval);
-      const banner = document.getElementById('timerBanner');
-      const clock = document.getElementById('timerClock');
-      banner.style.display = 'block';
-      let timeLeft = seconds;
-
-      const updateClock = () => {
-        const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-        const s = String(timeLeft % 60).padStart(2, '0');
-        clock.textContent = `${m}:${s}`;
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          userProfile.photo = compressedBase64;
+          document.getElementById('profileModalImg').src = compressedBase64;
+        };
+        img.src = event.target.result;
       };
-      updateClock();
+      reader.readAsDataURL(file);
+    };
 
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          clock.textContent = "TEMPO FIM!";
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          setTimeout(() => { banner.style.display = 'none'; }, 3000);
-        } else {
-          updateClock();
+    // Exercise Modal
+    window.openExerciseModal = (index = -1) => {
+      const modal = document.getElementById('exerciseModal');
+      const title = document.getElementById('exerciseModalTitle');
+      document.getElementById('exIndex').value = index;
+
+      if (index >= 0) {
+        title.textContent = "Editar Exercício";
+        const item = workouts[currentTab][index];
+        document.getElementById('exName').value = item.name || "";
+        document.getElementById('exSeries').value = item.series || "";
+        document.getElementById('exReps').value = item.reps || "";
+        document.getElementById('exWeight').value = item.weight || "";
+        document.getElementById('exObs').value = item.obs || "";
+      } else {
+        title.textContent = "Novo Exercício";
+        document.getElementById('exName').value = "";
+        document.getElementById('exSeries').value = "";
+        document.getElementById('exReps').value = "";
+        document.getElementById('exWeight').value = "";
+        document.getElementById('exObs').value = "";
+      }
+
+      modal.classList.remove('hidden');
+    };
+
+    window.closeExerciseModal = () => {
+      document.getElementById('exerciseModal').classList.add('hidden');
+    };
+
+    // Save Exercise
+    window.saveExercise = async (e) => {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('exIndex').value);
+
+      const exerciseData = {
+        name: document.getElementById('exName').value,
+        series: document.getElementById('exSeries').value,
+        reps: document.getElementById('exReps').value,
+        weight: document.getElementById('exWeight').value,
+        obs: document.getElementById('exObs').value
+      };
+
+      if (!workouts[currentTab]) workouts[currentTab] = [];
+
+      if (index >= 0) {
+        workouts[currentTab][index] = exerciseData;
+      } else {
+        workouts[currentTab].push(exerciseData);
+      }
+
+      try {
+        await saveUserData();
+        renderExercises();
+        closeExerciseModal();
+      } catch (err) {
+        alert("Erro ao salvar exercício: " + err.message);
+      }
+    };
+
+    // Delete Exercise
+    window.deleteExercise = async (index) => {
+      if (confirm("Deseja remover este exercício?")) {
+        workouts[currentTab].splice(index, 1);
+        try {
+          await saveUserData();
+          renderExercises();
+        } catch (err) {
+          alert("Erro ao excluir: " + err.message);
         }
-      }, 1000);
+      }
     };
   </script>
 </body>
 </html>
+      
