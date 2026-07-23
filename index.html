@@ -28,7 +28,7 @@
               200: '#a7f3d0',
               300: '#6ee7b7',
               400: '#34d399',
-              500: '#29b6f6', /* Novo verde Esmeralda vibrante e moderno */
+              500: '#29b6f6',
               600: '#059669',
               700: '#047857',
               800: '#065f46',
@@ -147,14 +147,24 @@
 
     <!-- CONTENT AREA -->
     <main class="p-5 space-y-4 flex-1">
+      <!-- MODO SWITCHER (Execução vs Edição) -->
+      <div class="grid grid-cols-2 gap-2 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 mb-2">
+        <button id="modeExecuteBtn" onclick="setAppMode('execute')" class="py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md">
+          <i class="ph-bold ph-play-circle mr-1"></i> Executar Treino
+        </button>
+        <button id="modeEditBtn" onclick="setAppMode('edit')" class="py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
+          <i class="ph-bold ph-pencil-line mr-1"></i> Editar Ficha
+        </button>
+      </div>
+
       <div class="flex items-center justify-between mb-2">
         <div>
           <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
             <span>Treino <span id="currentWorkoutLabel" class="text-brand-400">A</span></span>
           </h3>
-          <p class="text-xs text-slate-400">Lista de exercícios da sua ficha atual</p>
+          <p id="modeSubtitle" class="text-xs text-slate-400">Marque os exercícios e registre as cargas de hoje</p>
         </div>
-        <button onclick="openExerciseModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+        <button id="addExerciseBtn" onclick="openExerciseModal()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
           <i class="ph-bold ph-plus"></i>
           <span>Add Exercício</span>
         </button>
@@ -163,6 +173,14 @@
       <!-- EXERCISES LIST -->
       <div id="exerciseList" class="space-y-3">
         <!-- Renderizado Dinamicamente -->
+      </div>
+
+      <!-- BOTÃO DE FINALIZAR SESSÃO DE TREINO -->
+      <div id="finishWorkoutContainer" class="pt-4">
+        <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
+          <i class="ph-bold ph-check-circle text-xl"></i>
+          <span>Finalizar e Salvar Treino de Hoje</span>
+        </button>
       </div>
     </main>
 
@@ -248,7 +266,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Carga (kg)</label>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
             <input type="text" id="exWeight" placeholder="25kg cada lado" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
 
@@ -284,7 +302,7 @@
       setDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // INSIRA SUA CONFIGURAÇÃO DO FIREBASE AQUI
+    // CONFIGURAÇÃO DO FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyDjamnwcgG61PrwP08uP8RRJ_x99zALZ8A",
         authDomain: "treinoacademia-13aff.firebaseapp.com",
@@ -304,6 +322,8 @@
     let currentUser = null;
     let isRegisterMode = false;
     let currentTab = 'A';
+    let currentMode = 'execute'; // 'execute' ou 'edit'
+    let currentSessionLogs = {};
     
     let userProfile = {
       name: "",
@@ -316,6 +336,8 @@
     let workouts = {
       A: [], B: [], C: [], D: [], E: [], F: [], G: []
     };
+
+    let history = [];
 
     const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
 
@@ -380,7 +402,7 @@
       }
     };
 
-    // SANITIZAÇÃO ESTRITA DE DADOS
+    // SANITIZAÇÃO DE DADOS
     function sanitizeProfile(prof) {
       return {
         name: String(prof?.name || ""),
@@ -421,9 +443,11 @@
           const data = docSnap.data();
           userProfile = sanitizeProfile(data.profile);
           workouts = sanitizeWorkouts(data.workouts);
+          history = Array.isArray(data.history) ? data.history : [];
         } else {
           userProfile = sanitizeProfile({});
           workouts = sanitizeWorkouts({});
+          history = [];
           await saveUserData();
         }
 
@@ -445,12 +469,39 @@
 
       await setDoc(userDocRef, {
         profile: cleanProfileData,
-        workouts: cleanWorkoutsData
+        workouts: cleanWorkoutsData,
+        history: history
       }, { merge: true });
 
       userProfile = cleanProfileData;
       workouts = cleanWorkoutsData;
     }
+
+    // Controle de Modo (Executar / Editar)
+    window.setAppMode = (mode) => {
+      currentMode = mode;
+      const execBtn = document.getElementById('modeExecuteBtn');
+      const editBtn = document.getElementById('modeEditBtn');
+      const addExBtn = document.getElementById('addExerciseBtn');
+      const finishBtn = document.getElementById('finishWorkoutContainer');
+      const subtitle = document.getElementById('modeSubtitle');
+
+      if (mode === 'execute') {
+        execBtn.className = "py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md";
+        editBtn.className = "py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+        addExBtn.classList.add('hidden');
+        finishBtn.classList.remove('hidden');
+        subtitle.textContent = "Marque os exercícios e registre as cargas de hoje";
+      } else {
+        editBtn.className = "py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md";
+        execBtn.className = "py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
+        addExBtn.classList.remove('hidden');
+        finishBtn.classList.add('hidden');
+        subtitle.textContent = "Altere os exercícios, séries e cargas base da sua ficha";
+      }
+
+      renderExercises();
+    };
 
     // UI Updates
     function updateProfileHeader() {
@@ -474,6 +525,7 @@
     // Tab Switch
     window.selectWorkoutTab = (tab) => {
       currentTab = tab;
+      currentSessionLogs = {}; // Reseta os marcadores da aba anterior
       document.getElementById('currentWorkoutLabel').textContent = tab;
 
       document.querySelectorAll('.workout-tab').forEach(btn => {
@@ -498,35 +550,101 @@
           <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
             <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
             <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
-            <p class="text-xs text-slate-500 mt-1">Toque no botão "+ Add Exercício" para começar.</p>
+            <p class="text-xs text-slate-500 mt-1">Toque no modo "Editar Ficha" para adicionar.</p>
           </div>
         `;
         return;
       }
 
-      listContainer.innerHTML = currentList.map((item, index) => `
-        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
-          <div class="space-y-1 flex-1 pr-3">
-            <h4 class="font-bold text-white text-sm">${item.name}</h4>
-            <div class="flex items-center space-x-3 text-xs text-slate-400">
-              <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series} séries</span>
-              <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
-              ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
+      if (currentMode === 'edit') {
+        listContainer.innerHTML = currentList.map((item, index) => `
+          <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
+            <div class="space-y-1 flex-1 pr-3">
+              <h4 class="font-bold text-white text-sm">${item.name}</h4>
+              <div class="flex items-center space-x-3 text-xs text-slate-400">
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series} séries</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
+                ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
+              </div>
+              ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-1"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
             </div>
-            ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-1"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
-          </div>
 
-          <div class="flex items-center space-x-1">
-            <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-              <i class="ph-bold ph-pencil-simple text-sm"></i>
-            </button>
-            <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
-              <i class="ph-bold ph-trash text-sm"></i>
-            </button>
+            <div class="flex items-center space-x-1">
+              <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                <i class="ph-bold ph-pencil-simple text-sm"></i>
+              </button>
+              <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
+                <i class="ph-bold ph-trash text-sm"></i>
+              </button>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `).join('');
+      } else {
+        listContainer.innerHTML = currentList.map((item, index) => {
+          const log = currentSessionLogs[index] || { done: false, weight: item.weight || '' };
+          return `
+            <div class="glass-card rounded-2xl p-4 border ${log.done ? 'border-brand-500/50 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleExerciseDone(${index})">
+                  <input type="checkbox" ${log.done ? 'checked' : ''} class="w-5 h-5 accent-brand-500 rounded-lg cursor-pointer pointer-events-none">
+                  <h4 class="font-bold text-sm ${log.done ? 'line-through text-slate-500' : 'text-white'}">${item.name}</h4>
+                </div>
+                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x (${item.reps})</span>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                <span class="text-xs text-slate-400">Carga praticada hoje:</span>
+                <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || 'Ex: 20kg'}" class="w-32 bg-slate-900 border border-slate-800 rounded-xl py-1 px-3 text-xs text-right text-brand-400 font-bold focus:outline-none focus:border-brand-500">
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
+
+    // Ações do Modo Execução
+    window.toggleExerciseDone = (index) => {
+      if (!currentSessionLogs[index]) {
+        currentSessionLogs[index] = { done: true, weight: workouts[currentTab][index]?.weight || '' };
+      } else {
+        currentSessionLogs[index].done = !currentSessionLogs[index].done;
+      }
+      renderExercises();
+    };
+
+    window.updateSessionWeight = (index, value) => {
+      if (!currentSessionLogs[index]) {
+        currentSessionLogs[index] = { done: false, weight: value };
+      } else {
+        currentSessionLogs[index].weight = value;
+      }
+    };
+
+    window.finishCurrentSession = async () => {
+      if (!currentUser) return;
+
+      const sessionEntry = {
+        date: new Date().toISOString(),
+        workoutTab: currentTab,
+        exercises: (workouts[currentTab] || []).map((ex, idx) => ({
+          name: ex.name,
+          series: ex.series,
+          reps: ex.reps,
+          weightUsed: currentSessionLogs[idx]?.weight || ex.weight || '0kg',
+          completed: !!currentSessionLogs[idx]?.done
+        }))
+      };
+
+      try {
+        history.unshift(sessionEntry);
+        await saveUserData();
+        alert("Treino finalizado e gravado no histórico com sucesso!");
+        currentSessionLogs = {};
+        renderExercises();
+      } catch (err) {
+        alert("Erro ao salvar histórico: " + err.message);
+      }
+    };
 
     // Profile Modal
     window.openProfileModal = () => {
@@ -538,7 +656,6 @@
       document.getElementById('profileModal').classList.add('hidden');
     };
 
-    // Save Profile Fix
     window.saveUserProfile = async (e) => {
       e.preventDefault();
       const btn = document.getElementById('saveProfileBtn');
@@ -567,7 +684,7 @@
       }
     };
 
-    // Photo Upload Handler (Resized base64)
+    // Photo Upload Handler
     window.handlePhotoUpload = (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -682,4 +799,3 @@
   </script>
 </body>
 </html>
-      
