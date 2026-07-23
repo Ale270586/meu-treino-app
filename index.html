@@ -67,7 +67,7 @@
 <body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
   <!-- APP CONTAINER -->
-  <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col relative pb-20">
+  <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col relative pb-24">
 
     <!-- LOGIN / REGISTER MODAL -->
     <div id="authScreen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-center px-6 py-12">
@@ -145,44 +145,70 @@
       </div>
     </header>
 
-    <!-- CONTENT AREA -->
-    <main class="p-5 space-y-4 flex-1">
-      <!-- MODO SWITCHER (Execução vs Edição) -->
-      <div class="grid grid-cols-2 gap-2 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 mb-2">
-        <button id="modeExecuteBtn" onclick="setAppMode('execute')" class="py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md">
-          <i class="ph-bold ph-play-circle mr-1"></i> Executar Treino
-        </button>
-        <button id="modeEditBtn" onclick="setAppMode('edit')" class="py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white">
-          <i class="ph-bold ph-pencil-line mr-1"></i> Editar Ficha
-        </button>
-      </div>
-
-      <div class="flex items-center justify-between mb-2">
-        <div>
-          <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
-            <span>Treino <span id="currentWorkoutLabel" class="text-brand-400">A</span></span>
-          </h3>
-          <p id="modeSubtitle" class="text-xs text-slate-400">Marque os exercícios e registre as cargas de hoje</p>
+    <!-- VIEWS CONTAINER -->
+    <main class="p-5 flex-1 relative">
+      
+      <!-- TELA 1: EXECUÇÃO DO TREINO -->
+      <section id="viewExecute" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+              <span>Executando Treino <span class="currentWorkoutLabel text-brand-400">A</span></span>
+            </h3>
+            <p class="text-xs text-slate-400">Marque os exercícios concluídos e ajuste as cargas do dia</p>
+          </div>
         </div>
-        <button id="addExerciseBtn" onclick="openExerciseModal()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
-          <i class="ph-bold ph-plus"></i>
-          <span>Add Exercício</span>
-        </button>
-      </div>
 
-      <!-- EXERCISES LIST -->
-      <div id="exerciseList" class="space-y-3">
-        <!-- Renderizado Dinamicamente -->
-      </div>
+        <!-- LISTA DE EXECUÇÃO -->
+        <div id="executeExerciseList" class="space-y-3">
+          <!-- Renderizado Dinamicamente -->
+        </div>
 
-      <!-- BOTÃO DE FINALIZAR SESSÃO DE TREINO -->
-      <div id="finishWorkoutContainer" class="pt-4">
-        <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
-          <i class="ph-bold ph-check-circle text-xl"></i>
-          <span>Finalizar e Salvar Treino de Hoje</span>
-        </button>
-      </div>
+        <!-- BOTÃO FINALIZAR -->
+        <div class="pt-4">
+          <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
+            <i class="ph-bold ph-check-circle text-xl"></i>
+            <span>Finalizar e Salvar Treino</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- TELA 2: CRIAÇÃO / EDIÇÃO DO TREINO -->
+      <section id="viewEdit" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+              <span>Editar Ficha do Treino <span class="currentWorkoutLabel text-brand-400">A</span></span>
+            </h3>
+            <p class="text-xs text-slate-400">Gerencie a estrutura fixa da sua ficha</p>
+          </div>
+          <button onclick="openExerciseModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+            <i class="ph-bold ph-plus"></i>
+            <span>Add Exercício</span>
+          </button>
+        </div>
+
+        <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
+        <div id="editExerciseList" class="space-y-3">
+          <!-- Renderizado Dinamicamente -->
+        </div>
+      </section>
+
     </main>
+
+    <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 max-w-md mx-auto">
+      <div class="grid grid-cols-2 p-2 gap-2">
+        <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition">
+          <i class="ph-bold ph-play-circle text-xl mb-0.5"></i>
+          <span>Executar Treino</span>
+        </button>
+        <button id="navEditBtn" onclick="switchView('edit')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition">
+          <i class="ph-bold ph-pencil-line text-xl mb-0.5"></i>
+          <span>Criar / Editar Ficha</span>
+        </button>
+      </div>
+    </nav>
 
     <!-- PROFILE MODAL -->
     <div id="profileModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -322,7 +348,7 @@
     let currentUser = null;
     let isRegisterMode = false;
     let currentTab = 'A';
-    let currentMode = 'execute'; // 'execute' ou 'edit'
+    let currentView = 'execute'; // 'execute' ou 'edit'
     let currentSessionLogs = {};
     
     let userProfile = {
@@ -477,27 +503,24 @@
       workouts = cleanWorkoutsData;
     }
 
-    // Controle de Modo (Executar / Editar)
-    window.setAppMode = (mode) => {
-      currentMode = mode;
-      const execBtn = document.getElementById('modeExecuteBtn');
-      const editBtn = document.getElementById('modeEditBtn');
-      const addExBtn = document.getElementById('addExerciseBtn');
-      const finishBtn = document.getElementById('finishWorkoutContainer');
-      const subtitle = document.getElementById('modeSubtitle');
+    // Alternar Telas (Executar vs Editar)
+    window.switchView = (view) => {
+      currentView = view;
+      const vExec = document.getElementById('viewExecute');
+      const vEdit = document.getElementById('viewEdit');
+      const btnExec = document.getElementById('navExecuteBtn');
+      const btnEdit = document.getElementById('navEditBtn');
 
-      if (mode === 'execute') {
-        execBtn.className = "py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md";
-        editBtn.className = "py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-        addExBtn.classList.add('hidden');
-        finishBtn.classList.remove('hidden');
-        subtitle.textContent = "Marque os exercícios e registre as cargas de hoje";
+      if (view === 'execute') {
+        vExec.classList.remove('hidden');
+        vEdit.classList.add('hidden');
+        btnExec.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
+        btnEdit.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
       } else {
-        editBtn.className = "py-2 rounded-xl text-xs font-bold transition bg-brand-500 text-slate-950 shadow-md";
-        execBtn.className = "py-2 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white";
-        addExBtn.classList.remove('hidden');
-        finishBtn.classList.add('hidden');
-        subtitle.textContent = "Altere os exercícios, séries e cargas base da sua ficha";
+        vExec.classList.add('hidden');
+        vEdit.classList.remove('hidden');
+        btnEdit.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
+        btnExec.className = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
       }
 
       renderExercises();
@@ -522,11 +545,12 @@
       document.getElementById('profWeight').value = userProfile.weight || "";
     }
 
-    // Tab Switch
+    // Tab Switch (A, B, C...)
     window.selectWorkoutTab = (tab) => {
       currentTab = tab;
-      currentSessionLogs = {}; // Reseta os marcadores da aba anterior
-      document.getElementById('currentWorkoutLabel').textContent = tab;
+      currentSessionLogs = {}; // Limpa os registros temporários de execução
+      
+      document.querySelectorAll('.currentWorkoutLabel').forEach(el => el.textContent = tab);
 
       document.querySelectorAll('.workout-tab').forEach(btn => {
         btn.className = "workout-tab flex-1 min-w-[48px] py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-slate-800/80 text-slate-400 hover:text-white";
@@ -540,24 +564,54 @@
       renderExercises();
     };
 
-    // Render Exercises
+    // Render Exercises (Renderiza separadamente para cada tela)
     function renderExercises() {
-      const listContainer = document.getElementById('exerciseList');
       const currentList = workouts[currentTab] || [];
 
+      // 1. RENDER TELA EXECUÇÃO
+      const execListContainer = document.getElementById('executeExerciseList');
       if (currentList.length === 0) {
-        listContainer.innerHTML = `
+        execListContainer.innerHTML = `
           <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
             <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
-            <p class="text-xs text-slate-500 mt-1">Toque no modo "Editar Ficha" para adicionar.</p>
+            <p class="text-slate-400 text-sm font-medium">Nenhum exercício na ficha do Treino ${currentTab}</p>
+            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Criar / Editar Ficha" abaixo para cadastrar.</p>
           </div>
         `;
-        return;
+      } else {
+        execListContainer.innerHTML = currentList.map((item, index) => {
+          const log = currentSessionLogs[index] || { done: false, weight: item.weight || '' };
+          return `
+            <div class="glass-card rounded-2xl p-4 border ${log.done ? 'border-brand-500/50 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleExerciseDone(${index})">
+                  <input type="checkbox" ${log.done ? 'checked' : ''} class="w-5 h-5 accent-brand-500 rounded-lg cursor-pointer pointer-events-none">
+                  <h4 class="font-bold text-sm ${log.done ? 'line-through text-slate-500' : 'text-white'}">${item.name}</h4>
+                </div>
+                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x (${item.reps})</span>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                <span class="text-xs text-slate-400">Carga praticada hoje:</span>
+                <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || 'Ex: 20kg'}" class="w-32 bg-slate-900 border border-slate-800 rounded-xl py-1 px-3 text-xs text-right text-brand-400 font-bold focus:outline-none focus:border-brand-500">
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
-      if (currentMode === 'edit') {
-        listContainer.innerHTML = currentList.map((item, index) => `
+      // 2. RENDER TELA CRIAÇÃO/EDIÇÃO
+      const editListContainer = document.getElementById('editExerciseList');
+      if (currentList.length === 0) {
+        editListContainer.innerHTML = `
+          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
+            <i class="ph-bold ph-plus-circle text-4xl text-slate-600 mb-2"></i>
+            <p class="text-slate-400 text-sm font-medium">Sua ficha do Treino ${currentTab} está vazia</p>
+            <p class="text-xs text-slate-500 mt-1">Clique em "+ Add Exercício" para começar a montar.</p>
+          </div>
+        `;
+      } else {
+        editListContainer.innerHTML = currentList.map((item, index) => `
           <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
             <div class="space-y-1 flex-1 pr-3">
               <h4 class="font-bold text-white text-sm">${item.name}</h4>
@@ -579,26 +633,6 @@
             </div>
           </div>
         `).join('');
-      } else {
-        listContainer.innerHTML = currentList.map((item, index) => {
-          const log = currentSessionLogs[index] || { done: false, weight: item.weight || '' };
-          return `
-            <div class="glass-card rounded-2xl p-4 border ${log.done ? 'border-brand-500/50 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleExerciseDone(${index})">
-                  <input type="checkbox" ${log.done ? 'checked' : ''} class="w-5 h-5 accent-brand-500 rounded-lg cursor-pointer pointer-events-none">
-                  <h4 class="font-bold text-sm ${log.done ? 'line-through text-slate-500' : 'text-white'}">${item.name}</h4>
-                </div>
-                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${item.series}x (${item.reps})</span>
-              </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-slate-800/60">
-                <span class="text-xs text-slate-400">Carga praticada hoje:</span>
-                <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || 'Ex: 20kg'}" class="w-32 bg-slate-900 border border-slate-800 rounded-xl py-1 px-3 text-xs text-right text-brand-400 font-bold focus:outline-none focus:border-brand-500">
-              </div>
-            </div>
-          `;
-        }).join('');
       }
     }
 
