@@ -458,14 +458,30 @@
 
     window.saveUserProfile = async (e) => {
       e.preventDefault();
-      userProfile.name = document.getElementById('profName').value;
-      userProfile.age = document.getElementById('profAge').value;
-      userProfile.height = document.getElementById('profHeight').value;
-      userProfile.weight = document.getElementById('profWeight').value;
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = "Salvando...";
+      submitBtn.disabled = true;
 
-      await saveUserData();
-      updateProfileHeader();
-      closeProfileModal();
+      try {
+        userProfile.name = document.getElementById('profName').value;
+        userProfile.age = document.getElementById('profAge').value;
+        userProfile.height = document.getElementById('profHeight').value;
+        userProfile.weight = document.getElementById('profWeight').value;
+
+        await saveUserData();
+        updateProfileHeader();
+        closeProfileModal();
+        
+        alert("Perfil salvo com sucesso!");
+      } catch (err) {
+        console.error("Erro ao salvar perfil:", err);
+        alert("Erro ao salvar perfil: " + err.message);
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
     };
 
     function updateProfileHeader() {
