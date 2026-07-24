@@ -14,6 +14,9 @@
   <!-- Inter Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Chart.js para as Análises -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -195,16 +198,16 @@
       <!-- TELA 3: DESEMPENHO E HISTÓRICO -->
 <section id="viewPerformance" class="space-y-4 hidden">
     <div class="space-y-4">
+    <!-- Título e Botão de Peso -->
     <div class="flex items-center justify-between">
         <h3 class="text-lg font-extrabold text-white">Desempenho</h3>
-        <!-- Botão Log Peso (só visível na aba de pesos) -->
         <button id="btnOpenWeightForm" onclick="toggleWeightForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
             <i class="ph-bold ph-plus"></i>
             <span>Log Peso</span>
         </button>
     </div>
 
-    <!-- Navegação das Subtelas -->
+    <!-- Navegação das 3 Subtelas (Treinos, Pesos e Análises) -->
     <div class="flex bg-slate-900/50 p-1 rounded-2xl border border-slate-800">
         <button onclick="switchPerfTab('workouts')" id="perfTabWorkouts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg">
             Treinos
@@ -212,16 +215,19 @@
         <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
             Pesos
         </button>
+        <button onclick="switchPerfTab('charts')" id="perfTabCharts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
+            Análises
+        </button>
     </div>
 
-    <!-- Conteúdo 1: Treinos -->
+    <!-- Subtela 1: Histórico de Treinos -->
     <div id="subviewWorkouts">
         <div id="workoutHistoryList" class="space-y-3"></div>
     </div>
 
-    <!-- Conteúdo 2: Pesos -->
+    <!-- Subtela 2: Histórico de Pesos -->
     <div id="subviewWeights" class="hidden space-y-4">
-        <!-- Formulário de Peso movido para cá -->
+        <!-- Formulário de Peso -->
         <div id="weightLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
             <div class="grid grid-cols-2 gap-2">
                 <div>
@@ -237,24 +243,20 @@
         </div>
         <div id="weightHistoryList" class="space-y-3"></div>
     </div>
-</div>
 
-    <!-- Seção de Desempenho Separada -->
-<div class="space-y-6">
-    <!-- Bloco de Pesos -->
-    <div>
-        <div id="weightHistoryList" class="space-y-3">
-            <!-- Pesos aparecerão aqui -->
+    <!-- Subtela 3: Gráficos de Análise -->
+    <div id="subviewCharts" class="hidden space-y-4">
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Peso (kg)</h4>
+            <canvas id="weightChart"></canvas>
         </div>
-    </div>
-
-    <!-- Bloco de Treinos -->
-    <div>
-        <div id="workoutHistoryList" class="space-y-3">
-            <!-- Treinos aparecerão aqui -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Frequência Semanal de Treinos</h4>
+            <canvas id="workoutChart"></canvas>
         </div>
     </div>
 </div>
+  
 </section>
 
     </main>
@@ -430,9 +432,9 @@
         measurementId: "G-6CR9J6DWZZ"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
 
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (SUGESTÕES)
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
@@ -877,14 +879,21 @@
                 <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${numSeries}x séries</span>
               </div>
 
+              <div class="flex flex-col gap-2">
               ${item.link ? `
-                <div>
-                  <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 text-xs text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 px-2.5 py-1 rounded-lg border border-brand-500/20 font-medium transition">
-                    <i class="ph-bold ph-video-camera text-sm"></i>
-                    <span>Ver Exercício</span>
-                  </a>
-                </div>
+              <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center space-x-1.5 text-xs text-white bg-brand-400 hover:bg-brand-500 px-4 py-2 rounded-xl font-bold transition shadow-lg shadow-brand-400/20">
+                  <i class="ph-bold ph-play-circle text-lg"></i>
+                  <span>VER VÍDEO DE EXECUÇÃO</span>
+              </a>
               ` : ''}
+    
+    ${item.obs ? `
+    <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl flex items-start gap-2">
+        <i class="ph-bold ph-info text-brand-300 mt-0.5"></i>
+        <p class="text-[11px] text-slate-300 italic leading-tight"><strong>Obs:</strong> ${item.obs}</p>
+    </div>
+    ` : ''}
+</div>
 
               <!-- CHECKBOXES DAS SÉRIES INDIVIDUAIS -->
               <div class="pt-1">
@@ -1056,31 +1065,53 @@
     };
 
     // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
-    window.switchPerfTab = (tab) => {
-    const vWorkouts = document.getElementById('subviewWorkouts');
-    const vWeights = document.getElementById('subviewWeights');
-    const btnWeight = document.getElementById('btnOpenWeightForm');
-    const tWorkouts = document.getElementById('perfTabWorkouts');
-    const tWeights = document.getElementById('perfTabWeights');
-
-    const active = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg";
-    const inactive = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
-
-    if (tab === 'workouts') {
-        vWorkouts.classList.remove('hidden');
-        vWeights.classList.add('hidden');
-        btnWeight.classList.add('hidden');
-        tWorkouts.className = active;
-        tWeights.className = inactive;
-    } else {
-        vWorkouts.classList.add('hidden');
-        vWeights.classList.remove('hidden');
-        btnWeight.classList.remove('hidden');
-        tWorkouts.className = inactive;
-        tWeights.className = active;
-    }
-    renderPerformanceHistory();
-};
+    let weightChartInstance = null;
+  let workoutChartInstance = null;
+  
+  window.switchPerfTab = (tab) => {
+      const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts' };
+      const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts' };
+      
+      Object.keys(views).forEach(k => {
+          document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
+          document.getElementById(tabs[k]).className = k === tab 
+              ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
+              : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+      });
+  
+      document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
+      if (tab === 'charts') renderCharts();
+      renderPerformanceHistory();
+  };
+  
+  function renderCharts() {
+      if (weightChartInstance) weightChartInstance.destroy();
+      if (workoutChartInstance) workoutChartInstance.destroy();
+  
+      const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
+      weightChartInstance = new Chart(document.getElementById('weightChart'), {
+          type: 'line',
+          data: {
+              labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `${d}/${m}`; }),
+              datasets: [{ label: 'Peso', data: sortedW.map(w => w.weight), borderColor: '#3b82f6', tension: 0.3, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }]
+          },
+          options: { plugins: { legend: { display: false } } }
+      });
+  
+      const weeks = [];
+      for (let i = 3; i >= 0; i--) {
+          const d = new Date(); d.setDate(d.getDate() - (i*7));
+          const sun = new Date(d); sun.setDate(d.getDate() - d.getDay()); sun.setHours(0,0,0,0);
+          const sat = new Date(d); sat.setDate(d.getDate() + (6 - d.getDay())); sat.setHours(23,59,59,999);
+          const count = history.filter(h => { const hd = new Date(h.dateIso); return hd >= sun && hd <= sat; }).length;
+          weeks.push({ label: `${sun.getDate()}/${sun.getMonth()+1}`, count });
+      }
+      workoutChartInstance = new Chart(document.getElementById('workoutChart'), {
+          type: 'bar',
+          data: { labels: weeks.map(w=>w.label), datasets: [{ data: weeks.map(w=>w.count), backgroundColor: '#60a5fa' }] },
+          options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      });
+  }
 
 // 2. Renderiza as listas separadamente
 function renderPerformanceHistory() {
