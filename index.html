@@ -384,130 +384,131 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-  const presetExercisesList = {
-  "Abdômen (Core)": [
-    { name: "Abdominal na polia alta", link: "" },
-    { name: "Abdominal oblíquo (Polia)", link: "" },
-    { name: "Abdominal oblíquo (Solo)", link: "" },
-    { name: "Abdominal supra (Cabo)", link: "" },
-    { name: "Abdominal supra (Máquina)", link: "" },
-    { name: "Abdominal supra (Solo)", link: "" },
-    { name: "Elevação de pernas / Abdominal infra (Barra fixa)", link: "" },
-    { name: "Elevação de pernas / Abdominal infra (Solo)", link: "" },
-    { name: "Elevação de pernas / Abdominal infra (Suporte)", link: "" },
-    { name: "Encolhimento polia (abdominal)", link: "" },
-    { name: "Prancha isométrica (Solo)", link: "" },
-    { name: "Roda abdominal (Ab Wheel)", link: "" }
-  ],
-  "Braços (Bíceps e Antebraços)": [
-    { name: "Rosca alternada (Halteres)", link: "" },
-    { name: "Rosca concentrada (Halteres)", link: "" },
-    { name: "Rosca direta (Barra reta)", link: "" },
-    { name: "Rosca direta (Barra W)", link: "" },
-    { name: "Rosca direta (Halteres)", link: "" },
-    { name: "Rosca inversa (Barra - foco no antebraço)", link: "" },
-    { name: "Rosca martelo (Corda)", link: "" },
-    { name: "Rosca martelo (Halteres)", link: "" },
-    { name: "Rosca Scott (Barra)", link: "" },
-    { name: "Rosca Scott (Máquina)", link: "" }
-  ],
-  "Braços (Tríceps)": [
-    { name: "Tríceps coice (Halteres)", link: "" },
-    { name: "Tríceps coice (Polia)", link: "" },
-    { name: "Tríceps francês (Halter único)", link: "" },
-    { name: "Tríceps francês (Polia)", link: "" },
-    { name: "Tríceps invertido no cabo", link: "" },
-    { name: "Tríceps mergulho (Banco)", link: "" },
-    { name: "Tríceps mergulho (Paralelas)", link: "" },
-    { name: "Tríceps pulley (Barra reta)", link: "" },
-    { name: "Tríceps pulley (Barra V)", link: "" },
-    { name: "Tríceps pulley (Corda na polia alta)", link: "" },
-    { name: "Tríceps testa (Barra W)", link: "" },
-    { name: "Tríceps testa (Halteres)", link: "" }
-  ],
-  "Costas (Dorsais, Romboides, Trapézio)": [
-    { name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
-    { name: "Extensão lombar (Banco romano)", link: "" },
-    { name: "Pulley fechado com triângulo", link: "" },
-    { name: "Pulley Frente (pegada aberta)", link: "" },
-    { name: "Puxada frontal / Pulldown (Polia alta)", link: "" },
-    { name: "Puxada unilateral polia alta", link: "" },
-    { name: "Remada cavalinho (Barra T)", link: "" },
-    { name: "Remada curvada (Barra)", link: "" },
-    { name: "Remada curvada (Halteres)", link: "" },
-    { name: "Remada sentada (Polia baixa barra reta)", link: "" },
-    { name: "Remada sentada (Polia baixa triângulo)", link: "" },
-    { name: "Remada unilateral / Serrote (Halteres)", link: "" }
-  ],
-  "Ombros (Deltoides)": [
-    { name: "Abdução ombro cabo unilateral", link: "" },
-    { name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
-    { name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
-    { name: "Desenvolvimento (Barra)", link: "" },
-    { name: "Desenvolvimento (Halteres)", link: "" },
-    { name: "Desenvolvimento (Máquina)", link: "" },
-    { name: "Desenvolvimento ombro unilateral (Halteres)", link: "" },
-    { name: "Elevação frontal (Barra)", link: "" },
-    { name: "Elevação frontal (Halteres)", link: "" },
-    { name: "Elevação Frontal banco inclinado (Halteres)", link: "" },
-    { name: "Elevação frontal (Polia)", link: "" },
-    { name: "Elevação lateral (Halteres)", link: "" },
-    { name: "Elevação lateral (Polia)", link: "" },
-    { name: "Encolhimento de ombros (Barra)", link: "" },
-    { name: "Encolhimento de ombros (Halteres)", link: "" },
-    { name: "Remada Alta Trapézio (Cabo)", link: "" }
-  ],
-  "Peito (Peitorais)": [
-    { name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
-    { name: "Crucifixo inclinado (Halteres)", link: "" },
-    { name: "Crucifixo inclinado (Máquina)", link: "" },
-    { name: "Crucifixo reto (Cabos/Crossover)", link: "" },
-    { name: "Crucifixo reto (Halteres)", link: "" },
-    { name: "Crucifixo reto (Máquina)", link: "" },
-    { name: "Flexão de braços (Peso corporal)", link: "" },
-    { name: "Pull-over (Halter)", link: "" },
-    { name: "Supino 45º Aparelho Guiado", link: "" },
-    { name: "Supino declinado (Barra)", link: "" },
-    { name: "Supino declinado (Halteres)", link: "" },
-    { name: "Supino inclinado (Barra)", link: "" },
-    { name: "Supino inclinado (Halteres)", link: "" },
-    { name: "Supino reto (Barra)", link: "" },
-    { name: "Supino reto (Halteres)", link: "" },
-    { name: "Voador / Pec Deck (Máquina)", link: "" }
-  ],
-  "Pernas (Glúteos)": [
-    { name: "Cadeira abdutora (Máquina)", link: "" },
-    { name: "Cadeira adutora (Máquina)", link: "" },
-    { name: "Elevação pélvica (Barra ou Máquina)", link: "" },
-    { name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
-    { name: "Glúteo na polia / Cabo", link: "" }
-  ],
-  "Pernas (Membros Inferiores)": [
-    { name: "Agachamento Búlgaro (Halteres)", link: "" },
-    { name: "Agachamento Hack (Máquina)", link: "" },
-    { name: "Agachamento livre (Barra)", link: "" },
-    { name: "Cadeira extensora (Máquina)", link: "" },
-    { name: "Leg Press (45º)", link: "" },
-    { name: "Leg Press (horizontal)", link: "" },
-    { name: "Passada / Avanço / Afundo (Barra)", link: "" },
-    { name: "Passada / Avanço / Afundo (Halteres)", link: "" }
-  ],
-  "Pernas (Panturrilhas)": [
-    { name: "Elevação de panturrilha em pé (Máquina)", link: "" },
-    { name: "Elevação de panturrilha em pé (Smith)", link: "" },
-    { name: "Elevação de panturrilha em pé (Step)", link: "" },
-    { name: "Elevação de panturrilha sentado (Máquina)", link: "" },
-    { name: "Panturrilha no Leg Press", link: "" }
-  ],
-  "Pernas (Posteriores de Coxa)": [
-    { name: "Cadeira flexora (Máquina sentada)", link: "" },
-    { name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
-    { name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
-    { name: "Mesa flexora (Máquina deitada)", link: "" },
-    { name: "Stiff (Barra)", link: "" },
-    { name: "Stiff (Halteres)", link: "" }
-  ]
-};
+    // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (SUGESTÕES)
+    // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
+    const presetExercisesList = [
+      // --- ABDÔMEN (CORE) ---
+      { group: "Abdômen (Core)", name: "Abdominal na polia alta", link: "" },
+      { group: "Abdômen (Core)", name: "Abdominal oblíquo (Polia)", link: "" },
+      { group: "Abdômen (Core)", name: "Abdominal oblíquo (Solo)", link: "" },
+      { group: "Abdômen (Core)", name: "Abdominal supra (Cabo)", link: "" },
+      { group: "Abdômen (Core)", name: "Abdominal supra (Máquina)", link: "" },
+      { group: "Abdômen (Core)", name: "Abdominal supra (Solo)", link: "" },
+      { group: "Abdômen (Core)", name: "Elevação de pernas / Abdominal infra (Barra fixa)", link: "" },
+      { group: "Abdômen (Core)", name: "Elevação de pernas / Abdominal infra (Solo)", link: "" },
+      { group: "Abdômen (Core)", name: "Elevação de pernas / Abdominal infra (Suporte)", link: "" },
+      { group: "Abdômen (Core)", name: "Encolhimento polia (abdominal)", link: "" },
+      { group: "Abdômen (Core)", name: "Prancha isométrica (Solo)", link: "" },
+      { group: "Abdômen (Core)", name: "Roda abdominal (Ab Wheel)", link: "" },
+
+      // --- BRAÇOS (BÍCEPS E ANTEBRAÇOS) ---
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca alternada (Halteres)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca concentrada (Halteres)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra reta)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra W)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Halteres)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca inversa (Barra - foco no antebraço)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Corda)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Halteres)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Barra)", link: "" },
+      { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Máquina)", link: "" },
+
+      // --- BRAÇOS (TRÍCEPS) ---
+      { group: "Braços (Tríceps)", name: "Tríceps coice (Halteres)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps coice (Polia)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps francês (Halter único)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps francês (Polia)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps invertido no cabo", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps mergulho (Banco)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps mergulho (Paralelas)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps pulley (Barra reta)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps pulley (Barra V)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps pulley (Corda na polia alta)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps testa (Barra W)", link: "" },
+      { group: "Braços (Tríceps)", name: "Tríceps testa (Halteres)", link: "" },
+
+      // --- COSTAS (DORSAIS, ROMBOIDES, TRAPÉZIO) ---
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Extensão lombar (Banco romano)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley fechado com triângulo", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley Frente (pegada aberta)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Puxada frontal / Pulldown (Polia alta)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Puxada unilateral polia alta", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada cavalinho (Barra T)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada curvada (Barra)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada curvada (Halteres)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa barra reta)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa triângulo)", link: "" },
+      { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada unilateral / Serrote (Halteres)", link: "" },
+
+      // --- OMBROS (DELTOIDES) ---
+      { group: "Ombros (Deltoides)", name: "Abdução ombro cabo unilateral", link: "" },
+      { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Desenvolvimento (Barra)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Desenvolvimento (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Desenvolvimento (Máquina)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Desenvolvimento ombro unilateral (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação frontal (Barra)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação frontal (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação Frontal banco inclinado (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação frontal (Polia)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação lateral (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Elevação lateral (Polia)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Barra)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Halteres)", link: "" },
+      { group: "Ombros (Deltoides)", name: "Remada Alta Trapézio (Cabo)", link: "" },
+
+      // --- PEITO (PEITORAIS) ---
+      { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
+      { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Halteres)", link: "" },
+      { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Máquina)", link: "" },
+      { group: "Peito (Peitorais)", name: "Crucifixo reto (Cabos/Crossover)", link: "" },
+      { group: "Peito (Peitorais)", name: "Crucifixo reto (Halteres)", link: "" },
+      { group: "Peito (Peitorais)", name: "Crucifixo reto (Máquina)", link: "" },
+      { group: "Peito (Peitorais)", name: "Flexão de braços (Peso corporal)", link: "" },
+      { group: "Peito (Peitorais)", name: "Pull-over (Halter)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino 45º Aparelho Guiado", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino declinado (Barra)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino declinado (Halteres)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino inclinado (Barra)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino inclinado (Halteres)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino reto (Barra)", link: "" },
+      { group: "Peito (Peitorais)", name: "Supino reto (Halteres)", link: "" },
+      { group: "Peito (Peitorais)", name: "Voador / Pec Deck (Máquina)", link: "" },
+
+      // --- PERNAS (GLÚTEOS) ---
+      { group: "Pernas (Glúteos)", name: "Cadeira abdutora (Máquina)", link: "" },
+      { group: "Pernas (Glúteos)", name: "Cadeira adutora (Máquina)", link: "" },
+      { group: "Pernas (Glúteos)", name: "Elevação pélvica (Barra ou Máquina)", link: "" },
+      { group: "Pernas (Glúteos)", name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
+      { group: "Pernas (Glúteos)", name: "Glúteo na polia / Cabo", link: "" },
+
+      // --- PERNAS (MEMBROS INFERIORES) ---
+      { group: "Pernas (Membros Inferiores)", name: "Agachamento Búlgaro (Halteres)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Agachamento Hack (Máquina)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Agachamento livre (Barra)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Cadeira extensora (Máquina)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Leg Press (45º)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Leg Press (horizontal)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Barra)", link: "" },
+      { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Halteres)", link: "" },
+
+      // --- PERNAS (PANTURRILHAS) ---
+      { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Máquina)", link: "" },
+      { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Smith)", link: "" },
+      { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Step)", link: "" },
+      { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha sentado (Máquina)", link: "" },
+      { group: "Pernas (Panturrilhas)", name: "Panturrilha no Leg Press", link: "" },
+
+      // --- PERNAS (POSTERIORES DE COXA) ---
+      { group: "Pernas (Posteriores de Coxa)", name: "Cadeira flexora (Máquina sentada)", link: "" },
+      { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
+      { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
+      { group: "Pernas (Posteriores de Coxa)", name: "Mesa flexora (Máquina deitada)", link: "" },
+      { group: "Pernas (Posteriores de Coxa)", name: "Stiff (Barra)", link: "" },
+      { group: "Pernas (Posteriores de Coxa)", name: "Stiff (Halteres)", link: "" }
+    ];
 
     // Estados do App
     let currentUser = null;
