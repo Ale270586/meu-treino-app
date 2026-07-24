@@ -194,35 +194,50 @@
 
       <!-- TELA 3: DESEMPENHO E HISTÓRICO -->
 <section id="viewPerformance" class="space-y-4 hidden">
+    <div class="space-y-4">
     <div class="flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
-                <i class="ph-bold ph-chart-line-up text-brand-400"></i>
-                <span>Desempenho</span>
-            </h3>
-            <p class="text-xs text-slate-400">Treinos e evolução de peso por data</p>
-        </div>
-        <!-- Botão para registrar peso -->
-        <button onclick="toggleWeightForm()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+        <h3 class="text-lg font-extrabold text-white">Desempenho</h3>
+        <!-- Botão Log Peso (só visível na aba de pesos) -->
+        <button id="btnOpenWeightForm" onclick="toggleWeightForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
             <i class="ph-bold ph-plus"></i>
             <span>Log Peso</span>
         </button>
     </div>
 
-    <!-- Formulário de Registro de Peso (Escondido por padrão) -->
-    <div id="weightLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
-        <div class="grid grid-cols-2 gap-2">
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
-                <input type="date" id="weightDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Peso (kg)</label>
-                <input type="number" id="weightValue" step="0.1" placeholder="00.0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-        </div>
-        <button onclick="saveWeightEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
+    <!-- Navegação das Subtelas -->
+    <div class="flex bg-slate-900/50 p-1 rounded-2xl border border-slate-800">
+        <button onclick="switchPerfTab('workouts')" id="perfTabWorkouts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg">
+            Treinos
+        </button>
+        <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
+            Pesos
+        </button>
     </div>
+
+    <!-- Conteúdo 1: Treinos -->
+    <div id="subviewWorkouts">
+        <div id="workoutHistoryList" class="space-y-3"></div>
+    </div>
+
+    <!-- Conteúdo 2: Pesos -->
+    <div id="subviewWeights" class="hidden space-y-4">
+        <!-- Formulário de Peso movido para cá -->
+        <div id="weightLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
+                    <input type="date" id="weightDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Peso (kg)</label>
+                    <input type="number" id="weightValue" step="0.1" placeholder="00.0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
+                </div>
+            </div>
+            <button onclick="saveWeightEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
+        </div>
+        <div id="weightHistoryList" class="space-y-3"></div>
+    </div>
+</div>
 
     <!-- Seção de Desempenho Separada -->
 <div class="space-y-6">
@@ -1047,75 +1062,86 @@
     };
 
     // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
-    function renderPerformanceHistory() {
+    window.switchPerfTab = (tab) => {
+    const vWorkouts = document.getElementById('subviewWorkouts');
+    const vWeights = document.getElementById('subviewWeights');
+    const btnWeight = document.getElementById('btnOpenWeightForm');
+    const tWorkouts = document.getElementById('perfTabWorkouts');
+    const tWeights = document.getElementById('perfTabWeights');
+
+    const active = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg";
+    const inactive = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+
+    if (tab === 'workouts') {
+        vWorkouts.classList.remove('hidden');
+        vWeights.classList.add('hidden');
+        btnWeight.classList.add('hidden');
+        tWorkouts.className = active;
+        tWeights.className = inactive;
+    } else {
+        vWorkouts.classList.add('hidden');
+        vWeights.classList.remove('hidden');
+        btnWeight.classList.remove('hidden');
+        tWorkouts.className = inactive;
+        tWeights.className = active;
+    }
+    renderPerformanceHistory();
+};
+
+// 2. Renderiza as listas separadamente
+function renderPerformanceHistory() {
     const workoutContainer = document.getElementById('workoutHistoryList');
     const weightContainer = document.getElementById('weightHistoryList');
 
-    // 1. RENDERIZAR HISTÓRICO DE PESOS
-    if (weightHistory.length === 0) {
-        weightContainer.innerHTML = `<p class="text-center py-4 text-slate-600 text-xs italic">Nenhum registro de peso.</p>`;
-    } else {
-        weightContainer.innerHTML = weightHistory.map(item => {
-            // CORREÇÃO DA DATA: split para evitar erro de fuso horário
-            const [year, month, day] = item.date.split('-');
-            const dateDisplay = `${day}/${month}/${year}`;
-            
+    // Renderizar Pesos
+    weightContainer.innerHTML = weightHistory.length === 0 
+        ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum registro de peso.</p>`
+        : weightHistory.map(item => {
+            const [y, m, d] = item.date.split('-');
             return `
                 <div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-400">
-                            <i class="ph-bold ph-scales text-lg"></i>
-                        </div>
+                        <div class="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-400"><i class="ph-bold ph-scales text-lg"></i></div>
                         <div>
-                            <p class="text-xs text-slate-400">Peso</p>
+                            <p class="text-xs text-slate-400 flex items-center gap-1">
+                                Peso 
+                                <span class="text-[10px] text-brand-400 font-medium">
+                                    • IMC: ${(() => {
+                                        const h = parseFloat(userProfile.height);
+                                        // Verifica se a altura existe e é maior que zero [1, 3]
+                                        if (!h || h <= 0) return "0.0";
+                                        // Calcula o IMC: peso / (altura_em_metros²)
+                                        const imc = (parseFloat(item.weight) / ((h / 100) ** 2)).toFixed(1);
+                                        return imc;
+                                    })()}
+                                </span>
+                            </p>
                             <p class="text-white font-bold">${item.weight} kg</p>
                         </div>
                     </div>
                     <div class="text-right flex items-center space-x-3">
-                        <span class="text-[10px] text-slate-500 font-medium">${dateDisplay}</span>
-                        <button onclick="deleteWeightEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1 transition">
-                            <i class="ph-bold ph-trash"></i>
-                        </button>
+                        <span class="text-[10px] text-slate-500 font-medium">${d}/${m}/${y}</span>
+                        <button onclick="deleteWeightEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash"></i></button>
                     </div>
                 </div>`;
         }).join('');
-    }
 
-    // 2. RENDERIZAR HISTÓRICO DE TREINOS
-    if (history.length === 0) {
-        workoutContainer.innerHTML = `<p class="text-center py-4 text-slate-600 text-xs italic">Nenhum treino finalizado.</p>`;
-    } else {
-        workoutContainer.innerHTML = history.map((item, index) => {
-            // RESTAURAÇÃO DO RESUMO DOS EXERCÍCIOS
-            const exerciseSummary = item.exercises.map(ex => 
-                `<div class="flex justify-between text-[11px] border-b border-slate-800/40 py-1">
-                    <span class="text-slate-300">${ex.name}</span>
-                    <span class="text-brand-400 font-medium">${ex.seriesCompleted}/${ex.seriesTotal} séri. • ${ex.weightUsed}</span>
-                </div>`
-            ).join('');
-
-            return `
-                <div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xs">
-                                ${item.workoutTab}
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white">Treino Finalizado</h4>
-                                <p class="text-[10px] text-slate-500">${item.dateFormatted}</p>
-                            </div>
-                        </div>
-                        <button onclick="deleteHistorySession(${index})" class="text-red-400/50 hover:text-red-400 p-1 transition">
-                            <i class="ph-bold ph-trash text-sm"></i>
-                        </button>
+    // Renderizar Treinos
+    workoutContainer.innerHTML = history.length === 0
+        ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum treino finalizado.</p>`
+        : history.map((item, idx) => `
+            <div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xs">${item.workoutTab}</div>
+                        <div><h4 class="text-sm font-bold text-white">Treino Finalizado</h4><p class="text-[10px] text-slate-500">${item.dateFormatted}</p></div>
                     </div>
-                    <div class="bg-slate-900/50 rounded-xl p-2 space-y-1">
-                        ${exerciseSummary}
-                    </div>
-                </div>`;
-        }).join('');
-    }
+                    <button onclick="deleteHistorySession(${idx})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash text-sm"></i></button>
+                </div>
+                <div class="bg-slate-900/50 rounded-xl p-2 space-y-1">
+                    ${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-b border-slate-800/40 py-1"><span class="text-slate-300">${ex.name}</span><span class="text-brand-400 font-medium">${ex.seriesCompleted}/${ex.seriesTotal} séri. • ${ex.weightUsed}</span></div>`).join('')}
+                </div>
+            </div>`).join('');
 }
 
     // EXCLUIR TREINO DO HISTÓRICO
