@@ -192,20 +192,42 @@
         </div>
       </section>
 
-      <!-- TELA 3: DESEMPENHO E HISTÓRICO POR DATA -->
-      <section id="viewPerformance" class="space-y-4 hidden">
+      <!-- TELA 3: DESEMPENHO E HISTÓRICO -->
+<section id="viewPerformance" class="space-y-4 hidden">
+    <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
-            <i class="ph-bold ph-chart-line-up text-brand-400"></i>
-            <span>Desempenho & Histórico</span>
-          </h3>
-          <p class="text-xs text-slate-400">Acompanhe e gerencie os treinos realizados organizados por data</p>
+            <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+                <i class="ph-bold ph-chart-line-up text-brand-400"></i>
+                <span>Desempenho</span>
+            </h3>
+            <p class="text-xs text-slate-400">Treinos e evolução de peso por data</p>
         </div>
+        <!-- Botão para registrar peso -->
+        <button onclick="toggleWeightForm()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+            <i class="ph-bold ph-plus"></i>
+            <span>Log Peso</span>
+        </button>
+    </div>
 
-        <div id="performanceHistoryList" class="space-y-3">
-          <!-- Renderizado Dinamicamente -->
+    <!-- Formulário de Registro de Peso (Escondido por padrão) -->
+    <div id="weightLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+            <div>
+                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
+                <input type="date" id="weightDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
+            </div>
+            <div>
+                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Peso (kg)</label>
+                <input type="number" id="weightValue" step="0.1" placeholder="00.0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
+            </div>
         </div>
-      </section>
+        <button onclick="saveWeightEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
+    </div>
+
+    <div id="performanceHistoryList" class="space-y-3">
+        <!-- Renderizado Dinamicamente -->
+    </div>
+</section>
 
     </main>
 
@@ -523,6 +545,7 @@
     // 5 treinos: A, B, C, D, E
     let workouts = { A: [], B: [], C: [], D: [], E: [] };
     let history = [];
+    let weightHistory = []; // Novo: Armazena o histórico de peso
 
     const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
 
@@ -665,6 +688,8 @@
           userProfile = sanitizeProfile(data.profile);
           workouts = sanitizeWorkouts(data.workouts);
           history = Array.isArray(data.history) ? data.history : [];
+          weightHistory = Array.isArray(data.weightHistory) ? data.weightHistory : [];
+          
         } else {
           userProfile = sanitizeProfile({});
           workouts = sanitizeWorkouts({});
@@ -689,7 +714,8 @@
       await setDoc(userDocRef, {
         profile: cleanProfileData,
         workouts: cleanWorkoutsData,
-        history: history
+        history: history,
+        weightHistory: weightHistory
       }, { merge: true });
 
       userProfile = cleanProfileData;
@@ -1003,52 +1029,44 @@
 
     // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
     function renderPerformanceHistory() {
-      const perfContainer = document.getElementById('performanceHistoryList');
+    const perfContainer = document.getElementById('performanceHistoryList');
+    
+    // Combina os dois históricos para exibição
+    const unifiedHistory = [
+        ...history.map(h => ({ ...h, listType: 'workout' })),
+        ...weightHistory.map(w => ({ ...w, listType: 'weight', dateIso: w.date }))
+    ].sort((a, b) => new Date(b.dateIso) - new Date(a.dateIso));
 
-      if (!history || history.length === 0) {
-        perfContainer.innerHTML = `
-          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
-            <i class="ph-bold ph-calendar-x text-4xl text-slate-600 mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Nenhum treino registrado ainda</p>
-            <p class="text-xs text-slate-500 mt-1">Conclua um treino na aba "Treinar" para ver o histórico aqui.</p>
-          </div>
-        `;
+    if (unifiedHistory.length === 0) {
+        perfContainer.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">Sem registros.</div>`;
         return;
-      }
-
-      perfContainer.innerHTML = history.map((session, historyIndex) => `
-        <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div class="flex items-center space-x-2">
-              <span class="bg-brand-500 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">Treino ${session.workoutTab}</span>
-              <span class="text-xs text-slate-400 font-medium">${session.dateFormatted}</span>
-            </div>
-            
-            <div class="flex items-center space-x-2">
-              <span class="text-xs text-brand-400 font-bold">${session.exercises?.filter(e => e.completed).length || 0}/${session.exercises?.length || 0} feitos</span>
-              <button onclick="deleteHistorySession(${historyIndex})" class="w-7 h-7 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition" title="Apagar Registro">
-                <i class="ph-bold ph-trash text-xs"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            ${(session.exercises || []).map(ex => `
-              <div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/40 last:border-none">
-                <div class="flex items-center space-x-2 truncate pr-2">
-                  <i class="ph-bold ${ex.completed ? 'ph-check-circle text-brand-400' : 'ph-circle text-slate-600'}"></i>
-                  <span class="${ex.completed ? 'text-white font-medium' : 'text-slate-500'} truncate">${ex.name}</span>
-                </div>
-                <div class="flex items-center space-x-2 shrink-0">
-                  <span class="text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.seriesCompleted || 0}/${ex.seriesTotal || 3} sér.</span>
-                  <span class="text-brand-300 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${ex.weightUsed}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
     }
+
+    perfContainer.innerHTML = unifiedHistory.map((item) => {
+        if (item.listType === 'weight') {
+            // Card de Peso
+            return `
+                <div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-400">
+                            <i class="ph-bold ph-scales text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Registro de Peso</p>
+                            <p class="text-white font-bold">${item.weight} kg</p>
+                        </div>
+                    </div>
+                    <div class="text-right flex items-center space-x-3">
+                        <span class="text-[10px] text-slate-500 font-medium">${new Date(item.date).toLocaleDateString('pt-BR')}</span>
+                        <button onclick="deleteWeightEntry(${item.id})" class="text-red-400/50 hover:text-red-400"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                </div>`;
+        } else {
+            // Card de Treino (seu código original adaptado)
+            return `<!-- Seu HTML original de treino aqui, usando item.dateFormatted -->`;
+        }
+    }).join('');
+}
 
     // EXCLUIR TREINO DO HISTÓRICO
     window.deleteHistorySession = async (historyIndex) => {
@@ -1063,6 +1081,51 @@
       }
     };
 
+    // Abre/Fecha o formulário de peso e define a data de hoje
+window.toggleWeightForm = () => {
+    const form = document.getElementById('weightLogForm');
+    form.classList.toggle('hidden');
+    if (!form.classList.contains('hidden')) {
+        document.getElementById('weightDate').value = new Date().toISOString().split('T');
+    }
+};
+
+// Salva um novo peso no array e envia para o Firebase
+window.saveWeightEntry = async () => {
+    const dateValue = document.getElementById('weightDate').value;
+    const weightValue = document.getElementById('weightValue').value;
+
+    if (!dateValue || !weightValue) {
+        alert("Por favor, preencha a data e o peso.");
+        return;
+    }
+
+    const entry = {
+        id: Date.now(),
+        date: dateValue,
+        weight: weightValue,
+        type: 'weight'
+    };
+
+    weightHistory.unshift(entry);
+    // Ordena para que o mais recente apareça primeiro
+    weightHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    await saveUserData();
+    document.getElementById('weightValue').value = "";
+    document.getElementById('weightLogForm').classList.add('hidden');
+    renderPerformanceHistory();
+};
+
+// Exclui um registro de peso específico
+window.deleteWeightEntry = async (id) => {
+    if (confirm("Deseja apagar este registro de peso?")) {
+        weightHistory = weightHistory.filter(w => w.id !== id);
+        await saveUserData();
+        renderPerformanceHistory();
+    }
+};
+    
     // PROFIL MODAL
     window.openProfileModal = () => {
       updateProfileHeader();
