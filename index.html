@@ -876,23 +876,25 @@
             <div class="glass-card rounded-2xl p-4 border border-slate-800/80 transition space-y-3">
               <div class="flex items-center justify-between">
                 <h4 class="font-bold text-white text-base">${item.name}</h4>
-                <span class="text-xs text-brand-300 font-semibold bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/50">${numSeries}x séries</span>
               </div>
 
               <div class="flex flex-col gap-2">
               ${item.link ? `
-              <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center space-x-1.5 text-xs text-white bg-brand-400 hover:bg-brand-500 px-4 py-2 rounded-xl font-bold transition shadow-lg shadow-brand-400/20">
-                  <i class="ph-bold ph-play-circle text-lg"></i>
-                  <span>VER VÍDEO DE EXECUÇÃO</span>
-              </a>
+              <div>
+                  <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[10px] text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 px-2 py-0.5 rounded-lg border border-brand-500/20 font-medium transition">
+                      <i class="ph-bold ph-video-camera"></i>
+                      <span>Ver Vídeo</span>
+                  </a>
+              </div>
               ` : ''}
     
     ${item.obs ? `
-    <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl flex items-start gap-2">
-        <i class="ph-bold ph-info text-brand-300 mt-0.5"></i>
-        <p class="text-[11px] text-slate-300 italic leading-tight"><strong>Obs:</strong> ${item.obs}</p>
-    </div>
-    ` : ''}
+      <div class="text-right">
+          <p class="text-[10px] text-slate-500 italic">
+              <i class="ph-bold ph-info mr-1"></i>${item.obs}
+          </p>
+      </div>
+      ` : ''}
 </div>
 
               <!-- CHECKBOXES DAS SÉRIES INDIVIDUAIS -->
@@ -906,7 +908,7 @@
               <!-- CAMPOS DE REPETIÇÕES E CARGA -->
               <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Reps Feitas</label>
+                  <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Repetições</label>
                   <input type="text" value="${log.repsDone}" onchange="updateSessionReps(${index}, this.value)" placeholder="${item.reps || '10-12'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
@@ -1100,7 +1102,7 @@
                       scales: {
                           y: {
                               min: 0, // Escala começando em 0
-                              max: 180, // Escala terminando em 180kg
+                              max: 120, // Escala terminando em 120kg
                               grid: { color: 'rgba(255,255,255,0.05)' },
                               ticks: { color: '#94a3b8' }
                           },
