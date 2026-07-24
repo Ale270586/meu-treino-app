@@ -11,6 +11,8 @@
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- Inter Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -205,37 +207,32 @@
     </div>
 
     <!-- Navegação das Subtelas -->
-    <div class="flex bg-slate-900/50 p-1 rounded-2xl border border-slate-800">
-        <button onclick="switchPerfTab('workouts')" id="perfTabWorkouts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg">
-            Treinos
-        </button>
-        <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
-            Pesos
-        </button>
-    </div>
+    <!-- Sub-Navegação Atualizada (3 Abas) -->
+<div class="flex bg-slate-900/50 p-1 rounded-2xl border border-slate-800">
+    <button onclick="switchPerfTab('workouts')" id="perfTabWorkouts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg">Treinos</button>
+    <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">Pesos</button>
+    <button onclick="switchPerfTab('charts')" id="perfTabCharts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">Análises</button>
+</div>
 
-    <!-- Conteúdo 1: Treinos -->
-    <div id="subviewWorkouts">
-        <div id="workoutHistoryList" class="space-y-3"></div>
-    </div>
+<!-- Subtela 1: Treinos -->
+<div id="subviewWorkouts" class="space-y-3">
+    <div id="workoutHistoryList" class="space-y-3"></div>
+</div>
 
-    <!-- Conteúdo 2: Pesos -->
-    <div id="subviewWeights" class="hidden space-y-4">
-        <!-- Formulário de Peso movido para cá -->
-        <div id="weightLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
-                    <input type="date" id="weightDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Peso (kg)</label>
-                    <input type="number" id="weightValue" step="0.1" placeholder="00.0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-                </div>
-            </div>
-            <button onclick="saveWeightEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
-        </div>
-        <div id="weightHistoryList" class="space-y-3"></div>
+<!-- Subtela 2: Pesos -->
+<div id="subviewWeights" class="hidden space-y-4">
+    <div id="weightHistoryList" class="space-y-3"></div>
+</div>
+
+<!-- Subtela 3: Analises -->
+<div id="subviewCharts" class="hidden space-y-6">
+    <div class="glass-card rounded-2xl p-4 border border-slate-800">
+        <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4">Evolução de Peso (kg)</h4>
+        <canvas id="weightChart"></canvas>
+    </div>
+    <div class="glass-card rounded-2xl p-4 border border-slate-800">
+        <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4">Frequência Semanal de Treinos</h4>
+        <canvas id="workoutChart"></canvas>
     </div>
 </div>
 
@@ -1056,30 +1053,117 @@
     };
 
     // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
-    window.switchPerfTab = (tab) => {
-    const vWorkouts = document.getElementById('subviewWorkouts');
-    const vWeights = document.getElementById('subviewWeights');
+let weightChartInstance = null;
+let workoutChartInstance = null;
+
+window.switchPerfTab = (tab) => {
+    const views = {
+        workouts: document.getElementById('subviewWorkouts'),
+        weights: document.getElementById('subviewWeights'),
+        charts: document.getElementById('subviewCharts')
+    };
+    const tabs = {
+        workouts: document.getElementById('perfTabWorkouts'),
+        weights: document.getElementById('perfTabWeights'),
+        charts: document.getElementById('perfTabCharts')
+    };
     const btnWeight = document.getElementById('btnOpenWeightForm');
-    const tWorkouts = document.getElementById('perfTabWorkouts');
-    const tWeights = document.getElementById('perfTabWeights');
 
-    const active = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg";
-    const inactive = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+    // Reset styles
+    Object.values(views).forEach(v => v.classList.add('hidden'));
+    Object.values(tabs).forEach(t => t.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white");
+    btnWeight.classList.add('hidden');
 
-    if (tab === 'workouts') {
-        vWorkouts.classList.remove('hidden');
-        vWeights.classList.add('hidden');
-        btnWeight.classList.add('hidden');
-        tWorkouts.className = active;
-        tWeights.className = inactive;
-    } else {
-        vWorkouts.classList.add('hidden');
-        vWeights.classList.remove('hidden');
-        btnWeight.classList.remove('hidden');
-        tWorkouts.className = inactive;
-        tWeights.className = active;
-    }
+    // Active styles
+    views[tab].classList.remove('hidden');
+    tabs[tab].className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg";
+    
+    if (tab === 'weights') btnWeight.classList.remove('hidden');
+    if (tab === 'charts') renderCharts();
+    
     renderPerformanceHistory();
+};
+
+function renderCharts() {
+    // Destruir gráficos existentes para evitar bugs de sobreposição
+    if (weightChartInstance) weightChartInstance.destroy();
+    if (workoutChartInstance) workoutChartInstance.destroy();
+
+    // --- 1. CONFIGURAÇÃO GRÁFICO DE PESO ---
+    const weightCtx = document.getElementById('weightChart').getContext('2d');
+    // Pegar pesos ordenados por data (do mais antigo para o mais novo)
+    const sortedWeights = [...weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    weightChartInstance = new Chart(weightCtx, {
+        type: 'line',
+        data: {
+            labels: sortedWeights.map(w => {
+                const [y, m, d] = w.date.split('-');
+                return `${d}/${m}`;
+            }),
+            datasets: [{
+                label: 'Peso (kg)',
+                data: sortedWeights.map(w => w.weight),
+                borderColor: '#60a5fa',
+                backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // --- 2. CONFIGURAÇÃO GRÁFICO DE TREINOS (SEMANAL) ---
+    const workoutCtx = document.getElementById('workoutChart').getContext('2d');
+    
+    // Lógica para agrupar as últimas 4 semanas
+    const last4Weeks = [];
+    for (let i = 3; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - (i * 7));
+        const sun = new Date(d); sun.setDate(d.getDate() - d.getDay());
+        const sat = new Date(d); sat.setDate(d.getDate() + (6 - d.getDay()));
+        
+        const label = `${sun.getDate().toString().padStart(2,'0')}/${(sun.getMonth()+1).toString().padStart(2,'0')} - ${sat.getDate().toString().padStart(2,'0')}/${(sat.getMonth()+1).toString().padStart(2,'0')}`;
+        
+        // Contar treinos que caem entre esse domingo e sábado
+        const count = history.filter(h => {
+            const hDate = new Date(h.dateIso);
+            return hDate >= sun && hDate <= sat;
+        }).length;
+
+        last4Weeks.push({ label, count });
+    }
+
+    workoutChartInstance = new Chart(workoutCtx, {
+        type: 'bar',
+        data: {
+            labels: last4Weeks.map(w => w.label),
+            datasets: [{
+                label: 'Treinos',
+                data: last4Weeks.map(w => w.count),
+                backgroundColor: '#3b82f6',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { stepSize: 1, color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 9 } } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
 };
 
 // 2. Renderiza as listas separadamente
