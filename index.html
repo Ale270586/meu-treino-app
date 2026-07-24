@@ -540,10 +540,33 @@
     });
 
     function populatePresetsDropdown() {
-      const select = document.getElementById('exPresetSelect');
-      select.innerHTML = '<option value="">-- Escolha um exercício ou digite abaixo --</option>' +
-        presetExercisesList.map((ex, idx) => `<option value="${idx}">${ex.name}</option>`).join('');
+  const select = document.getElementById('exPresetSelect');
+  
+  // 1. Agrupa os exercícios por grupo muscular
+  const groups = {};
+  presetExercisesList.forEach((ex, idx) => {
+    if (!groups[ex.group]) {
+      groups[ex.group] = [];
     }
+    // Guardamos o índice original para que a função applyPresetExercise continue funcionando
+    groups[ex.group].push({ ...ex, originalIndex: idx });
+  });
+
+  // 2. Constrói o HTML usando <optgroup> para as categorias
+  let html = '<option value="">-- Escolha um exercício ou digite abaixo --</option>';
+  
+  for (const groupName in groups) {
+    html += `<optgroup label="${groupName}" class="bg-slate-800 text-brand-400 font-bold">`;
+    groups[groupName].forEach(ex => {
+      html += `<option value="${ex.originalIndex}" class="bg-slate-900 text-white font-normal">
+                ${ex.name}
+              </option>`;
+    });
+    html += `</optgroup>`;
+  }
+  
+  select.innerHTML = html;
+}
 
     window.applyPresetExercise = (index) => {
       if (index === "" || index === null) return;
