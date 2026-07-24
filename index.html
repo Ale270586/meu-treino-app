@@ -1095,7 +1095,18 @@
               labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `${d}/${m}`; }),
               datasets: [{ label: 'Peso', data: sortedW.map(w => w.weight), borderColor: '#3b82f6', tension: 0.3, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }]
           },
-          options: { plugins: { legend: { display: false } } }
+          options: {
+                      plugins: { legend: { display: false } },
+                      scales: {
+                          y: {
+                              min: 0, // Escala começando em 0
+                              max: 180, // Escala terminando em 180kg
+                              grid: { color: 'rgba(255,255,255,0.05)' },
+                              ticks: { color: '#94a3b8' }
+                          },
+                          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                      }
+                  }
       });
   
       const weeks = [];
