@@ -1035,8 +1035,7 @@ window.handleForgotPassword = async () => {
             </div>
         </div>
         ` : ''}
-              </div>
-
+            
               <!-- CRONÔMETRO DE DESCANSO (FONTE MAIOR E TEMPO CONFIGURÁVEL) -->
               <div class="flex items-center justify-between pt-2 border-t border-slate-800/40">
                 <button onclick="startRestTimer(${index}, ${restSeconds})" class="inline-flex items-center space-x-2 text-xs text-slate-200 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 transition font-semibold">
@@ -1049,7 +1048,7 @@ window.handleForgotPassword = async () => {
           `;
         }).join('');
       }
-
+  </div>
       // 2. RENDER CRIAÇÃO/EDIÇÃO
       const editListContainer = document.getElementById('editExerciseList');
       if (currentList.length === 0) {
