@@ -1606,42 +1606,55 @@ window.deleteWeightEntry = async (id) => {
 
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
-    const file = e.target.files;
+    // CORREÇÃO: Captura o primeiro arquivo da lista
+    const file = e.target.files; 
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-        const content = event.target.result;
-        const lines = content.split('\n');
-        
-        // Pula o cabeçalho (primeira linha) e processa as demais
-        for (let i = 1; i < lines.length; i++) {
-            if (!lines[i].trim()) continue;
-            
-            // Formato esperado: Treino;Exercício;Séries;Reps;Carga;Descanso;Link;Obs
-            const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = lines[i].split(';');
-            
-            const abaLimpa = aba ? aba.trim().toUpperCase() : '';
-            if (workouts[abaLimpa]) {
-                workouts[abaLimpa].push({
-                    name: nome ? nome.trim() : "Exercício sem nome",
-                    series: series ? series.trim() : "3",
-                    reps: reps ? reps.trim() : "10-12",
-                    weight: carga ? carga.trim() : "",
-                    restTime: descanso ? descanso.trim() : "60",
-                    link: link ? link.trim() : "",
-                    obs: obs ? obs.trim() : ""
-                });
-            }
-        }
-
         try {
-            await saveUserData(); // Salva no Firebase [2]
-            renderExercises();    // Atualiza a interface [3]
-            alert("Treinos importados com sucesso!");
-            e.target.value = '';  // Limpa o input de arquivo
+            const content = event.target.result;
+            const lines = content.split('\n');
+            let importCount = 0;
+
+            // Começa do 1 para pular o cabeçalho da planilha
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].trim();
+                if (!row) continue;
+
+                // Divide as colunas por ponto e vírgula (Padrão Excel Brasil)
+                const columns = row.split(';');
+                if (columns.length < 5) continue; // Pula linhas inválidas
+
+                const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
+                const abaLimpa = aba ? aba.trim().toUpperCase() : '';
+
+                if (workouts[abaLimpa]) {
+                    workouts[abaLimpa].push({
+                        name: nome ? nome.trim() : "Exercício",
+                        series: series ? series.trim() : "3",
+                        reps: reps ? reps.trim() : "10-12",
+                        weight: carga ? carga.trim() : "",
+                        ritmo: ritmo ? ritmo.trim() : "",
+                        restTime: descanso ? descanso.trim() : "60",
+                        link: link ? link.trim() : "",
+                        obs: obs ? obs.trim() : ""
+                    });
+                    importCount++;
+                }
+            }
+
+            if (importCount > 0) {
+                await saveUserData(); // Grava no Firebase
+                renderExercises();    // Atualiza a tela imediatamente
+                alert(`Sucesso! ${importCount} exercícios importados.`);
+            } else {
+                alert("Nenhum dado válido. Use A, B, C, D ou E na primeira coluna.");
+            }
         } catch (err) {
-            alert("Erro ao salvar dados importados: " + err.message);
+            alert("Erro no CSV: " + err.message);
+        } finally {
+            e.target.value = ''; // Permite subir o mesmo arquivo novamente se necessário
         }
     };
     reader.readAsText(file);
