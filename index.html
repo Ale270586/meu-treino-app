@@ -197,7 +197,46 @@
         </div>
       </section>
 
-      <!-- TELA 3: DESEMPENHO E HISTÓRICO -->
+<!-- TELA 3: VISUALIZAÇÃO DA DIETA (TABELA) -->
+<section id="viewDiet" class="space-y-4 hidden">
+    <div class="flex items-center justify-between">
+        <h3 class="text-lg font-extrabold text-white">Minha Dieta</h3>
+        <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400 font-bold uppercase tracking-widest" id="dietDayLabel">Hoje</span>
+    </div>
+    
+    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-900/80 border-b border-slate-800">
+                    <tr>
+                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Hora</th>
+                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Alimentos</th>
+                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Medicação</th>
+                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">OK</th>
+                    </tr>
+                </thead>
+                <tbody id="dietTableBody" class="divide-y divide-slate-800/50">
+                    <!-- Gerado via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- TELA 4: EDIÇÃO DA DIETA -->
+<section id="viewEditDiet" class="space-y-4 hidden">
+    <div class="flex items-center justify-between">
+        <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
+        <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
+            <i class="ph-bold ph-plus-circle"></i> Novo Horário
+        </button>
+    </div>
+    <div id="dietEditList" class="space-y-3">
+        <!-- Itens para exclusão/edição -->
+    </div>
+</section>
+      
+      <!-- TELA 5: DESEMPENHO E HISTÓRICO -->
 <section id="viewPerformance" class="space-y-4 hidden">
     <div class="space-y-4">
     <!-- Título e Botão de Peso -->
@@ -265,21 +304,29 @@
 
     <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 max-w-md mx-auto">
-      <div class="grid grid-cols-3 p-2 gap-1.5">
-        <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition">
-          <i class="ph-bold ph-play-circle text-lg mb-0.5"></i>
-          <span>Treinar</span>
+    <div class="grid grid-cols-5 p-2 gap-1">
+        <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition">
+            <i class="ph-bold ph-play-circle text-lg mb-0.5"></i>
+            <span>Treinar</span>
         </button>
-        <button id="navEditBtn" onclick="switchView('edit')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition">
-          <i class="ph-bold ph-pencil-line text-lg mb-0.5"></i>
-          <span>Editar Ficha</span>
+        <button id="navEditBtn" onclick="switchView('edit')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
+            <i class="ph-bold ph-pencil-line text-lg mb-0.5"></i>
+            <span>Ficha</span>
         </button>
-        <button id="navPerformanceBtn" onclick="switchView('performance')" class="flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition">
-          <i class="ph-bold ph-chart-bar text-lg mb-0.5"></i>
-          <span>Desempenho</span>
+        <button id="navDietBtn" onclick="switchView('diet')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
+            <i class="ph-bold ph-bowl-food text-lg mb-0.5"></i>
+            <span>Dieta</span>
         </button>
-      </div>
-    </nav>
+        <button id="navEditDietBtn" onclick="switchView('editDiet')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
+            <i class="ph-bold ph-note-pencil text-lg mb-0.5"></i>
+            <span>Editar</span>
+        </button>
+        <button id="navPerformanceBtn" onclick="switchView('performance')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
+            <i class="ph-bold ph-chart-bar text-lg mb-0.5"></i>
+            <span>Evolução</span>
+        </button>
+    </div>
+</nav>
 
     <!-- PROFILE MODAL -->
     <div id="profileModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -574,11 +621,13 @@
     let activeTimers = {}; 
     
     let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
+ 
     
     // 5 treinos: A, B, C, D, E
     let workouts = { A: [], B: [], C: [], D: [], E: [] };
     let history = [];
     let weightHistory = []; // Novo: Armazena o histórico de peso
+    let dietPlan = []; // Formato esperado: [{ id, time, foods: [], meds: [], done: false }]
 
     const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
 
@@ -754,6 +803,7 @@ window.handleForgotPassword = async () => {
           workouts = sanitizeWorkouts(data.workouts);
           history = Array.isArray(data.history) ? data.history : [];
           weightHistory = Array.isArray(data.weightHistory) ? data.weightHistory : [];
+          dietPlan = Array.isArray(data.dietPlan) ? data.dietPlan : [];
           
         } else {
           userProfile = sanitizeProfile({});
@@ -776,11 +826,13 @@ window.handleForgotPassword = async () => {
       const cleanProfileData = sanitizeProfile(userProfile);
       const cleanWorkoutsData = sanitizeWorkouts(workouts);
 
+      
       await setDoc(userDocRef, {
         profile: cleanProfileData,
         workouts: cleanWorkoutsData,
         history: history,
         weightHistory: weightHistory
+        dietPlan: dietPlan 
       }, { merge: true });
 
       userProfile = cleanProfileData;
@@ -789,44 +841,47 @@ window.handleForgotPassword = async () => {
 
     // Trocar Telas do App
     window.switchView = (view) => {
-      currentView = view;
-      const vExec = document.getElementById('viewExecute');
-      const vEdit = document.getElementById('viewEdit');
-      const vPerf = document.getElementById('viewPerformance');
-      const tabsHeader = document.getElementById('workoutTabsHeader');
-
-      const btnExec = document.getElementById('navExecuteBtn');
-      const btnEdit = document.getElementById('navEditBtn');
-      const btnPerf = document.getElementById('navPerformanceBtn');
-
-      const activeClass = "flex flex-col items-center justify-center py-2.5 rounded-xl text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-xs transition";
-      const inactiveClass = "flex flex-col items-center justify-center py-2.5 rounded-xl text-slate-400 hover:text-white font-bold text-xs transition";
-
-      vExec.classList.add('hidden');
-      vEdit.classList.add('hidden');
-      vPerf.classList.add('hidden');
-
-      btnExec.className = inactiveClass;
-      btnEdit.className = inactiveClass;
-      btnPerf.className = inactiveClass;
-
-      if (view === 'execute') {
-        vExec.classList.remove('hidden');
-        tabsHeader.classList.remove('hidden');
-        btnExec.className = activeClass;
-      } else if (view === 'edit') {
-        vEdit.classList.remove('hidden');
-        tabsHeader.classList.remove('hidden');
-        btnEdit.className = activeClass;
-      } else if (view === 'performance') {
-        vPerf.classList.remove('hidden');
-        tabsHeader.classList.add('hidden');
-        btnPerf.className = activeClass;
-        renderPerformanceHistory();
-      }
-
-      renderExercises();
+    currentView = view;
+    const views = ['viewExecute', 'viewEdit', 'viewDiet', 'viewEditDiet', 'viewPerformance'];
+    const btns = { 
+        execute: 'navExecuteBtn', 
+        edit: 'navEditBtn', 
+        diet: 'navDietBtn', 
+        editDiet: 'navEditDietBtn', 
+        performance: 'navPerformanceBtn' 
     };
+
+    // Esconde todas as seções
+    views.forEach(v => {
+        const el = document.getElementById(v);
+        if (el) el.classList.add('hidden');
+    });
+
+    // Reseta o estilo de todos os botões da navegação
+    Object.values(btns).forEach(b => {
+        const el = document.getElementById(b);
+        if (el) el.className = "flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition";
+    });
+
+    // Mostra a tela selecionada e destaca o botão correspondente
+    const targetView = document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`);
+    if (targetView) targetView.classList.remove('hidden');
+    
+    const targetBtn = document.getElementById(btns[view]);
+    if (targetBtn) targetBtn.className = "flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition";
+
+    // Controla a visibilidade do cabeçalho de treinos (A, B, C, D, E)
+    const tabsHeader = document.getElementById('workoutTabsHeader');
+    if (tabsHeader) {
+        tabsHeader.classList.toggle('hidden', ['performance', 'diet', 'editDiet'].includes(view));
+    }
+
+    // Chama a renderização específica de cada tela
+    if (view === 'diet') renderDietTable();
+    if (view === 'editDiet') renderDietEditor();
+    if (view === 'performance') renderPerformanceHistory();
+    renderExercises();
+};
 
     function updateProfileHeader() {
       const nameHeader = document.getElementById('userNameHeader');
@@ -1232,7 +1287,98 @@ function renderPerformanceHistory() {
         }
       }
     };
+// --- FUNÇÕES DE GERENCIAMENTO DA DIETA ---
 
+function renderDietTable() {
+    const body = document.getElementById('dietTableBody');
+    if (!body) return;
+    
+    if (dietPlan.length === 0) {
+        body.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-[11px] text-slate-500 italic">Nenhuma dieta cadastrada. Vá em "Editar".</td></tr>`;
+        return;
+    }
+    
+    // Ordenar por horário para exibição cronológica
+    dietPlan.sort((a,b) => a.time.localeCompare(b.time));
+
+    body.innerHTML = dietPlan.map((entry, idx) => `
+        <tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
+            <td class="p-3 text-xs font-bold text-white align-top">${entry.time}h</td>
+            <td class="p-3 text-[11px] text-slate-300 align-top leading-relaxed">
+                ${entry.foods.map(f => `• ${f.item}: <span class="text-slate-500">${f.qty}</span>`).join('<br>')}
+            </td>
+            <td class="p-3 text-[11px] text-brand-300 align-top leading-relaxed">
+                ${entry.meds.map(m => `💊 ${m.item}: <span class="text-brand-500/60">${m.qty}</span>`).join('<br>')}
+            </td>
+            <td class="p-3 align-top text-center">
+                <input type="checkbox" ${entry.done ? 'checked' : ''} onchange="toggleDietDone(${idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 focus:ring-brand-500 cursor-pointer">
+            </td>
+        </tr>
+    `).join('');
+}
+
+window.toggleDietDone = async (idx) => {
+    dietPlan[idx].done = !dietPlan[idx].done;
+    await saveUserData();
+    renderDietTable();
+};
+
+window.openDietModal = () => {
+    const time = prompt("Horário (ex: 10:00)");
+    if (!time) return;
+    
+    const foodStr = prompt("Alimentos e quantidades (Ex: whey protein:50g, ovos:2)");
+    const medStr = prompt("Medicações e quantidades (Ex: Vitamina C:1 caps)");
+
+    const parseItems = (str) => {
+        if (!str) return [];
+        return str.split(',').map(s => {
+            const [item, qty] = s.split(':');
+            return { item: item.trim(), qty: qty ? qty.trim() : '-' };
+        });
+    };
+
+    dietPlan.push({
+        id: Date.now(),
+        time,
+        foods: parseItems(foodStr),
+        meds: parseItems(medStr),
+        done: false
+    });
+    
+    saveUserData();
+    renderDietEditor();
+};
+
+function renderDietEditor() {
+    const container = document.getElementById('dietEditList');
+    if (!container) return;
+    
+    if (dietPlan.length === 0) {
+        container.innerHTML = `<p class="text-center py-10 text-slate-500 italic text-xs">Nenhum item cadastrado.</p>`;
+        return;
+    }
+    
+    container.innerHTML = dietPlan.map(i => `
+        <div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
+            <div>
+                <span class="text-brand-400 font-bold text-sm">${i.time}h</span>
+                <p class="text-[10px] text-slate-500">${i.foods.length} alimentos, ${i.meds.length} medicações</p>
+            </div>
+            <button onclick="removeDietItem(${i.id})" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20">
+                <i class="ph-bold ph-trash"></i>
+            </button>
+        </div>
+    `).join('');
+}
+
+window.removeDietItem = async (id) => {
+    if (confirm("Remover este horário da dieta?")) {
+        dietPlan = dietPlan.filter(i => i.id !== id);
+        await saveUserData();
+        renderDietEditor();
+    }
+};
     // Abre/Fecha o formulário de peso e define a data de hoje
 window.toggleWeightForm = () => {
     const form = document.getElementById('weightLogForm');
