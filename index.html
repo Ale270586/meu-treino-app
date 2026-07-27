@@ -1066,18 +1066,18 @@ window.handleForgotPassword = async () => {
               <h4 class="font-bold text-white text-sm">${item.name}</h4>
               <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
                 <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series || 3} séries</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-orange-400 font-medium">${item.ritmo || 'Ritmo: -'}</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-400">${item.restTime || 60}s desc.</span>
-                ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.reps} repetiçoes</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-medium">${item.ritmo || 'Ritmo: -'} ritmo</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.restTime || 60}s descanso.</span>
+                ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight} kg</span>` : ''}
               </div>
               ${item.link ? `
-                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-brand-400 hover:underline mt-1">
+                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-brand-300 hover:underline mt-1">
                   <i class="ph-bold ph-link text-xs"></i>
                   <span class="truncate max-w-[200px]">${item.link}</span>
                 </a>
               ` : ''}
-              ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
+              ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` OBS: ''}
             </div>
 
             <div class="flex items-center space-x-1">
