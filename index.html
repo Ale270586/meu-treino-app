@@ -307,11 +307,11 @@
     <div class="grid grid-cols-5 p-2 gap-1">
         <button id="navExecuteBtn" onclick="switchView('execute')" class="flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition">
             <i class="ph-bold ph-play-circle text-lg mb-0.5"></i>
-            <span>Treinar</span>
+            <span>Treina</span>
         </button>
         <button id="navEditBtn" onclick="switchView('edit')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
             <i class="ph-bold ph-pencil-line text-lg mb-0.5"></i>
-            <span>Ficha</span>
+            <span>Editar Treino</span>
         </button>
         <button id="navDietBtn" onclick="switchView('diet')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
             <i class="ph-bold ph-bowl-food text-lg mb-0.5"></i>
@@ -319,11 +319,11 @@
         </button>
         <button id="navEditDietBtn" onclick="switchView('editDiet')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
             <i class="ph-bold ph-note-pencil text-lg mb-0.5"></i>
-            <span>Editar</span>
+            <span>Editar Dieta</span>
         </button>
         <button id="navPerformanceBtn" onclick="switchView('performance')" class="flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition">
             <i class="ph-bold ph-chart-bar text-lg mb-0.5"></i>
-            <span>Evolução</span>
+            <span>Performance</span>
         </button>
     </div>
 </nav>
@@ -932,7 +932,7 @@ window.handleForgotPassword = async () => {
           <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
             <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
             <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
-            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Editar Ficha" abaixo para cadastrar.</p>
+            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Editar Treino" abaixo para cadastrar.</p>
           </div>
         `;
       } else {
