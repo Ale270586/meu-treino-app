@@ -1014,13 +1014,13 @@ window.handleForgotPassword = async () => {
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga Hoje</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold flex items-center h-[34px]">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
                           ${log.weight || item.weight || '20kg'}
                       </div>
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Ritmo</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-slate-300 font-bold flex items-center h-[34px]">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
                           ${item.ritmo || 'Livre'}
                       </div>
                   </div>
@@ -1081,14 +1081,20 @@ window.handleForgotPassword = async () => {
               ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
             </div>
 
-            <div class="flex items-center space-x-1">
-              <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-                <i class="ph-bold ph-pencil-simple text-sm"></i>
-              </button>
-              <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
-                <i class="ph-bold ph-trash text-sm"></i>
-              </button>
-            </div>
+            <div class="flex flex-wrap items-center gap-2 text-[10px] uppercase font-bold tracking-tight">
+              <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-300">
+                  ${item.series || 3} Séries
+              </span>
+              <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-300">
+                  ${item.reps || '10-12'} Reps
+              </span>
+              <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-brand-400">
+                  Ritmo: ${item.ritmo || 'Livre'}
+              </span>
+              <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-400">
+                  Desc: ${item.restTime || 60}s
+              </span>
+          </div>
           </div>
         `).join('');
       }
