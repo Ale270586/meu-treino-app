@@ -190,7 +190,18 @@
             <span>Add Exercício</span>
           </button>
         </div>
-
+        <div class="flex gap-2">
+            <!-- Novo botão de Importar CSV -->
+            <button onclick="document.getElementById('csvFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+                <i class="ph-bold ph-file-csv"></i>
+                <span>Importar CSV</span>
+            </button>
+            
+            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
+            
+            <!-- Botão Add Exercício já existente -->
+            <button onclick="openExerciseModal()" class="bg-brand-500/10 ..."> ... </button>
+        </div>
         <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
         <div id="editExerciseList" class="space-y-3">
           <!-- Renderizado Dinamicamente -->
@@ -1571,6 +1582,49 @@ window.deleteWeightEntry = async (id) => {
         }
       }
     };
+
+    // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
+window.handleCSVUpload = (e) => {
+    const file = e.target.files;
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        const content = event.target.result;
+        const lines = content.split('\n');
+        
+        // Pula o cabeçalho (primeira linha) e processa as demais
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            
+            // Formato esperado: Treino;Exercício;Séries;Reps;Carga;Descanso;Link;Obs
+            const [aba, nome, series, reps, carga, descanso, link, obs] = lines[i].split(';');
+            
+            const abaLimpa = aba ? aba.trim().toUpperCase() : '';
+            if (workouts[abaLimpa]) {
+                workouts[abaLimpa].push({
+                    name: nome ? nome.trim() : "Exercício sem nome",
+                    series: series ? series.trim() : "3",
+                    reps: reps ? reps.trim() : "10-12",
+                    weight: carga ? carga.trim() : "",
+                    restTime: descanso ? descanso.trim() : "60",
+                    link: link ? link.trim() : "",
+                    obs: obs ? obs.trim() : ""
+                });
+            }
+        }
+
+        try {
+            await saveUserData(); // Salva no Firebase [2]
+            renderExercises();    // Atualiza a interface [3]
+            alert("Treinos importados com sucesso!");
+            e.target.value = '';  // Limpa o input de arquivo
+        } catch (err) {
+            alert("Erro ao salvar dados importados: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+};
   </script>
 </body>
 </html>
