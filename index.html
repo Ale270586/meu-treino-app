@@ -663,8 +663,20 @@
           await signInWithEmailAndPassword(auth, email, password);
         }
       } catch (error) {
-        alert("Erro na autenticação: " + error.message);
-      } finally {
+    let mensagem = "Ocorreu um erro inesperado. Tente novamente.";
+    
+    switch (error.code) {
+        case 'auth/invalid-email': mensagem = "O formato do e-mail é inválido."; break;
+        case 'auth/user-not-found': mensagem = "Usuário não encontrado. Verifique o e-mail ou cadastre-se."; break;
+        case 'auth/wrong-password': mensagem = "Senha incorreta. Tente novamente."; break;
+        case 'auth/invalid-credential': mensagem = "E-mail ou senha incorretos."; break;
+        case 'auth/email-already-in-use': mensagem = "Este e-mail já está sendo usado por outra conta."; break;
+        case 'auth/weak-password': mensagem = "A senha deve ter pelo menos 6 caracteres."; break;
+    }
+    
+    alert(mensagem); // Exibe a mensagem amigável em português
+}
+       finally {
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-70');
       }
