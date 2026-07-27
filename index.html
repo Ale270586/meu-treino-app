@@ -994,7 +994,7 @@ window.handleForgotPassword = async () => {
               </div>
               ` : ''}
     
-            </div>
+</div>
 
               <!-- CHECKBOXES DAS SÉRIES INDIVIDUAIS -->
               <div class="pt-1">
@@ -1014,13 +1014,13 @@ window.handleForgotPassword = async () => {
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga Hoje</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold flex items-center h-[34px]">
                           ${log.weight || item.weight || '20kg'}
                       </div>
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Ritmo</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-slate-300 font-bold flex items-center h-[34px]">
                           ${item.ritmo || 'Livre'}
                       </div>
                   </div>
@@ -1035,7 +1035,7 @@ window.handleForgotPassword = async () => {
             </div>
         </div>
         ` : ''}
-              
+              </div>
 
               <!-- CRONÔMETRO DE DESCANSO (FONTE MAIOR E TEMPO CONFIGURÁVEL) -->
               <div class="flex items-center justify-between pt-2 border-t border-slate-800/40">
@@ -1048,7 +1048,7 @@ window.handleForgotPassword = async () => {
             </div>
           `;
         }).join('');
-      
+      }
 
       // 2. RENDER CRIAÇÃO/EDIÇÃO
       const editListContainer = document.getElementById('editExerciseList');
@@ -1062,54 +1062,34 @@ window.handleForgotPassword = async () => {
         `;
       } else {
         editListContainer.innerHTML = currentList.map((item, index) => `
-        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
-            <div class="space-y-2 flex-1 pr-3">
-                <!-- Título do Exercício -->
-                <h4 class="font-bold text-white text-sm">${item.name}</h4>
-        
-                <!-- Etiquetas (Badges) Uniformes e em linha -->
-                <div class="flex flex-wrap items-center gap-2 text-[10px] uppercase font-bold tracking-tight">
-                    <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-300">
-                        ${item.series || 3} Séries
-                    </span>
-                    <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-300">
-                        ${item.reps || '10-12'} Reps
-                    </span>
-                    <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-brand-400">
-                        Ritmo: ${item.ritmo || 'Livre'}
-                    </span>
-                    <span class="bg-slate-800/80 px-2 py-1 rounded-md border border-slate-700/50 text-slate-400">
-                        Desc: ${item.restTime || 60}s
-                    </span>
-                    ${item.weight ? `
-                    <span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-1 rounded-md">
-                        ${item.weight}
-                    </span>` : ''}
-                </div>
-        
-                <!-- Links e Observações (Abaixo das etiquetas) -->
-                ${item.link ? `
-                <div class="flex items-center space-x-1 text-[10px] text-brand-400">
-                    <i class="ph-bold ph-link"></i>
-                    <span class="truncate max-w-[200px]">${item.link}</span>
-                </div>` : ''}
-        
-                ${item.obs ? `
-                <p class="text-[10px] text-slate-500 italic flex items-center">
-                    <i class="ph-bold ph-info mr-1"></i>${item.obs}
-                </p>` : ''}
+          <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
+            <div class="space-y-1 flex-1 pr-3">
+              <h4 class="font-bold text-white text-sm">${item.name}</h4>
+              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series || 3} séries</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-slate-300">${item.reps} rep</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-orange-400 font-medium">${item.ritmo || 'Ritmo: -'}</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-400">${item.restTime || 60}s desc.</span>
+                ${item.weight ? `<span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-medium">${item.weight}</span>` : ''}
+              </div>
+              ${item.link ? `
+                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-brand-400 hover:underline mt-1">
+                  <i class="ph-bold ph-link text-xs"></i>
+                  <span class="truncate max-w-[200px]">${item.link}</span>
+                </a>
+              ` : ''}
+              ${item.obs ? `<p class="text-[11px] text-slate-500 italic mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs}</p>` : ''}
             </div>
-        
-            <!-- Botões de Ação -->
+
             <div class="flex items-center space-x-1">
-                <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-                    <i class="ph-bold ph-pencil-simple text-sm"></i>
-                </button>
-                <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
-                    <i class="ph-bold ph-trash text-sm"></i>
-                </button>
+              <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                <i class="ph-bold ph-pencil-simple text-sm"></i>
+              </button>
+              <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
+                <i class="ph-bold ph-trash text-sm"></i>
+              </button>
             </div>
-        </div>
+          </div>
         `).join('');
       }
     }
@@ -1631,56 +1611,43 @@ window.handleCSVUpload = (e) => {
 
     const reader = new FileReader();
     reader.onload = async (event) => {
+        const content = event.target.result;
+        const lines = content.split('\n');
+        
+        // Pula o cabeçalho (primeira linha) e processa as demais
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            
+            // Formato esperado: Treino;Exercício;Séries;Reps;Carga;Descanso;Link;Obs
+            const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = lines[i].split(';');
+            
+            const abaLimpa = aba ? aba.trim().toUpperCase() : '';
+            if (workouts[abaLimpa]) {
+                workouts[abaLimpa].push({
+                    name: nome ? nome.trim() : "Exercício sem nome",
+                    series: series ? series.trim() : "3",
+                    reps: reps ? reps.trim() : "10-12",
+                    weight: carga ? carga.trim() : "",
+                    restTime: descanso ? descanso.trim() : "60",
+                    link: link ? link.trim() : "",
+                    obs: obs ? obs.trim() : ""
+                });
+            }
+        }
+
         try {
-            const content = event.target.result;
-            const lines = content.split('\n');
-            let importCount = 0;
-
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].trim();
-                if (!row) continue;
-
-                // Tenta separar por ponto-e-vírgula (padrão Excel BR)
-                const columns = row.split(';');
-                if (columns.length < 5) continue;
-
-                const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
-                const tabKey = aba ? aba.trim().toUpperCase() : '';
-
-                if (workouts[tabKey]) {
-                    workouts[tabKey].push({
-                        name: nome?.trim() || "Exercício",
-                        series: series?.trim() || "3",
-                        reps: reps?.trim() || "10",
-                        weight: carga?.trim() || "",
-                        ritmo: ritmo?.trim() || "",
-                        restTime: descanso?.trim() || "60",
-                        link: link?.trim() || "",
-                        obs: obs?.trim() || ""
-                    });
-                    importCount++;
-                }
-            }
-
-            if (importCount > 0) {
-                await saveUserData();
-                renderExercises();
-                alert(`Sucesso! ${importCount} exercícios importados.`);
-            } else {
-                alert("Nenhum dado válido encontrado. Verifique se as colunas estão separadas por ; (ponto e vírgula).");
-            }
+            await saveUserData(); // Salva no Firebase [2]
+            renderExercises();    // Atualiza a interface [3]
+            alert("Treinos importados com sucesso!");
+            e.target.value = '';  // Limpa o input de arquivo
         } catch (err) {
-            alert("Erro ao processar arquivo: " + err.message);
-        } finally {
-            e.target.value = ''; 
+            alert("Erro ao salvar dados importados: " + err.message);
         }
     };
-    reader.onerror = () => alert("Erro ao ler o arquivo.");
     reader.readAsText(file);
 };
   </script>
 </body>
 </html>
-
 
 
