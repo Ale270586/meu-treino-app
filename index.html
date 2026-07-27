@@ -1004,15 +1004,19 @@ window.handleForgotPassword = async () => {
                 </div>
               </div>
 
-              <!-- CAMPOS DE REPETIÇÕES, CARGA E RITMO -->
+              <!-- CAMPOS DE REPETIÇÕES, CARGA E RITMO (NÃO EDITÁVEIS) -->
               <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/60">
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Repetições</label>
-                      <input type="text" value="${log.repsDone}" onchange="updateSessionReps(${index}, this.value)" placeholder="${item.reps || '10-12'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold focus:outline-none focus:border-brand-500">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
+                          ${log.repsDone || item.reps || '10-12'}
+                      </div>
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga Hoje</label>
-                      <input type="text" value="${log.weight}" onchange="updateSessionWeight(${index}, this.value)" placeholder="${item.weight || '20kg'}" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold focus:outline-none focus:border-brand-500">
+                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-400 font-bold flex items-center h-[34px]">
+                          ${log.weight || item.weight || '20kg'}
+                      </div>
                   </div>
                   <div>
                       <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Ritmo</label>
