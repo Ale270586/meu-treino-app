@@ -438,7 +438,8 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Descanso (Segundos)</label>
-              <select id="exRestTime" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-brand-300 text-sm focus:outline-none focus:border-brand-500">
+              <select id="exRestTime" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-brand-300 text-sm focus:outline-none focus:border-brand-500">
+                <option value="0" selected>0 segundos</option>
                 <option value="30">30 segundos</option>
                 <option value="45">45 segundos</option>
                 <option value="60">60 segundos</option>
@@ -1534,21 +1535,21 @@ window.deleteWeightEntry = async (id) => {
         title.textContent = "Editar Exercício";
         const item = workouts[currentTab][index];
         document.getElementById('exName').value = item.name || "";
-        document.getElementById('exSeries').value = item.series || "3";
+        document.getElementById('exSeries').value = item.series || "";
         document.getElementById('exReps').value = item.reps || "";
         document.getElementById('exWeight').value = item.weight || "";
         document.getElementById('exTempo').value = item.ritmo || "";
-        document.getElementById('exRestTime').value = item.restTime || "60";
+        document.getElementById('exRestTime').value = item.restTime || "";
         document.getElementById('exLink').value = item.link || "";
         document.getElementById('exObs').value = item.obs || "";
       } else {
         title.textContent = "Novo Exercício";
         document.getElementById('exName').value = "";
-        document.getElementById('exSeries').value = "3";
+        document.getElementById('exSeries').value = "";
         document.getElementById('exReps').value = "";
         document.getElementById('exWeight').value = "";
         document.getElementById('exTempo').value = ""
-        document.getElementById('exRestTime').value = "60";
+        document.getElementById('exRestTime').value = "";
         document.getElementById('exLink').value = "";
         document.getElementById('exObs').value = "";
       }
@@ -1566,11 +1567,11 @@ window.deleteWeightEntry = async (id) => {
 
       const exerciseData = {
         name: document.getElementById('exName').value,
-        series: document.getElementById('exSeries').value || "3",
+        series: document.getElementById('exSeries').value || "",
         reps: document.getElementById('exReps').value,
         weight: document.getElementById('exWeight').value,
         ritmo: document.getElementById('exTempo').value,
-        restTime: document.getElementById('exRestTime').value || "60",
+        restTime: document.getElementById('exRestTime').value || "",
         link: document.getElementById('exLink').value,
         obs: document.getElementById('exObs').value
       };
