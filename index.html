@@ -1065,11 +1065,11 @@ window.handleForgotPassword = async () => {
             <div class="space-y-1 flex-1 pr-3">
               <h4 class="font-bold text-white text-sm">${item.name}</h4>
               <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series || ''} séries</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.reps || ''} repetiçoes</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-medium">${item.ritmo ||  ''} ritmo</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.restTime || ''}s descanso.</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.weight || ''} kg.</span>
+                ${item.series ? `<span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series} séries</span>` : ''}
+                ${item.reps ? `<span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.reps} repetições</span>` : ''}
+                ${item.ritmo ? `<span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-medium">${item.ritmo} ritmo</span>` : ''}
+                ${item.restTime ? `<span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.restTime}s descanso</span>` : ''}
+                ${item.weight ? `<span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.weight}kg</span>` : ''
               </div>
               ${item.obs ? `<p class="text-[11px] text-brand-300 mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs} </p>` : ''}
               
