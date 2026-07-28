@@ -1007,11 +1007,10 @@ window.handleForgotPassword = async () => {
     const execListContainer = document.getElementById('executeExerciseList');
     const editListContainer = document.getElementById('editExerciseList');
 
-    // 1. LÓGICA DE AGRUPAMENTO PARA EXECUÇÃO
+    // 1. AGRUPAMENTO PARA EXECUÇÃO (Check e Cronômetro Únicos)
     const grouped = [];
     currentList.forEach((ex, idx) => {
         const lastGroup = grouped[grouped.length - 1];
-        // Se tem o mesmo nome de grupo e é consecutivo, coloca no mesmo card
         if (ex.combinado && lastGroup && lastGroup.tag === ex.combinado) {
             lastGroup.items.push({ ...ex, originalIndex: idx });
         } else {
@@ -1024,51 +1023,70 @@ window.handleForgotPassword = async () => {
     } else {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
-            return `
-            <div class="glass-card rounded-2xl p-4 border ${isCombined ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-4">
-                ${isCombined ? `<div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase"><i class="ph-bold ph-link"></i> COMBINADO: ${group.tag}</div>` : ''}
-                ${group.items.map((item, i) => {
-                    const idx = item.originalIndex;
-                    const numSeries = parseInt(item.series) || 1;
-                    if (!currentSessionLogs[idx]) currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false), weight: item.weight || '', repsDone: item.reps || '' };
-                    const log = currentSessionLogs[idx];
-                    const restSeconds = parseInt(item.restTime) || 60;
-                    
-                    let seriesHtml = '';
-                    for (let s = 0; s < numSeries; s++) {
-                        const isChecked = log.seriesDone[s] || false;
-                        seriesHtml += `<label class="inline-flex items-center space-x-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-3 h-3 accent-brand-500"><span class="text-[10px] ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
-                    }
+            // Usamos o primeiro item do grupo como referência para o Check e o Tempo
+            const masterItem = group.items;
+            const masterIdx = masterItem.originalIndex;
+            const numSeries = parseInt(masterItem.series) || 1;
+            const restSeconds = parseInt(masterItem.restTime) || 60;
 
-                    return `
-                    <div class="${i > 0 ? 'pt-4 border-t border-slate-800/60' : ''} space-y-2">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
-                        <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500">
-                            <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
-                            <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
-                            <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
+            if (!currentSessionLogs[masterIdx]) {
+                currentSessionLogs[masterIdx] = { seriesDone: new Array(numSeries).fill(false) };
+            }
+            const log = currentSessionLogs[masterIdx];
+
+            let seriesHtml = '';
+            for (let s = 0; s < numSeries; s++) {
+                const isChecked = log.seriesDone[s] || false;
+                seriesHtml += `
+                    <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${masterIdx}, ${s})" class="w-4 h-4 accent-brand-500">
+                        <span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span>
+                    </label>`;
+            }
+
+            return `
+            <div class="glass-card rounded-2xl p-4 border ${isCombined ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/80'} space-y-4">
+                ${isCombined ? `<div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white uppercase tracking-tighter mb-2">COMBINADO: ${group.tag}</div>` : ''}
+                
+                ${group.items.map((item, i) => `
+                    <div class="${i > 0 ? 'pt-4 border-t border-slate-800/40' : ''} space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white text-sm leading-tight">${item.name}</h4>
+                            ${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}
                         </div>
-                        <div class="flex flex-wrap gap-1">${seriesHtml}</div>
-                        ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
-                        <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 mt-1"><i class="ph-bold ph-timer"></i> Descanso ${restSeconds}s</button>
-                        <span id="timer-display-${idx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
-                    </div>`;
-                }).join('')}
+                        <div class="grid grid-cols-3 gap-2 text-[10px] text-slate-500 font-bold uppercase">
+                            <div>Reps: <span class="text-brand-300">${item.reps}</span></div>
+                            <div>Carga: <span class="text-brand-300">${item.weight}</span></div>
+                            <div>Ritmo: <span class="text-brand-300">${item.ritmo}</span></div>
+                        </div>
+                        ${item.obs ? `<p class="text-[10px] text-slate-400 italic bg-white/5 p-1.5 rounded">Obs: ${item.obs}</p>` : ''}
+                    </div>
+                `).join('')}
+
+                <!-- CONTROLES UNIFICADOS (Check e Cronômetro no rodapé do card) -->
+                <div class="pt-3 border-t border-slate-800/60 space-y-3">
+                    <div class="flex flex-wrap gap-2">${seriesHtml}</div>
+                    <div class="flex items-center justify-between">
+                        <button onclick="startRestTimer(${masterIdx}, ${restSeconds})" class="text-[10px] font-bold text-slate-300 bg-slate-800 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-2">
+                            <i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s
+                        </button>
+                        <span id="timer-display-${masterIdx}" class="text-base font-mono font-black text-brand-400 hidden">00:00</span>
+                    </div>
+                </div>
             </div>`;
         }).join('');
     }
 
-    // 2. RENDER EDIÇÃO (Lista Simples)
-    editListContainer.innerHTML = currentList.length === 0 ? `<p class="text-center py-10 text-slate-500">Vazio.</p>` : 
-    currentList.map((item, index) => `
-        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between">
-            <div class="flex-1">
-                <h4 class="font-bold text-white text-sm">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2">[${item.combinado}]</span>` : ''}</h4>
-                <p class="text-[10px] text-slate-500">${item.series}x ${item.reps} • ${item.weight}kg</p>
+    // LISTA DE EDIÇÃO (Simplificada)
+    editListContainer.innerHTML = currentList.map((item, index) => `
+        <div class="glass-card p-3 rounded-xl border border-slate-800 flex justify-between items-center mb-2">
+            <div class="truncate">
+                <h4 class="text-white text-xs font-bold truncate">${item.name}</h4>
+                ${item.combinado ? `<span class="text-[9px] text-brand-400 font-black uppercase">[${item.combinado}]</span>` : ''}
             </div>
             <div class="flex gap-1">
-                <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded bg-slate-800 text-slate-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>
-                <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded bg-red-500/10 text-red-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>
+                <button onclick="openExerciseModal(${index})" class="w-7 h-7 bg-slate-800 rounded text-slate-300 flex items-center justify-center"><i class="ph ph-pencil-simple text-sm"></i></button>
+                <button onclick="deleteExercise(${index})" class="w-7 h-7 bg-red-500/10 rounded text-red-400 flex items-center justify-center"><i class="ph ph-trash text-sm"></i></button>
             </div>
         </div>
     `).join('');
