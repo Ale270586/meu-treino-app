@@ -1560,6 +1560,25 @@ function renderDietTable() {
         </tr>
     `).join('');
 }
+
+
+    // Função para remover um item da dieta
+window.removeDietItem = async (id) => {
+    if (confirm("Deseja realmente excluir esta refeição do seu plano?")) {
+        // Filtra a lista mantendo apenas os itens com ID diferente do selecionado
+        dietPlan = dietPlan.filter(item => item.id !== id);
+        
+        try {
+            await saveUserData(); // Salva a alteração no Firebase
+            renderDietEditor();    // Atualiza a lista de edição
+            renderDietTable();     // Atualiza a tabela de visualização
+        } catch (err) {
+            alert("Erro ao excluir item da dieta: " + err.message);
+        }
+    }
+};
+
+    
     // Abre/Fecha o formulário de peso e define a data de hoje
 window.toggleWeightForm = () => {
     const form = document.getElementById('weightLogForm');
