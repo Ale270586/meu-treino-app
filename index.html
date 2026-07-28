@@ -1377,7 +1377,6 @@ function renderPerformanceHistory() {
         }
       }
     };
-// --- FUNÇÕES DE GERENCIAMENTO DA DIETA ---
 
 // --- FUNÇÕES DE GERENCIAMENTO DA DIETA (VERSÃO SEM TRAVAS E COM EDIÇÃO) ---
 
@@ -1443,6 +1442,76 @@ window.saveDietEntry = async (e) => {
     closeDietModal();
 };
 
+window.handleDietCSVUpload = (e) => {
+    // CORREÇÃO 1: Pega o primeiro arquivo selecionado (files[0])
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        try {
+            const content = event.target.result;
+            const lines = content.split(/\r\n|\n/);
+            
+            // CORREÇÃO 2: Pega o texto da PRIMEIRA LINHA de verdade (lines[0])
+            const firstLine = lines[0] || '';
+            const separator = firstLine.includes(';') ? ';' : ',';
+
+            // Limpa a dieta atual para sobreposição total
+            dietPlan = []; 
+
+            // Helper para limpar aspas e converter células com múltiplos itens
+            const parseCell = (str) => {
+                if (!str) return [];
+                // Remove aspas do Excel e divide por vírgula, barra ou quebra interna
+                return str
+                    .replace(/^["']|["']$/g, '') // Remove aspas externas
+                    .split(/,|\n/)
+                    .map(s => s.trim())
+                    .filter(s => s !== "");
+            };
+
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].trim();
+                if (!row) continue;
+
+                const columns = row.split(separator);
+                
+                // Estrutura esperada: Horário; Alimentos; Medicações
+                const [hora, alimentos, medicacoes] = columns;
+
+                if (hora && hora.trim()) {
+                    dietPlan.push({
+                        id: Date.now() + i,
+                        time: hora.replace(/['"]/g, '').trim(),
+                        foods: parseCell(alimentos),
+                        meds: parseCell(medicacoes),
+                        done: false
+                    });
+                }
+            }
+
+            if (dietPlan.length > 0) {
+                if (typeof saveUserData === 'function') await saveUserData(); // Salva no Firebase
+                if (typeof renderDietEditor === 'function') renderDietEditor(); // Atualiza editor
+                if (typeof renderDietTable === 'function') renderDietTable();   // Atualiza tabela principal
+                
+                alert(`Sucesso! ${dietPlan.length} horários de dieta importados.`);
+            } else {
+                alert("Nenhum dado válido encontrado. Verifique se o arquivo segue o formato: Horário; Alimentos; Medicações");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao processar CSV de Dieta: " + err.message);
+        } finally {
+            e.target.value = ''; // Reseta o input de arquivo
+        }
+    };
+    
+    reader.readAsText(file, 'UTF-8');
+};
+
+    
 function renderDietEditor() {
     const container = document.getElementById('dietEditList');
     if (!container) return;
