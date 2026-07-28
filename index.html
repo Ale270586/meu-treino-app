@@ -1606,7 +1606,7 @@ window.deleteWeightEntry = async (id) => {
 
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
-    // CORREÇÃO: Captura o primeiro arquivo da lista
+    // 1. CORREÇÃO: Captura o arquivo individual com 
     const file = e.target.files; 
     if (!file) return;
 
@@ -1615,17 +1615,21 @@ window.handleCSVUpload = (e) => {
         try {
             const content = event.target.result;
             const lines = content.split('\n');
-            let importCount = 0;
+            
+            // 2. SEGURANÇA: Identifica se o separador é vírgula ou ponto e vírgula
+            const firstLine = lines || '';
+            const separator = firstLine.includes(';') ? ';' : ',';
 
-            // Começa do 1 para pular o cabeçalho da planilha
+            // 3. SOBREPOSIÇÃO: Limpa todos os treinos (A, B, C, D, E) antes de importar
+            Object.keys(workouts).forEach(k => workouts[k] = []);
+
+            let count = 0;
             for (let i = 1; i < lines.length; i++) {
                 const row = lines[i].trim();
                 if (!row) continue;
 
-                // Divide as colunas por ponto e vírgula (Padrão Excel Brasil)
-                const columns = row.split(';');
-                if (columns.length < 5) continue; // Pula linhas inválidas
-
+                const columns = row.split(separator);
+                // Ordem esperada: Aba;Nome;Séries;Reps;Carga;Ritmo;Descanso;Link;Obs
                 const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
                 const abaLimpa = aba ? aba.trim().toUpperCase() : '';
 
@@ -1635,26 +1639,27 @@ window.handleCSVUpload = (e) => {
                         series: series ? series.trim() : "3",
                         reps: reps ? reps.trim() : "10-12",
                         weight: carga ? carga.trim() : "",
-                        ritmo: ritmo ? ritmo.trim() : "",
+                        ritmo: ritmo ? ritmo.trim() : "", // 4. CORREÇÃO: Inclui o ritmo
                         restTime: descanso ? descanso.trim() : "60",
                         link: link ? link.trim() : "",
                         obs: obs ? obs.trim() : ""
                     });
-                    importCount++;
+                    count++;
                 }
             }
 
-            if (importCount > 0) {
-                await saveUserData(); // Grava no Firebase
-                renderExercises();    // Atualiza a tela imediatamente
-                alert(`Sucesso! ${importCount} exercícios importados.`);
+            if (count > 0) {
+                // 5. SALVAMENTO: Grava a nova versão limpa no Firebase e atualiza a tela
+                await saveUserData(); 
+                renderExercises();    
+                alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
             } else {
-                alert("Nenhum dado válido. Use A, B, C, D ou E na primeira coluna.");
+                alert("Nenhum dado válido encontrado. Certifique-se de que a primeira coluna indica o treino (A, B, C, D ou E).");
             }
         } catch (err) {
-            alert("Erro no CSV: " + err.message);
+            alert("Erro ao processar arquivo: " + err.message);
         } finally {
-            e.target.value = ''; // Permite subir o mesmo arquivo novamente se necessário
+            e.target.value = ''; // Permite subir o mesmo arquivo novamente
         }
     };
     reader.readAsText(file);
