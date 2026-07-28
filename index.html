@@ -499,17 +499,18 @@
         <h3 class="text-xl font-extrabold text-white text-center">Novo Item na Dieta</h3>
         <form onsubmit="saveDietEntry(event)" class="space-y-4">
             <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
-                <input type="time" id="dietTimeInput" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
-            </div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
+              <input type="time" id="dietTimeInput" required 
+                     class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
+          </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos + Quantidades</label>
-                <textarea id="dietFoodsInput" placeholder="Ex: Whey Protein: 30g&#10;Ovos Cozidos: 3 unidades" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
+                <textarea id="dietFoodsInput" placeholder="" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
                 <p class="text-[10px] text-slate-500 mt-1">Dica: Use "item: quantidade" por linha</p>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações + Quantidades</label>
-                <textarea id="dietMedsInput" placeholder="Ex: Multivitamínico: 1 caps&#10;Creatina: 5g" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
+                <textarea id="dietMedsInput" placeholder="" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
             </div>
             <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
                 <i class="ph-bold ph-check-circle"></i>
@@ -1493,29 +1494,37 @@ window.saveDietEntry = async (e) => {
     const foodStr = document.getElementById('dietFoodsInput').value;
     const medStr = document.getElementById('dietMedsInput').value;
 
+    // Função auxiliar robusta para processar as linhas
     const parseManualItems = (str) => {
-        if (!str) return [];
-        // Divide por quebra de linha e processa cada item
-        return str.split('\n').filter(line => line.trim() !== "").map(s => {
-            const parts = s.split(':');
-            const item = parts ? parts.trim() : '-';
-            const qty = parts[4] ? parts[4].trim() : '-';
-            return { item, qty };
-        });
+        if (!str || str.trim() === "") return [];
+        return str.split('\n')
+            .filter(line => line.trim() !== "") // Remove linhas vazias
+            .map(s => {
+                if (!s.includes(':')) {
+                    // Se não tiver ':', assume que o texto todo é o item e a quantidade é '-'
+                    return { item: s.trim(), qty: '-' };
+                }
+                const parts = s.split(':');
+                const item = parts ? parts.trim() : '-';
+                const qty = parts[4] ? parts[4].trim() : '-';
+                return { item, qty };
+            });
     };
 
-    dietPlan.push({
+    const newEntry = {
         id: Date.now(),
         time: time,
         foods: parseManualItems(foodStr),
         meds: parseManualItems(medStr),
         done: false
-    });
+    };
+
+    dietPlan.push(newEntry);
 
     try {
-        await saveUserData();
-        renderDietEditor();
-        renderDietTable(); // Atualiza a visualização principal também [5]
+        await saveUserData(); // Salva no Firebase [5, 6]
+        renderDietEditor();    // Atualiza a lista de edição [7]
+        if (typeof renderDietTable === 'function') renderDietTable(); 
         closeDietModal();
     } catch (err) {
         alert("Erro ao salvar dieta: " + err.message);
