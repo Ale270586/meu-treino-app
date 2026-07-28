@@ -98,6 +98,15 @@
             <input type="password" id="authPassword" required minlength="6" placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
           </div>
         </div>
+
+        <div id="confirmPasswordGroup" class="hidden">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Confirmar Senha</label>
+          <div class="relative">
+            <i class="ph-bold ph-lock-key absolute left-4 top-3.5 text-slate-500"></i>
+            <input type="password" id="authConfirmPassword" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
+          </div>
+        </div>
+        
         <div class="text-right">
           <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-brand-400 transition">Esqueci minha senha</button>
         </div>
@@ -703,17 +712,19 @@
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleBtn = document.getElementById('toggleAuthBtn');
-
+      const confirmGroup = document.getElementById('confirmPasswordGroup'); // Novo
+  
       if (isRegisterMode) {
-        subtitle.textContent = "Crie sua conta para salvar seus treinos";
-        submitBtn.querySelector('span').textContent = "Cadastrar Conta";
-        toggleBtn.textContent = "Já tem uma conta? Faça Login";
+          subtitle.textContent = "Crie sua conta para salvar seus treinos";
+          submitBtn.querySelector('span').textContent = "Cadastrar Conta";
+          confirmGroup.classList.remove('hidden'); // Mostra o campo
       } else {
-        subtitle.textContent = "Acesse sua ficha de treinos personalizada";
-        submitBtn.querySelector('span').textContent = "Entrar no App";
-        toggleBtn.textContent = "Não tem uma conta? Cadastre-se";
+          subtitle.textContent = "Acesse sua ficha de treinos personalizada";
+          submitBtn.querySelector('span').textContent = "Entrar no App";
+          confirmGroup.classList.add('hidden'); // Esconde o campo
       }
-    };
+      toggleBtn.textContent = isRegisterMode ? "Já tem uma conta? Faça Login" : "Não tem uma conta? Cadastre-se";
+  };
 
     // Função para Recuperação de Senha
 window.handleForgotPassword = async () => {
@@ -739,8 +750,15 @@ window.handleForgotPassword = async () => {
       e.preventDefault();
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
+      const confirmPassword = document.getElementById('authConfirmPassword').value; // Novo
       const submitBtn = document.getElementById('authSubmitBtn');
 
+      // Validação de Senhas Iguais
+      if (isRegisterMode && password !== confirmPassword) {
+          alert("As senhas não coincidem. Por favor, tente novamente.");
+          return;
+      }
+      
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-70');
 
