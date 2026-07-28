@@ -1607,7 +1607,7 @@ window.deleteWeightEntry = async (id) => {
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
     // 1. CORREÇÃO: Captura o arquivo individual com 
-    const file = e.target.files; 
+    const file = e.target.files``; 
     if (!file) return;
 
     const reader = new FileReader();
