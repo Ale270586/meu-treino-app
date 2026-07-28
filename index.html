@@ -491,34 +491,34 @@
 
   </div>
   <!-- DIET MODAL (MANUAL ENTRY) -->
-<div id="dietModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
-        <button onclick="closeDietModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
-            <i class="ph-bold ph-x text-lg"></i>
-        </button>
-        <h3 class="text-xl font-extrabold text-white text-center">Novo Item na Dieta</h3>
-        <form onsubmit="saveDietEntry(event)" class="space-y-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
-              <input type="time" id="dietTimeInput" required 
-                     class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
-          </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos + Quantidades</label>
-                <textarea id="dietFoodsInput" placeholder="" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
-                <p class="text-[10px] text-slate-500 mt-1">Dica: Use "item: quantidade" por linha</p>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações + Quantidades</label>
-                <textarea id="dietMedsInput" placeholder="" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500"></textarea>
-            </div>
-            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
-                <i class="ph-bold ph-check-circle"></i>
-                <span>Salvar na Dieta</span>
-            </button>
-        </form>
-    </div>
-</div>
+<!-- DIET MODAL (MODAL DE DIETA COM EDIÇÃO) -->
+  <div id="dietModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <button onclick="closeDietModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
+              <i class="ph-bold ph-x text-lg"></i>
+          </button>
+          <h3 id="dietModalTitle" class="text-xl font-extrabold text-white text-center">Nova Refeição</h3>
+          <form onsubmit="saveDietEntry(event)" class="space-y-4">
+              <input type="hidden" id="dietEditId" value="">
+              <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
+                  <input type="time" id="dietTimeInput" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
+              </div>
+              <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos</label>
+                  <textarea id="dietFoodsInput" rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Escreva como quiser..."></textarea>
+              </div>
+              <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações</label>
+                  <textarea id="dietMedsInput" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Ex: Creatina, Vitaminas..."></textarea>
+              </div>
+              <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2">
+                  <i class="ph-bold ph-check-circle"></i>
+                  <span>Salvar Dieta</span>
+              </button>
+          </form>
+      </div>
+  </div>
 
   <!-- FIREBASE SDKS -->
   <script type="module">
@@ -1379,187 +1379,116 @@ function renderPerformanceHistory() {
     };
 // --- FUNÇÕES DE GERENCIAMENTO DA DIETA ---
 
-function renderDietTable() {
-    const body = document.getElementById('dietTableBody');
-    if (!body) return;
+// --- FUNÇÕES DE GERENCIAMENTO DA DIETA (VERSÃO SEM TRAVAS E COM EDIÇÃO) ---
+
+window.openDietModal = (id = null) => {
+    const modal = document.getElementById('dietModal');
+    const title = document.getElementById('dietModalTitle');
+    const editIdField = document.getElementById('dietEditId');
     
-    if (dietPlan.length === 0) {
-        body.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-[11px] text-slate-500 italic">Nenhuma dieta cadastrada. Vá em "Editar".</td></tr>`;
-        return;
+    if (id) {
+        // MODO EDIÇÃO: Busca o item no array para preencher o formulário
+        const item = dietPlan.find(i => i.id === id);
+        title.textContent = "Editar Refeição";
+        editIdField.value = id;
+        document.getElementById('dietTimeInput').value = item.time || "";
+        // Une o array de volta em texto separado por linhas para o usuário editar
+        document.getElementById('dietFoodsInput').value = item.foods.join('\n');
+        document.getElementById('dietMedsInput').value = item.meds.join('\n');
+    } else {
+        // MODO NOVO: Limpa todos os campos
+        title.textContent = "Nova Refeição";
+        editIdField.value = "";
+        document.getElementById('dietTimeInput').value = "";
+        document.getElementById('dietFoodsInput').value = "";
+        document.getElementById('dietMedsInput').value = "";
     }
-    
-    // Ordenar por horário para exibição cronológica
-    dietPlan.sort((a,b) => a.time.localeCompare(b.time));
-
-    body.innerHTML = dietPlan.map((entry, idx) => `
-        <tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
-            <td class="p-3 text-xs font-bold text-white align-top">${entry.time}h</td>
-            <td class="p-3 text-[11px] text-slate-300 align-top leading-relaxed">
-                ${entry.foods.map(f => `• ${f.item}: <span class="text-slate-500">${f.qty}</span>`).join('<br>')}
-            </td>
-            <td class="p-3 text-[11px] text-brand-300 align-top leading-relaxed">
-                ${entry.meds.map(m => `💊 ${m.item}: <span class="text-brand-500/60">${m.qty}</span>`).join('<br>')}
-            </td>
-            <td class="p-3 align-top text-center">
-                <input type="checkbox" ${entry.done ? 'checked' : ''} onchange="toggleDietDone(${idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 focus:ring-brand-500 cursor-pointer">
-            </td>
-        </tr>
-    `).join('');
-}
-
-window.toggleDietDone = async (idx) => {
-    dietPlan[idx].done = !dietPlan[idx].done;
-    await saveUserData();
-    renderDietTable();
-};
-
-// Abre o novo modal de dieta
-window.openDietModal = () => {
-    document.getElementById('dietTimeInput').value = "";
-    document.getElementById('dietFoodsInput').value = "";
-    document.getElementById('dietMedsInput').value = "";
-    document.getElementById('dietModal').classList.remove('hidden');
+    modal.classList.remove('hidden');
 };
 
 window.closeDietModal = () => {
     document.getElementById('dietModal').classList.add('hidden');
 };
-window.handleDietCSVUpload = (e) => {
-    const file = e.target.files; // Correção: Acessando o arquivo corretamente [1]
-    if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-        try {
-            const content = event.target.result;
-            const lines = content.split(/\r\n|\n/);
-            
-            // Detecta separador (ponto e vírgula ou vírgula) na primeira linha [2]
-            const firstLine = lines || '';
-            const separator = firstLine.includes(';') ? ';' : ',';
-
-            // Limpa a dieta atual para sobrepor os dados
-            dietPlan = []; 
-
-            const parseItems = (str) => {
-                if (!str) return [];
-                // Divide por vírgula para pegar múltiplos alimentos/remédios na mesma célula
-                return str.split(',').map(s => {
-                    const [item, qty] = s.split(':');
-                    return { 
-                        item: item ? item.trim().replace(/['"]/g, '') : '-', 
-                        qty: qty ? qty.trim().replace(/['"]/g, '') : '-' 
-                    };
-                });
-            };
-
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].trim();
-                if (!row) continue;
-
-                const [hora, alimentos, medicacoes] = row.split(separator);
-
-                if (hora) {
-                    dietPlan.push({
-                        id: Date.now() + i,
-                        time: hora.trim().replace(/['"]/g, ''),
-                        foods: parseItems(alimentos),
-                        meds: parseItems(medicacoes),
-                        done: false
-                    });
-                }
-            }
-
-            if (dietPlan.length > 0) {
-                await saveUserData(); // Salva no Firebase [9]
-                renderDietEditor();    // Atualiza a lista de edição [10]
-                renderDietTable();     // Atualiza a tabela principal [11]
-                alert(`Sucesso! ${dietPlan.length} horários de dieta importados.`);
-            } else {
-                alert("Nenhum dado válido encontrado no CSV.");
-            }
-        } catch (err) {
-            alert("Erro ao processar CSV de Dieta: " + err.message);
-        } finally {
-            e.target.value = ''; 
-        }
-    };
-    reader.readAsText(file, 'UTF-8');
-};
-// Salva a entrada manual processando as linhas
 window.saveDietEntry = async (e) => {
     e.preventDefault();
-    
+    const editId = document.getElementById('dietEditId').value;
     const time = document.getElementById('dietTimeInput').value;
-    const foodStr = document.getElementById('dietFoodsInput').value;
-    const medStr = document.getElementById('dietMedsInput').value;
+    const foodsRaw = document.getElementById('dietFoodsInput').value;
+    const medsRaw = document.getElementById('dietMedsInput').value;
 
-    // Função auxiliar robusta para processar as linhas
-    const parseManualItems = (str) => {
-        if (!str || str.trim() === "") return [];
-        return str.split('\n')
-            .filter(line => line.trim() !== "") // Remove linhas vazias
-            .map(s => {
-                if (!s.includes(':')) {
-                    // Se não tiver ':', assume que o texto todo é o item e a quantidade é '-'
-                    return { item: s.trim(), qty: '-' };
-                }
-                const parts = s.split(':');
-                const item = parts ? parts.trim() : '-';
-                const qty = parts[4] ? parts[4].trim() : '-';
-                return { item, qty };
-            });
-    };
+    // Converte o texto livre em array de linhas, preservando exatamente o que foi escrito
+    const processLines = (str) => str.split('\n').map(l => l.trim()).filter(l => l !== "");
 
-    const newEntry = {
-        id: Date.now(),
-        time: time,
-        foods: parseManualItems(foodStr),
-        meds: parseManualItems(medStr),
+    const entryData = {
+        id: editId ? parseInt(editId) : Date.now(),
+        time,
+        foods: processLines(foodsRaw),
+        meds: processLines(medsRaw),
         done: false
     };
 
-    dietPlan.push(newEntry);
-
-    try {
-        await saveUserData(); // Salva no Firebase [5, 6]
-        renderDietEditor();    // Atualiza a lista de edição [7]
-        if (typeof renderDietTable === 'function') renderDietTable(); 
-        closeDietModal();
-    } catch (err) {
-        alert("Erro ao salvar dieta: " + err.message);
+    if (editId) {
+        // Se estiver editando, substitui o item antigo
+        const idx = dietPlan.findIndex(i => i.id === parseInt(editId));
+        dietPlan[idx] = { ...dietPlan[idx], ...entryData };
+    } else {
+        // Se for novo, adiciona ao final
+        dietPlan.push(entryData);
     }
+
+    await saveUserData();
+    renderDietEditor();
+    renderDietTable();
+    closeDietModal();
 };
 
 function renderDietEditor() {
     const container = document.getElementById('dietEditList');
     if (!container) return;
-    
     if (dietPlan.length === 0) {
         container.innerHTML = `<p class="text-center py-10 text-slate-500 italic text-xs">Nenhum item cadastrado.</p>`;
         return;
     }
-    
+
     container.innerHTML = dietPlan.map(i => `
         <div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
             <div>
                 <span class="text-brand-400 font-bold text-sm">${i.time}h</span>
-                <p class="text-[10px] text-slate-500">${i.foods.length} alimentos, ${i.meds.length} medicações</p>
+                <p class="text-[10px] text-slate-500">${i.foods.length} itens salvos</p>
             </div>
-            <button onclick="removeDietItem(${i.id})" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20">
-                <i class="ph-bold ph-trash"></i>
-            </button>
+            <div class="flex gap-2">
+                <!-- Botão de Editar que abre o modal com os dados -->
+                <button onclick="openDietModal(${i.id})" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700">
+                    <i class="ph-bold ph-pencil-simple"></i>
+                </button>
+                <button onclick="removeDietItem(${i.id})" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20">
+                    <i class="ph-bold ph-trash"></i>
+                </button>
+            </div>
         </div>
     `).join('');
 }
 
-window.removeDietItem = async (id) => {
-    if (confirm("Remover este horário da dieta?")) {
-        dietPlan = dietPlan.filter(i => i.id !== id);
-        await saveUserData();
-        renderDietEditor();
-    }
-};
+function renderDietTable() {
+    const body = document.getElementById('dietTableBody');
+    if (!body) return;
+    dietPlan.sort((a,b) => a.time.localeCompare(b.time));
+    body.innerHTML = dietPlan.map((entry, idx) => `
+        <tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
+            <td class="p-3 text-xs font-bold text-white align-top">${entry.time}h</td>
+            <td class="p-3 text-[11px] text-slate-300 align-top">
+                ${entry.foods.map(f => `• ${f}`).join('<br>')}
+            </td>
+            <td class="p-3 text-[11px] text-brand-300 align-top">
+                ${entry.meds.map(m => `💊 ${m}`).join('<br>')}
+            </td>
+            <td class="p-3 align-top text-center">
+                <input type="checkbox" ${entry.done ? 'checked' : ''} onchange="toggleDietDone(${idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 cursor-pointer">
+            </td>
+        </tr>
+    `).join('');
+}
     // Abre/Fecha o formulário de peso e define a data de hoje
 window.toggleWeightForm = () => {
     const form = document.getElementById('weightLogForm');
