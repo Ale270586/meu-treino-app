@@ -248,6 +248,21 @@
         <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
             <i class="ph-bold ph-plus-circle"></i> Novo Horário
         </button>
+    <div class="flex items-center justify-between">
+        <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
+        <div class="flex gap-2">
+            <!-- Novo Botão de Importar CSV Dieta -->
+            <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <i class="ph-bold ph-file-csv"></i> Importar
+            </button>
+            <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
+            
+            <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
+                <i class="ph-bold ph-plus-circle"></i> Novo Horário
+            </button>
+        </div>
+    </div>
+    
     </div>
     <div id="dietEditList" class="space-y-3">
         <!-- Itens para exclusão/edição -->
@@ -1408,7 +1423,68 @@ window.openDietModal = () => {
 window.closeDietModal = () => {
     document.getElementById('dietModal').classList.add('hidden');
 };
+window.handleDietCSVUpload = (e) => {
+    const file = e.target.files; // Correção: Acessando o arquivo corretamente [1]
+    if (!file) return;
 
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        try {
+            const content = event.target.result;
+            const lines = content.split(/\r\n|\n/);
+            
+            // Detecta separador (ponto e vírgula ou vírgula) na primeira linha [2]
+            const firstLine = lines || '';
+            const separator = firstLine.includes(';') ? ';' : ',';
+
+            // Limpa a dieta atual para sobrepor os dados
+            dietPlan = []; 
+
+            const parseItems = (str) => {
+                if (!str) return [];
+                // Divide por vírgula para pegar múltiplos alimentos/remédios na mesma célula
+                return str.split(',').map(s => {
+                    const [item, qty] = s.split(':');
+                    return { 
+                        item: item ? item.trim().replace(/['"]/g, '') : '-', 
+                        qty: qty ? qty.trim().replace(/['"]/g, '') : '-' 
+                    };
+                });
+            };
+
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i].trim();
+                if (!row) continue;
+
+                const [hora, alimentos, medicacoes] = row.split(separator);
+
+                if (hora) {
+                    dietPlan.push({
+                        id: Date.now() + i,
+                        time: hora.trim().replace(/['"]/g, ''),
+                        foods: parseItems(alimentos),
+                        meds: parseItems(medicacoes),
+                        done: false
+                    });
+                }
+            }
+
+            if (dietPlan.length > 0) {
+                await saveUserData(); // Salva no Firebase [9]
+                renderDietEditor();    // Atualiza a lista de edição [10]
+                renderDietTable();     // Atualiza a tabela principal [11]
+                alert(`Sucesso! ${dietPlan.length} horários de dieta importados.`);
+            } else {
+                alert("Nenhum dado válido encontrado no CSV.");
+            }
+        } catch (err) {
+            alert("Erro ao processar CSV de Dieta: " + err.message);
+        } finally {
+            e.target.value = ''; 
+        }
+    };
+    reader.readAsText(file, 'UTF-8');
+};
 // Salva a entrada manual processando as linhas
 window.saveDietEntry = async (e) => {
     e.preventDefault();
