@@ -192,7 +192,7 @@
             <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
               <span>Editar Ficha do Treino <span class="currentWorkoutLabel text-brand-400">A</span></span>
             </h3>
-            <p class="text-xs text-slate-400">Gerencie a estrutura fixa da sua ficha</p>
+            <p class="text-xs text-slate-400">Gerencie seus treinos</p>
           </div>
           <button onclick="openExerciseModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
             <i class="ph-bold ph-plus"></i>
@@ -203,7 +203,7 @@
             <!-- Novo botão de Importar CSV -->
             <button onclick="document.getElementById('csvFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
                 <i class="ph-bold ph-file-csv"></i>
-                <span>Importar CSV</span>
+                <span>Importar csv</span>
             </button>
             
             <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
@@ -246,12 +246,12 @@
     <div class="flex items-center justify-between">
       <div>
           <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
-          <p class="text-xs text-slate-400">Importe sua planilha ou adicione horários</p>
+          <p class="text-xs text-slate-400">Gerencie sua dieta</p>
       </div>
       <!-- Botão Principal (Novo Horário) seguindo estilo do 'Add Exercício' -->
       <button onclick="openDietModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
           <i class="ph-bold ph-plus"></i>
-          <span>Novo Horário</span>
+          <span>Add Horário</span>
       </button>
   </div>
   
@@ -259,7 +259,7 @@
       <!-- Botão Secundário (Importar) seguindo estilo do 'Importar CSV' -->
       <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
           <i class="ph-bold ph-file-csv"></i>
-          <span>Importar</span>
+          <span>Importar csv</span>
       </button>
       <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
   </div>
