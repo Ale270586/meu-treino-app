@@ -1625,8 +1625,7 @@ window.deleteWeightEntry = async (id) => {
 
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
-    // CORREÇÃO: Uso de  para acessar o arquivo individual
-    const file = e.target.files[0]; 
+  const file = e.target.files; 
     if (!file) return;
 
     const reader = new FileReader();
@@ -1635,7 +1634,7 @@ window.handleCSVUpload = (e) => {
             const content = event.target.result;
             const lines = content.split('\n');
             
-            // SEGURANÇA: Identifica o separador na primeira linha (índice )
+            // CORREÇÃO 2: Identifica o separador na primeira linha (índice )
             const firstLine = lines || '';
             const separator = firstLine.includes(';') ? ';' : ',';
 
@@ -1669,7 +1668,7 @@ window.handleCSVUpload = (e) => {
 
             if (count > 0) {
                 await saveUserData(); // Salva no Firebase
-                renderExercises();    // Atualiza a tela
+                renderExercises();    // Atualiza a tela imediatamente
                 alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
             } else {
                 alert("Nenhum dado válido encontrado. Verifique se a primeira coluna é A, B, C, D ou E.");
