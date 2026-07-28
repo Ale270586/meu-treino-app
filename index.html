@@ -244,26 +244,25 @@
 <!-- TELA 4: EDIÇÃO DA DIETA -->
 <section id="viewEditDiet" class="space-y-4 hidden">
     <div class="flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
-            <p class="text-xs text-slate-400">Importe sua planilha ou adicione horários</p>
-        </div>
-        
-        <div class="flex gap-2">
-            <!-- Botão de Importar CSV Dieta -->
-            <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                <i class="ph-bold ph-file-csv text-base"></i> 
-                <span>Importar</span>
-            </button>
-            <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
-            
-            <!-- Botão Novo Horário -->
-            <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
-                <i class="ph-bold ph-plus-circle text-base"></i> 
-                <span>Novo Horário</span>
-            </button>
-        </div>
-    </div>
+      <div>
+          <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
+          <p class="text-xs text-slate-400">Importe sua planilha ou adicione horários</p>
+      </div>
+      <!-- Botão Principal (Novo Horário) seguindo estilo do 'Add Exercício' -->
+      <button onclick="openDietModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+          <i class="ph-bold ph-plus"></i>
+          <span>Novo Horário</span>
+      </button>
+  </div>
+  
+  <div class="flex gap-2 mt-2">
+      <!-- Botão Secundário (Importar) seguindo estilo do 'Importar CSV' -->
+      <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+          <i class="ph-bold ph-file-csv"></i>
+          <span>Importar</span>
+      </button>
+      <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
+  </div>
 
     <div id="dietEditList" class="space-y-3">
         <!-- Os itens da dieta aparecerão aqui via JavaScript [2] -->
