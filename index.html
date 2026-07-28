@@ -244,28 +244,29 @@
 <!-- TELA 4: EDIÇÃO DA DIETA -->
 <section id="viewEditDiet" class="space-y-4 hidden">
     <div class="flex items-center justify-between">
-        <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
-        <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
-            <i class="ph-bold ph-plus-circle"></i> Novo Horário
-        </button>
-    <div class="flex items-center justify-between">
-        <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
+        <div>
+            <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
+            <p class="text-xs text-slate-400">Importe sua planilha ou adicione horários</p>
+        </div>
+        
         <div class="flex gap-2">
-            <!-- Novo Botão de Importar CSV Dieta -->
+            <!-- Botão de Importar CSV Dieta -->
             <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                <i class="ph-bold ph-file-csv"></i> Importar
+                <i class="ph-bold ph-file-csv text-base"></i> 
+                <span>Importar</span>
             </button>
             <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
             
+            <!-- Botão Novo Horário -->
             <button onclick="openDietModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
-                <i class="ph-bold ph-plus-circle"></i> Novo Horário
+                <i class="ph-bold ph-plus-circle text-base"></i> 
+                <span>Novo Horário</span>
             </button>
         </div>
     </div>
-    
-    </div>
+
     <div id="dietEditList" class="space-y-3">
-        <!-- Itens para exclusão/edição -->
+        <!-- Os itens da dieta aparecerão aqui via JavaScript [2] -->
     </div>
 </section>
       
