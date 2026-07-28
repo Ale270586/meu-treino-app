@@ -1522,12 +1522,14 @@ function renderDietEditor() {
 
     container.innerHTML = dietPlan.map(i => `
         <div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
-            <div>
+            <div class="flex-1 pr-4">
                 <span class="text-brand-400 font-bold text-sm">${i.time}h</span>
-                <p class="text-[10px] text-slate-500">${i.foods.length} itens salvos</p>
+                <!-- Aqui trocamos o contador pelo texto real, separado por vírgulas -->
+                <p class="text-[10px] text-slate-300 mt-0.5 truncate max-w-[200px]">
+                    ${i.foods.join(', ')}
+                </p>
             </div>
             <div class="flex gap-2">
-                <!-- Botão de Editar que abre o modal com os dados -->
                 <button onclick="openDietModal(${i.id})" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700">
                     <i class="ph-bold ph-pencil-simple"></i>
                 </button>
