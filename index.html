@@ -1623,62 +1623,72 @@ window.deleteWeightEntry = async (id) => {
 
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
   window.handleCSVUpload = (e) => {
-      // CORREÇÃO: Uso de  para acessar o arquivo (estava com crases) [1]
-      const file = e.target.files; 
-      if (!file) return;
+  // CORREÇÃO 1: Pega o primeiro arquivo do input (files[0])
+  const file = e.target.files && e.target.files[0]; 
+  if (!file) return;
+
+  const reader = new FileReader();
   
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-          try {
-              const content = event.target.result;
-              const lines = content.split('\n');
-              
-              // CORREÇÃO: Pegar apenas a PRIMEIRA linha  para o separador [2]
-              const firstLine = lines || '';
-              const separator = firstLine.includes(';') ? ';' : ',';
-  
-              // SOBREPOSIÇÃO: Limpa os treinos atuais [2]
-              Object.keys(workouts).forEach(k => workouts[k] = []);
-  
-              let count = 0;
-              for (let i = 1; i < lines.length; i++) {
-                  const row = lines[i].trim();
-                  if (!row) continue;
-  
-                  const columns = row.split(separator);
-                  const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
-                  const abaLimpa = aba ? aba.trim().toUpperCase() : '';
-  
-                  if (workouts[abaLimpa]) {
-                      workouts[abaLimpa].push({
-                          name: nome ? nome.trim() : "Exercício",
-                          series: series ? series.trim() : "3",
-                          reps: reps ? reps.trim() : "10-12",
-                          weight: carga ? carga.trim() : "",
-                          ritmo: ritmo ? ritmo.trim() : "", 
-                          restTime: descanso ? descanso.trim() : "0", // Padrão 0 conforme solicitado
-                          link: link ? link.trim() : "",
-                          obs: obs ? obs.trim() : ""
-                      });
-                      count++;
-                  }
-              }
-  
-              if (count > 0) {
-                  await saveUserData(); [4]
-                  renderExercises(); [5]
-                  alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
-              } else {
-                  alert("Nenhum dado válido encontrado. Verifique se a primeira coluna é A, B, C, D ou E.");
-              }
-          } catch (err) {
-              alert("Erro ao processar: " + err.message);
-          } finally {
-              e.target.value = ''; 
-          }
-      };
-      reader.readAsText(file);
+  reader.onload = async (event) => {
+    try {
+      const content = event.target.result;
+      
+      // Divide por quebra de linha (Windows/Mac/Linux)
+      const lines = content.split(/\r\n|\n/); 
+      
+      // CORREÇÃO 2: Pega a PRIMEIRA LINHA de verdade
+      const firstLine = lines[0] || '';
+      const separator = firstLine.includes(';') ? ';' : ',';
+
+      // SOBREPOSIÇÃO: Limpa os treinos atuais antes da importação
+      Object.keys(workouts).forEach(k => workouts[k] = []);
+
+      let count = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].trim();
+        if (!row) continue;
+
+        const columns = row.split(separator);
+        
+        // Ordem: Aba;Nome;Séries;Reps;Carga;Ritmo;Descanso;Link;Obs
+        const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
+        
+        // Remove aspas simples/duplas e espaços extras do nome da aba
+        const abaLimpa = aba ? aba.replace(/['"]/g, '').trim().toUpperCase() : '';
+
+        if (workouts[abaLimpa]) {
+          workouts[abaLimpa].push({
+            name: nome ? nome.replace(/['"]/g, '').trim() : "Exercício",
+            series: series ? series.replace(/['"]/g, '').trim() : "3",
+            reps: reps ? reps.replace(/['"]/g, '').trim() : "10-12",
+            weight: carga ? carga.replace(/['"]/g, '').trim() : "",
+            ritmo: ritmo ? ritmo.replace(/['"]/g, '').trim() : "", 
+            restTime: descanso ? descanso.replace(/['"]/g, '').trim() : "0",
+            link: link ? link.replace(/['"]/g, '').trim() : "",
+            obs: obs ? obs.replace(/['"]/g, '').trim() : ""
+          });
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        if (typeof saveUserData === 'function') await saveUserData(); // Salva no Firebase
+        if (typeof renderExercises === 'function') renderExercises();  // Atualiza a tela imediatamente
+        alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
+      } else {
+        alert("Nenhum dado válido encontrado. Verifique se a primeira coluna contém as chaves válidas (ex: A, B, C, D ou E).");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao processar arquivo: " + err.message);
+    } finally {
+      e.target.value = ''; // Limpa o input para permitir reenvio
+    }
   };
+
+  // CORREÇÃO 3: Lê com suporte a UTF-8 para garantir acentuação correta
+  reader.readAsText(file, 'UTF-8');
+};
   </script>
 </body>
 </html>
