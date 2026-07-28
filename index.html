@@ -207,9 +207,7 @@
             </button>
             
             <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
-            
-            <!-- Botão Add Exercício já existente -->
-            <button onclick="openExerciseModal()" class="bg-brand-500/10 ..."> ... </button>
+          
         </div>
         <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
         <div id="editExerciseList" class="space-y-3">
@@ -1624,63 +1622,63 @@ window.deleteWeightEntry = async (id) => {
     };
 
     // --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
-window.handleCSVUpload = (e) => {
-  const file = e.target.files; 
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-        try {
-            const content = event.target.result;
-            const lines = content.split('\n');
-            
-            // CORREÇÃO 2: Identifica o separador na primeira linha (índice )
-            const firstLine = lines || '';
-            const separator = firstLine.includes(';') ? ';' : ',';
-
-            // SOBREPOSIÇÃO: Limpa os treinos atuais antes da importação
-            Object.keys(workouts).forEach(k => workouts[k] = []);
-
-            let count = 0;
-            for (let i = 1; i < lines.length; i++) {
-                const row = lines[i].trim();
-                if (!row) continue;
-
-                const columns = row.split(separator);
-                // Ordem: Aba;Nome;Séries;Reps;Carga;Ritmo;Descanso;Link;Obs
-                const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
-                const abaLimpa = aba ? aba.trim().toUpperCase() : '';
-
-                if (workouts[abaLimpa]) {
-                    workouts[abaLimpa].push({
-                        name: nome ? nome.trim() : "Exercício",
-                        series: series ? series.trim() : "3",
-                        reps: reps ? reps.trim() : "10-12",
-                        weight: carga ? carga.trim() : "",
-                        ritmo: ritmo ? ritmo.trim() : "", 
-                        restTime: descanso ? descanso.trim() : "0",
-                        link: link ? link.trim() : "",
-                        obs: obs ? obs.trim() : ""
-                    });
-                    count++;
-                }
-            }
-
-            if (count > 0) {
-                await saveUserData(); // Salva no Firebase
-                renderExercises();    // Atualiza a tela imediatamente
-                alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
-            } else {
-                alert("Nenhum dado válido encontrado. Verifique se a primeira coluna é A, B, C, D ou E.");
-            }
-        } catch (err) {
-            alert("Erro ao processar arquivo: " + err.message);
-        } finally {
-            e.target.value = ''; 
-        }
-    };
-    reader.readAsText(file);
-};
+  window.handleCSVUpload = (e) => {
+      // CORREÇÃO: Uso de  para acessar o arquivo (estava com crases) [1]
+      const file = e.target.files; 
+      if (!file) return;
+  
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+          try {
+              const content = event.target.result;
+              const lines = content.split('\n');
+              
+              // CORREÇÃO: Pegar apenas a PRIMEIRA linha  para o separador [2]
+              const firstLine = lines || '';
+              const separator = firstLine.includes(';') ? ';' : ',';
+  
+              // SOBREPOSIÇÃO: Limpa os treinos atuais [2]
+              Object.keys(workouts).forEach(k => workouts[k] = []);
+  
+              let count = 0;
+              for (let i = 1; i < lines.length; i++) {
+                  const row = lines[i].trim();
+                  if (!row) continue;
+  
+                  const columns = row.split(separator);
+                  const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
+                  const abaLimpa = aba ? aba.trim().toUpperCase() : '';
+  
+                  if (workouts[abaLimpa]) {
+                      workouts[abaLimpa].push({
+                          name: nome ? nome.trim() : "Exercício",
+                          series: series ? series.trim() : "3",
+                          reps: reps ? reps.trim() : "10-12",
+                          weight: carga ? carga.trim() : "",
+                          ritmo: ritmo ? ritmo.trim() : "", 
+                          restTime: descanso ? descanso.trim() : "0", // Padrão 0 conforme solicitado
+                          link: link ? link.trim() : "",
+                          obs: obs ? obs.trim() : ""
+                      });
+                      count++;
+                  }
+              }
+  
+              if (count > 0) {
+                  await saveUserData(); [4]
+                  renderExercises(); [5]
+                  alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
+              } else {
+                  alert("Nenhum dado válido encontrado. Verifique se a primeira coluna é A, B, C, D ou E.");
+              }
+          } catch (err) {
+              alert("Erro ao processar: " + err.message);
+          } finally {
+              e.target.value = ''; 
+          }
+      };
+      reader.readAsText(file);
+  };
   </script>
 </body>
 </html>
