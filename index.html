@@ -480,7 +480,12 @@
             <label class="block text-xs font-semibold text-slate-400 mb-1">Observação Geral</label>
             <input type="text" id="exObs" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
           </div>
-
+          <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Grupo Combinado (Opcional)</label>
+              <input type="text" id="exCombinado" placeholder="Ex: SS1" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+              <p class="text-[10px] text-slate-500 mt-1">Exercícios com o mesmo nome (ex: SS1) aparecerão juntos.</p>
+          </div>
+         
           <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
             <i class="ph-bold ph-check-circle"></i>
             <span>Salvar Exercício</span>
@@ -847,24 +852,23 @@ window.handleForgotPassword = async () => {
     }
 
     function sanitizeWorkouts(w) {
-      const keys = ['A', 'B', 'C', 'D', 'E'];
-      const cleanW = {};
-      
-      keys.forEach(k => {
+    const keys = ['A', 'B', 'C', 'D', 'E'];
+    const cleanW = {};
+    keys.forEach(k => {
         const list = Array.isArray(w?.[k]) ? w[k] : [];
         cleanW[k] = list.map(item => ({
-          name: String(item?.name || ""),
-          series: String(item?.series || "3"),
-          reps: String(item?.reps || ""),
-          weight: String(item?.weight || ""),
-          ritmo: String(item?.ritmo || ""),
-          restTime: String(item?.restTime || "60"),
-          link: String(item?.link || ""),
-          obs: String(item?.obs || "")
+            name: String(item?.name || ""),
+            series: String(item?.series || "3"),
+            reps: String(item?.reps || ""),
+            weight: String(item?.weight || ""),
+            ritmo: String(item?.ritmo || ""),
+            restTime: String(item?.restTime || "60"),
+            link: String(item?.link || ""),
+            obs: String(item?.obs || ""),
+            combinado: String(item?.combinado || "") // NOVO CAMPO
         }));
-      });
-
-      return cleanW;
+    });
+    return cleanW;
     }
 
     async function loadUserData() {
@@ -998,162 +1002,77 @@ window.handleForgotPassword = async () => {
 
     // Renderizar Exercícios
     function renderExercises() {
-      if (currentView === 'performance') return;
+    if (currentView === 'performance') return;
+    const currentList = workouts[currentTab] || [];
+    const execListContainer = document.getElementById('executeExerciseList');
+    const editListContainer = document.getElementById('editExerciseList');
 
-      const currentList = workouts[currentTab] || [];
+    // 1. LÓGICA DE AGRUPAMENTO PARA EXECUÇÃO
+    const grouped = [];
+    currentList.forEach((ex, idx) => {
+        const lastGroup = grouped[grouped.length - 1];
+        // Se tem o mesmo nome de grupo e é consecutivo, coloca no mesmo card
+        if (ex.combinado && lastGroup && lastGroup.tag === ex.combinado) {
+            lastGroup.items.push({ ...ex, originalIndex: idx });
+        } else {
+            grouped.push({ tag: ex.combinado || null, items: [{ ...ex, originalIndex: idx }] });
+        }
+    });
 
-      // 1. RENDER EXECUÇÃO
-      const execListContainer = document.getElementById('executeExerciseList');
-      if (currentList.length === 0) {
-        execListContainer.innerHTML = `
-          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
-            <i class="ph-bold ph-barbell text-4xl text-slate-600 mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Nenhum exercício no Treino ${currentTab}</p>
-            <p class="text-xs text-slate-500 mt-1">Acesse a aba "Editar Treino" abaixo para cadastrar.</p>
-          </div>
-        `;
-      } else {
-        execListContainer.innerHTML = currentList.map((item, index) => {
-          const numSeries = parseInt(item.series) || 1;
-          
-          if (!currentSessionLogs[index]) {
-            currentSessionLogs[index] = {
-              seriesDone: new Array(numSeries).fill(false),
-              weight: item.weight || '',
-              repsDone: item.reps || ''
-            };
-          }
+    if (currentList.length === 0) {
+        execListContainer.innerHTML = `<div class="text-center py-12 glass-card rounded-2xl border border-slate-800"><p class="text-slate-400">Nenhum exercício.</p></div>`;
+    } else {
+        execListContainer.innerHTML = grouped.map(group => {
+            const isCombined = group.tag !== null;
+            return `
+            <div class="glass-card rounded-2xl p-4 border ${isCombined ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/80'} transition space-y-4">
+                ${isCombined ? `<div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase"><i class="ph-bold ph-link"></i> COMBINADO: ${group.tag}</div>` : ''}
+                ${group.items.map((item, i) => {
+                    const idx = item.originalIndex;
+                    const numSeries = parseInt(item.series) || 1;
+                    if (!currentSessionLogs[idx]) currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false), weight: item.weight || '', repsDone: item.reps || '' };
+                    const log = currentSessionLogs[idx];
+                    const restSeconds = parseInt(item.restTime) || 60;
+                    
+                    let seriesHtml = '';
+                    for (let s = 0; s < numSeries; s++) {
+                        const isChecked = log.seriesDone[s] || false;
+                        seriesHtml += `<label class="inline-flex items-center space-x-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-3 h-3 accent-brand-500"><span class="text-[10px] ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
+                    }
 
-          const log = currentSessionLogs[index];
-          const restSeconds = parseInt(item.restTime) || 60;
+                    return `
+                    <div class="${i > 0 ? 'pt-4 border-t border-slate-800/60' : ''} space-y-2">
+                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
+                        <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500">
+                            <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
+                            <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
+                            <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
+                        </div>
+                        <div class="flex flex-wrap gap-1">${seriesHtml}</div>
+                        ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
+                        <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 mt-1"><i class="ph-bold ph-timer"></i> Descanso ${restSeconds}s</button>
+                        <span id="timer-display-${idx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }).join('');
+    }
 
-          // Gerar checkboxes para cada série
-          let seriesCheckboxesHtml = '';
-          for (let s = 0; s < numSeries; s++) {
-            const isChecked = log.seriesDone[s] || false;
-            seriesCheckboxesHtml += `
-              <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer hover:border-brand-500/50 transition">
-                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${index}, ${s})" class="w-4 h-4 accent-brand-500 rounded cursor-pointer">
-                <span class="text-xs font-semibold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">Série ${s + 1}</span>
-              </label>
-            `;
-          }
-
-          return `
-            <div class="glass-card rounded-2xl p-4 border border-slate-800/80 transition space-y-3">
-              <div class="flex items-center justify-between">
-                <h4 class="font-bold text-white text-base">${item.name}</h4>
-              </div>
-
-              <div class="flex flex-col gap-2">
-              ${item.link ? `
-              <div>
-                  <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center space-x-2 text-[10px] text-white bg-brand-500 hover:bg-brand-600 px-3 py-1.5 rounded-lg font-bold transition shadow-lg shadow-brand-500/20">
-                  <i class="ph-bold ph-play-circle text-sm"></i>
-                  <span>VER VÍDEO</span>
-              </a>
-              </div>
-              ` : ''}
-    
-      </div>
-
-              <!-- CHECKBOXES DAS SÉRIES INDIVIDUAIS -->
-              <div class="pt-1">
-                <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1.5">Conclusão por Série:</p>
-                <div class="flex flex-wrap gap-2">
-                  ${seriesCheckboxesHtml}
-                </div>
-              </div>
-
-              <!-- CAMPOS DE REPETIÇÕES, CARGA E RITMO (NÃO EDITÁVEIS) -->
-              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800/60">
-                  <div>
-                      <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Repetições</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
-                          ${log.repsDone || item.reps || '10-12'}
-                      </div>
-                  </div>
-                  <div>
-                      <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Carga Hoje</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
-                          ${log.weight || item.weight || '20kg'}
-                      </div>
-                  </div>
-                  <div>
-                      <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Ritmo</label>
-                      <div class="w-full bg-slate-800/50 border border-slate-800 rounded-xl py-1.5 px-3 text-xs text-brand-300 font-bold flex items-center h-[34px]">
-                          ${item.ritmo || 'Livre'}
-                      </div>
-                  </div>
-              </div>
-            
-                ${item.obs ? `
-        <div class="pt-1 pb-1">
-            <div class="bg-brand-500/5 border-l-2 border-brand-400 p-2 rounded-r-lg">
-                <p class="text-[11px] text-slate-300 leading-relaxed italic">
-                    <strong class="text-brand-300 not-italic">Obs:</strong> ${item.obs}
-                </p>
+    // 2. RENDER EDIÇÃO (Lista Simples)
+    editListContainer.innerHTML = currentList.length === 0 ? `<p class="text-center py-10 text-slate-500">Vazio.</p>` : 
+    currentList.map((item, index) => `
+        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between">
+            <div class="flex-1">
+                <h4 class="font-bold text-white text-sm">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2">[${item.combinado}]</span>` : ''}</h4>
+                <p class="text-[10px] text-slate-500">${item.series}x ${item.reps} • ${item.weight}kg</p>
+            </div>
+            <div class="flex gap-1">
+                <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded bg-slate-800 text-slate-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>
+                <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded bg-red-500/10 text-red-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>
             </div>
         </div>
-        ` : ''}
-            
-              <!-- CRONÔMETRO DE DESCANSO (FONTE MAIOR E TEMPO CONFIGURÁVEL) -->
-              <div class="flex items-center justify-between pt-2 border-t border-slate-800/40">
-                <button onclick="startRestTimer(${index}, ${restSeconds})" class="inline-flex items-center space-x-2 text-xs text-slate-200 bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 transition font-semibold">
-                  <i class="ph-bold ph-timer text-brand-400 text-base"></i>
-                  <span>Descanso (${restSeconds}s)</span>
-                </button>
-                <span id="timer-display-${index}" class="text-base font-mono font-extrabold text-brand-400 hidden">00:00</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      // 2. RENDER CRIAÇÃO/EDIÇÃO
-      const editListContainer = document.getElementById('editExerciseList');
-      if (currentList.length === 0) {
-        editListContainer.innerHTML = `
-          <div class="text-center py-12 px-4 glass-card rounded-2xl border border-slate-800">
-            <i class="ph-bold ph-plus-circle text-4xl text-slate-600 mb-2"></i>
-            <p class="text-slate-400 text-sm font-medium">Sua ficha do Treino ${currentTab} está vazia</p>
-            <p class="text-xs text-slate-500 mt-1">Clique em "+ Add Exercício" para montar.</p>
-          </div>
-        `;
-      } else {
-        editListContainer.innerHTML = currentList.map((item, index) => `
-          <div class="glass-card rounded-2xl p-4 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between">
-            <div class="space-y-1 flex-1 pr-3">
-              <h4 class="font-bold text-white text-sm">${item.name}</h4>
-              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-semibold">${item.series || '-'} séries</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.reps || '-'} repetiçoes</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300 font-medium">${item.ritmo || '-'} ritmo</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.restTime || '-'}s descanso</span>
-                <span class="bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700/50 text-brand-300">${item.weight || '-'} kg</span>
-              </div>
-              ${item.obs ? `<p class="text-[11px] text-brand-300 mt-0.5"><i class="ph-bold ph-info mr-1"></i>${item.obs} </p>` : ''}
-              
-              ${item.link ? `
-                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-brand-400 hover:underline mt-1">
-                    <i class="ph-bold ph-link text-xs"></i>
-                    <span>Ver Link / Vídeo</span> 
-                </a>
-                ` : ''}
-            </div>
-
-            <div class="flex items-center space-x-1">
-              <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-                <i class="ph-bold ph-pencil-simple text-sm"></i>
-              </button>
-              <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center transition">
-                <i class="ph-bold ph-trash text-sm"></i>
-              </button>
-            </div>
-          </div>
-        `).join('');
-      }
-    }
+    `).join('');
+}
 
     // CRONÔMETRO DE DESCANSO
     window.startRestTimer = (index, seconds) => {
@@ -1696,12 +1615,12 @@ window.deleteWeightEntry = async (id) => {
 
     // EXERCISE MODAL
     window.openExerciseModal = (index = -1) => {
-      const modal = document.getElementById('exerciseModal');
-      const title = document.getElementById('exerciseModalTitle');
-      document.getElementById('exIndex').value = index;
-      document.getElementById('exPresetSelect').value = "";
+    const modal = document.getElementById('exerciseModal');
+    const title = document.getElementById('exerciseModalTitle');
+    document.getElementById('exIndex').value = index;
+    document.getElementById('exPresetSelect').value = "";
 
-      if (index >= 0) {
+    if (index >= 0) {
         title.textContent = "Editar Exercício";
         const item = workouts[currentTab][index];
         document.getElementById('exName').value = item.name || "";
@@ -1709,22 +1628,18 @@ window.deleteWeightEntry = async (id) => {
         document.getElementById('exReps').value = item.reps || "";
         document.getElementById('exWeight').value = item.weight || "";
         document.getElementById('exTempo').value = item.ritmo || "";
-        document.getElementById('exRestTime').value = item.restTime || "";
+        document.getElementById('exRestTime').value = item.restTime || "60";
         document.getElementById('exLink').value = item.link || "";
         document.getElementById('exObs').value = item.obs || "";
-      } else {
+        document.getElementById('exCombinado').value = item.combinado || ""; // CARREGA O CAMPO
+    } else {
         title.textContent = "Novo Exercício";
-        document.getElementById('exName').value = "";
-        document.getElementById('exSeries').value = "";
-        document.getElementById('exReps').value = "";
-        document.getElementById('exWeight').value = "";
-        document.getElementById('exTempo').value = ""
-        document.getElementById('exRestTime').value = "";
-        document.getElementById('exLink').value = "";
-        document.getElementById('exObs').value = "";
-      }
-
-      modal.classList.remove('hidden');
+        // Limpa todos os campos
+        const fields = ['exName','exSeries','exReps','exWeight','exTempo','exLink','exObs','exCombinado'];
+        fields.forEach(f => document.getElementById(f).value = "");
+        document.getElementById('exRestTime').value = "60";
+    }
+    modal.classList.remove('hidden');
     };
 
     window.closeExerciseModal = () => {
@@ -1732,36 +1647,28 @@ window.deleteWeightEntry = async (id) => {
     };
 
     window.saveExercise = async (e) => {
-      e.preventDefault();
-      const index = parseInt(document.getElementById('exIndex').value);
-
-      const exerciseData = {
+    e.preventDefault();
+    const index = parseInt(document.getElementById('exIndex').value);
+    const exerciseData = {
         name: document.getElementById('exName').value,
         series: document.getElementById('exSeries').value || "",
         reps: document.getElementById('exReps').value,
         weight: document.getElementById('exWeight').value,
         ritmo: document.getElementById('exTempo').value,
-        restTime: document.getElementById('exRestTime').value || "",
+        restTime: document.getElementById('exRestTime').value || "0",
         link: document.getElementById('exLink').value,
-        obs: document.getElementById('exObs').value
-      };
-
-      if (!workouts[currentTab]) workouts[currentTab] = [];
-
-      if (index >= 0) {
-        workouts[currentTab][index] = exerciseData;
-      } else {
-        workouts[currentTab].push(exerciseData);
-      }
-
-      try {
+        obs: document.getElementById('exObs').value,
+        combinado: document.getElementById('exCombinado').value || "" // SALVA O CAMPO
+    };
+    if (!workouts[currentTab]) workouts[currentTab] = [];
+    if (index >= 0) workouts[currentTab][index] = exerciseData;
+    else workouts[currentTab].push(exerciseData);
+    try {
         await saveUserData();
         renderExercises();
         closeExerciseModal();
-      } catch (err) {
-        alert("Erro ao salvar exercício: " + err.message);
-      }
-    };
+    } catch (err) { alert("Erro ao salvar: " + err.message); }
+  };
 
     window.deleteExercise = async (index) => {
       if (confirm("Deseja remover este exercício?")) {
@@ -1805,7 +1712,7 @@ window.deleteWeightEntry = async (id) => {
         const columns = row.split(separator);
         
         // Ordem: Aba;Nome;Séries;Reps;Carga;Ritmo;Descanso;Link;Obs
-        const [aba, nome, series, reps, carga, ritmo, descanso, link, obs] = columns;
+        const [aba, nome, series, reps, carga, ritmo, descanso, link, obs, combinado] = columns;
         
         // Remove aspas simples/duplas e espaços extras do nome da aba
         const abaLimpa = aba ? aba.replace(/['"]/g, '').trim().toUpperCase() : '';
@@ -1819,7 +1726,8 @@ window.deleteWeightEntry = async (id) => {
             ritmo: ritmo ? ritmo.replace(/['"]/g, '').trim() : "", 
             restTime: descanso ? descanso.replace(/['"]/g, '').trim() : "0",
             link: link ? link.replace(/['"]/g, '').trim() : "",
-            obs: obs ? obs.replace(/['"]/g, '').trim() : ""
+            obs: obs ? obs.replace(/['"]/g, '').trim() : "",
+            combinado: combinado ? combinado.replace(/['"]/g, '').trim() : ""
           });
           count++;
         }
