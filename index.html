@@ -1719,12 +1719,12 @@ window.deleteWeightEntry = async (id) => {
 
         if (workouts[abaLimpa]) {
           workouts[abaLimpa].push({
-            name: nome ? nome.replace(/['"]/g, '').trim() : "Exercício",
-            series: series ? series.replace(/['"]/g, '').trim() : "3",
-            reps: reps ? reps.replace(/['"]/g, '').trim() : "10-12",
+            name: nome ? nome.replace(/['"]/g, '').trim() : "",
+            series: series ? series.replace(/['"]/g, '').trim() : "",
+            reps: reps ? reps.replace(/['"]/g, '').trim() : "",
             weight: carga ? carga.replace(/['"]/g, '').trim() : "",
             ritmo: ritmo ? ritmo.replace(/['"]/g, '').trim() : "", 
-            restTime: descanso ? descanso.replace(/['"]/g, '').trim() : "0",
+            restTime: descanso ? descanso.replace(/['"]/g, '').trim() : "",
             link: link ? link.replace(/['"]/g, '').trim() : "",
             obs: obs ? obs.replace(/['"]/g, '').trim() : "",
             combinado: combinado ? combinado.replace(/['"]/g, '').trim() : ""
