@@ -1024,10 +1024,10 @@ window.handleForgotPassword = async () => {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
             
-            // CORREÇÃO: Pegamos o primeiro item do grupo  para ser o mestre do Check e do Cronômetro
+            // CORREÇÃO: Pegamos o primeiro item da lista do grupo para ser o "Mestre"
             const masterItem = group.items; 
             const masterIdx = masterItem.originalIndex;
-            const numSeries = parseInt(masterItem.series) || 1;
+            const numSeries = parseInt(masterItem.series) || 1; // Agora lê corretamente a quantidade
             const restSeconds = parseInt(masterItem.restTime) || 60;
 
             if (!currentSessionLogs[masterIdx]) {
@@ -1035,7 +1035,7 @@ window.handleForgotPassword = async () => {
             }
             const log = currentSessionLogs[masterIdx];
 
-            // Gera os quadradinhos de séries uma única vez para o grupo
+            // Gera as caixinhas de check baseadas na quantidade de séries configurada
             let seriesHtml = '';
             for (let s = 0; s < numSeries; s++) {
                 const isChecked = log.seriesDone[s] || false;
@@ -1065,7 +1065,6 @@ window.handleForgotPassword = async () => {
                     </div>
                 `).join('')}
 
-                <!-- CONTROLES UNIFICADOS (Séries e Cronômetro fixos no rodapé do card) -->
                 <div class="pt-3 border-t border-slate-800/60 space-y-3">
                     <div class="flex flex-wrap gap-2">${seriesHtml}</div>
                     <div class="flex items-center justify-between">
@@ -1079,7 +1078,7 @@ window.handleForgotPassword = async () => {
         }).join('');
     }
 
-    // LISTA DE EDIÇÃO (Simplificada)
+    // LISTA DE EDIÇÃO
     editListContainer.innerHTML = currentList.map((item, index) => `
         <div class="glass-card p-3 rounded-xl border border-slate-800 flex justify-between items-center mb-2">
             <div class="truncate">
