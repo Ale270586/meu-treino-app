@@ -1068,8 +1068,8 @@ function renderExercises() {
                     const isChecked = log.seriesDone[s] || false;
                     seriesHtml += `
                     <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-600">
-                        <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-600 line-through' : 'text-slate-300'}">S${s+1}</span>
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
+                        <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-500 line-through' : 'text-slate-300'}">S${s+1}</span>
                     </label>`;
                 }
 
@@ -1077,7 +1077,7 @@ function renderExercises() {
                 <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
                     isComplete 
                         ? 'border-emerald-500/60 bg-emerald-500/10' 
-                        : 'border-emerald-500/40 bg-brand-500/5'
+                        : 'border-emerald-500/40 bg-emerald-500/5'
                 } space-y-4">
                     <div class="flex items-center justify-between">
                         <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-brand-500' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white uppercase">
