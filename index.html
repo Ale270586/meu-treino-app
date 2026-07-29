@@ -1027,13 +1027,12 @@ window.handleForgotPassword = async () => {
             
             // SE FOR COMBINADO
             if (isCombined) {
-                // CORREÇÃO 1: Acessamos o índice [0] do array de itens
                 const masterItem = group.items[0]; 
                 const masterIdx = masterItem.originalIndex;
                 const numSeries = parseInt(masterItem.series) || 1;
                 const restSeconds = parseInt(masterItem.restTime) || 60;
 
-                // CORREÇÃO 2: Garante inicialização no log para TODOS os exercícios do grupo combinado
+                // Garante inicialização no log para TODOS os exercícios do grupo combinado
                 group.items.forEach(item => {
                     if (!currentSessionLogs[item.originalIndex]) {
                         currentSessionLogs[item.originalIndex] = { seriesDone: new Array(numSeries).fill(false) };
@@ -1043,27 +1042,36 @@ window.handleForgotPassword = async () => {
                 const log = currentSessionLogs[masterIdx];
                 const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
 
-                // Guardamos os índices de todos os itens do grupo em formato JSON para atualizar juntos no toggle
+                // Array de índices para sincronizar todos do grupo ao clicar na checkbox
                 const allGroupIndexes = JSON.stringify(group.items.map(i => i.originalIndex));
 
                 let seriesHtml = '';
                 for (let s = 0; s < numSeries; s++) {
                     const isChecked = log.seriesDone[s] || false;
-                    // Chama uma função genérica ou passa os índices do grupo para marcar todas as séries
-                    seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-brand-500">
-                        <span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span>
+                    
+                    // CORREÇÃO: Aplica text-emerald-400 e line-through quando marcado
+                    seriesHtml += `
+                    <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
+                        <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
                     </label>`;
                 }
 
                 return `
-                <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-brand-500/60 bg-brand-500/10' : 'border-brand-500/40 bg-brand-500/5'} space-y-4">
-                    <div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase">
+                <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
+                    isComplete 
+                        ? 'border-emerald-500/60 bg-emerald-500/10' // VERDE COM OPACIDADE QUANDO FINALIZADO
+                        : 'border-brand-500/40 bg-brand-500/5'     // AZUL PADRÃO ENQUANTO EM ANDAMENTO
+                } space-y-4">
+                    <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-emerald-500' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase">
                         <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
                     </div>
                     ${group.items.map((item, i) => `
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
-                            <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold text-white text-sm">${item.name}</h4>
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}
+                            </div>
                             <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                                 <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
                                 <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
@@ -1074,7 +1082,9 @@ window.handleForgotPassword = async () => {
                     <div class="pt-3 border-t border-slate-800/60 space-y-3">
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
                         <div class="flex items-center justify-between">
-                            <button onclick="startRestTimer(${masterIdx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2"><i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s</button>
+                            <button onclick="startRestTimer(${masterIdx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2">
+                                <i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s
+                            </button>
                             <span id="timer-display-${masterIdx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
                         </div>
                     </div>
@@ -1097,12 +1107,23 @@ window.handleForgotPassword = async () => {
                     let seriesHtml = '';
                     for (let s = 0; s < numSeries; s++) {
                         const isChecked = log.seriesDone[s] || false;
-                        seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-4 h-4 accent-brand-500"><span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
+                        seriesHtml += `
+                        <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-4 h-4 accent-emerald-500">
+                            <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
+                        </label>`;
                     }
 
                     return `
-                    <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-brand-500/60 bg-brand-500/10' : 'border-slate-800/80'} space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${isComplete ? '<i class="ph-fill ph-check-circle text-brand-400 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}</div>
+                    <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
+                        isComplete 
+                            ? 'border-emerald-500/60 bg-emerald-500/10' // VERDE COM OPACIDADE QUANDO FINALIZADO
+                            : 'border-slate-800/80'
+                    } space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-white text-sm">${item.name}</h4>
+                            ${isComplete ? '<i class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}
+                        </div>
                         <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                             <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
                             <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
@@ -1110,7 +1131,9 @@ window.handleForgotPassword = async () => {
                         </div>
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
                         <div class="flex items-center justify-between pt-1">
-                            <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2"><i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s</button>
+                            <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2">
+                                <i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s
+                            </button>
                             <span id="timer-display-${idx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
                         </div>
                     </div>`;
