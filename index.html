@@ -1077,10 +1077,14 @@ function renderExercises() {
                 <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
                     isComplete 
                         ? 'border-emerald-500/60 bg-emerald-500/10' 
-                        : 'border-emerald-500/40 bg-emerald-500/5'
+                        : 'border-slate-800/80'
                 } space-y-4">
                     <div class="flex items-center justify-between">
-                        <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-brand-500' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white uppercase">
+                        <div class="inline-flex items-center gap-1 ${
+                            isComplete 
+                                ? 'bg-emerald-500 text-slate-950' 
+                                : 'bg-brand-500 text-white'
+                        } text-[9px] font-black px-2 py-0.5 rounded uppercase">
                             <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
                         </div>
                     </div>
