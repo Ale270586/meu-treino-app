@@ -1027,6 +1027,7 @@ window.handleForgotPassword = async () => {
             
             // SE FOR COMBINADO: Usa o primeiro item como mestre para o Check e Cronômetro
             if (isCombined) {
+                // CORREÇÃO: Acessando o índice  para pegar os dados do primeiro exercício do grupo
                 const masterItem = group.items; 
                 const masterIdx = masterItem.originalIndex;
                 const numSeries = parseInt(masterItem.series) || 1;
@@ -1107,7 +1108,7 @@ window.handleForgotPassword = async () => {
         }).join('');
     }
 
-    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO (MANTIDA IGUAL AO ÚLTIMO CÓDIGO) ---
+    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO ---
     editListContainer.innerHTML = currentList.length === 0 ? 
     `<div class="text-center py-10 glass-card rounded-2xl border border-slate-800"><p class="text-slate-500 italic text-xs">Vazio.</p></div>` : 
     currentList.map((item, index) => `
