@@ -1007,11 +1007,9 @@ window.handleForgotPassword = async () => {
     const execListContainer = document.getElementById('executeExerciseList');
     const editListContainer = document.getElementById('editExerciseList');
 
-    // 1. AGRUPAMENTO PARA EXECUÇÃO
     const grouped = [];
     currentList.forEach((ex, idx) => {
         const lastGroup = grouped[grouped.length - 1];
-        // Se tem o mesmo nome de grupo e é consecutivo, coloca no mesmo card
         if (ex.combinado && ex.combinado.trim() !== "" && lastGroup && lastGroup.tag === ex.combinado) {
             lastGroup.items.push({ ...ex, originalIndex: idx });
         } else {
@@ -1025,7 +1023,6 @@ window.handleForgotPassword = async () => {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
             
-            // SE FOR COMBINADO: Renderiza um card com controles únicos baseados no primeiro item
             if (isCombined) {
                 const masterItem = group.items;
                 const masterIdx = masterItem.originalIndex;
@@ -1036,6 +1033,8 @@ window.handleForgotPassword = async () => {
                     currentSessionLogs[masterIdx] = { seriesDone: new Array(numSeries).fill(false) };
                 }
                 const log = currentSessionLogs[masterIdx];
+                // VERIFICAÇÃO DE CONCLUSÃO (COMBINADO)
+                const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
 
                 let seriesHtml = '';
                 for (let s = 0; s < numSeries; s++) {
@@ -1044,8 +1043,10 @@ window.handleForgotPassword = async () => {
                 }
 
                 return `
-                <div class="glass-card rounded-2xl p-4 border border-brand-500/40 bg-brand-500/5 space-y-4">
-                    <div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase"><i class="ph-bold ph-link"></i> COMBINADO: ${group.tag}</div>
+                <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-green-500/50 bg-green-500/10' : 'border-brand-500/40 bg-brand-500/5'} space-y-4">
+                    <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-green-600' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase">
+                        <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
+                    </div>
                     ${group.items.map((item, i) => `
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
                             <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
@@ -1054,7 +1055,6 @@ window.handleForgotPassword = async () => {
                                 <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                                 <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                             </div>
-                            ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
                         </div>
                     `).join('')}
                     <div class="pt-3 border-t border-slate-800/60 space-y-3">
@@ -1065,18 +1065,18 @@ window.handleForgotPassword = async () => {
                         </div>
                     </div>
                 </div>`;
-            } 
-            // SE FOR INDIVIDUAL: Cada exercício tem seu card, séries e cronômetro próprios
-            else {
+            } else {
                 return group.items.map(item => {
                     const idx = item.originalIndex;
                     const numSeries = parseInt(item.series) || 3;
                     const restSeconds = parseInt(item.restTime) || 60;
 
                     if (!currentSessionLogs[idx]) {
-                        currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false), weight: item.weight || '', repsDone: item.reps || '' };
+                        currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false) };
                     }
                     const log = currentSessionLogs[idx];
+                    // VERIFICAÇÃO DE CONCLUSÃO (INDIVIDUAL)
+                    const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
 
                     let seriesHtml = '';
                     for (let s = 0; s < numSeries; s++) {
@@ -1085,15 +1085,17 @@ window.handleForgotPassword = async () => {
                     }
 
                     return `
-                    <div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
+                    <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-green-500/50 bg-green-500/10 shadow-lg shadow-green-500/5' : 'border-slate-800/80'} space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-white text-sm">${item.name}</h4>
+                            ${isComplete ? '<i class="ph-fill ph-check-circle text-green-500 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}
+                        </div>
                         <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                             <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
                             <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                             <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                         </div>
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
-                        ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
                         <div class="flex items-center justify-between pt-1">
                             <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700"><i class="ph-bold ph-timer"></i> Descanso ${restSeconds}s</button>
                             <span id="timer-display-${idx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
@@ -1103,20 +1105,7 @@ window.handleForgotPassword = async () => {
             }
         }).join('');
     }
-
-    // 2. RENDER EDIÇÃO (Mantenha como está)
-    editListContainer.innerHTML = currentList.length === 0 ? `<p class="text-center py-10 text-slate-500">Vazio.</p>` :
-    currentList.map((item, index) => `
-        <div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between">
-            <div class="flex-1">
-                <h4 class="font-bold text-white text-sm">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2">[${item.combinado}]</span>` : ''}</h4>
-                <p class="text-[10px] text-slate-500">${item.series}x ${item.reps} • ${item.weight}kg</p>
-            </div>
-            <div class="flex gap-1">
-                <button onclick="openExerciseModal(${index})" class="w-8 h-8 rounded bg-slate-800 text-slate-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>
-                <button onclick="deleteExercise(${index})" class="w-8 h-8 rounded bg-red-500/10 text-red-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>
-            </div>
-        </div>`).join('');
+    renderEditList(); 
 }
 
     // CRONÔMETRO DE DESCANSO
