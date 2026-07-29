@@ -1025,9 +1025,9 @@ window.handleForgotPassword = async () => {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
             
-            // SE FOR COMBINADO: Usa o primeiro item como mestre para o Check e Cronômetro
+            // SE FOR COMBINADO
             if (isCombined) {
-                // CORREÇÃO: Acessamos o índice  da lista para ler as séries do primeiro exercício do grupo [1]
+                // CORREÇÃO: Acessamos o item  para pegar o número de séries real da edição
                 const masterItem = group.items; 
                 const masterIdx = masterItem.originalIndex;
                 const numSeries = parseInt(masterItem.series) || 1;
@@ -1046,8 +1046,10 @@ window.handleForgotPassword = async () => {
                 }
 
                 return `
-                <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-green-500/50 bg-green-500/10 shadow-lg shadow-green-500/5' : 'border-brand-500/40 bg-brand-500/5'} space-y-4">
-                    <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-green-600' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase"><i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}</div>
+                <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-brand-500/60 bg-brand-500/10' : 'border-brand-500/40 bg-brand-500/5'} space-y-4">
+                    <div class="inline-flex items-center gap-1 bg-brand-500 text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase">
+                        <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
+                    </div>
                     ${group.items.map((item, i) => `
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
                             <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}</div>
@@ -1056,7 +1058,6 @@ window.handleForgotPassword = async () => {
                                 <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                                 <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                             </div>
-                            ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
                         </div>
                     `).join('')}
                     <div class="pt-3 border-t border-slate-800/60 space-y-3">
@@ -1069,7 +1070,7 @@ window.handleForgotPassword = async () => {
                 </div>`;
             } 
             
-            // SE FOR INDIVIDUAL: Mantém a independência de cada card
+            // SE FOR INDIVIDUAL
             else {
                 return group.items.map(item => {
                     const idx = item.originalIndex;
@@ -1089,15 +1090,14 @@ window.handleForgotPassword = async () => {
                     }
 
                     return `
-                    <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-green-500/50 bg-green-500/10 shadow-lg shadow-green-500/5' : 'border-slate-800/80'} space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${isComplete ? '<i class="ph-fill ph-check-circle text-green-500 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}</div>
+                    <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-brand-500/60 bg-brand-500/10' : 'border-slate-800/80'} space-y-3">
+                        <div class="flex justify-between items-center"><h4 class="font-bold text-white text-sm">${item.name}</h4>${isComplete ? '<i class="ph-fill ph-check-circle text-brand-400 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}</div>
                         <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                             <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
                             <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                             <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                         </div>
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
-                        ${item.obs ? `<p class="text-[10px] text-slate-400 italic">Obs: ${item.obs}</p>` : ''}
                         <div class="flex items-center justify-between pt-1">
                             <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2"><i class="ph-bold ph-timer text-brand-400"></i> Descanso ${restSeconds}s</button>
                             <span id="timer-display-${idx}" class="text-xs font-mono font-bold text-brand-400 hidden ml-2">00:00</span>
@@ -1108,22 +1108,18 @@ window.handleForgotPassword = async () => {
         }).join('');
     }
 
-    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO (MANTIDA) [3-5] ---
+    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO ---
     editListContainer.innerHTML = currentList.length === 0 ? 
     `<div class="text-center py-10 glass-card rounded-2xl border border-slate-800"><p class="text-slate-500 italic text-xs">Vazio.</p></div>` : 
     currentList.map((item, index) => `
         <div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between transition-all">
             <div class="flex-1 truncate pr-4">
                 <h4 class="font-bold text-white text-sm truncate">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2 font-black uppercase">[${item.combinado}]</span>` : ''}</h4>
-                <p class="text-[10px] text-slate-500 mt-1">${item.series}x ${item.reps} • ${item.weight}kg • ${item.ritmo || 'Ritmo: -'}</p>
+                <p class="text-[10px] text-slate-500 mt-1">${item.series}x ${item.reps} • ${item.weight}kg</p>
             </div>
             <div class="flex gap-1.5">
-                <button onclick="openExerciseModal(${index})" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700">
-                    <i class="ph-bold ph-pencil-simple text-base"></i>
-                </button>
-                <button onclick="deleteExercise(${index})" class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20">
-                    <i class="ph-bold ph-trash text-base"></i>
-                </button>
+                <button onclick="openExerciseModal(${index})" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700"><i class="ph-bold ph-pencil-simple text-base"></i></button>
+                <button onclick="deleteExercise(${index})" class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20"><i class="ph-bold ph-trash text-base"></i></button>
             </div>
         </div>
     `).join('');
