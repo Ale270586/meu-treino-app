@@ -1024,22 +1024,23 @@ window.handleForgotPassword = async () => {
     } else {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
-            const masterItem = group.items; // Referência para séries e descanso
+            
+            // CORREÇÃO: Pegar o primeiro item da lista do grupo para ler Séries e Descanso corretamente
+            const masterItem = group.items; 
             const masterIdx = masterItem.originalIndex;
-            const numSeries = parseInt(masterItem.series) || 3;
+            const numSeries = parseInt(masterItem.series) || 1;
             const restSeconds = parseInt(masterItem.restTime) || 60;
 
             if (!currentSessionLogs[masterIdx]) {
                 currentSessionLogs[masterIdx] = { seriesDone: new Array(numSeries).fill(false) };
             }
             const log = currentSessionLogs[masterIdx];
-            // VERIFICAÇÃO DE CONCLUSÃO PARA PINTAR DE VERDE
             const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
 
             let seriesHtml = '';
             for (let s = 0; s < numSeries; s++) {
                 const isChecked = log.seriesDone[s] || false;
-                seriesHtml += `<label class="inline-flex items-center space-x-1 bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${masterIdx}, ${s})" class="w-3 h-3 accent-brand-500"><span class="text-[10px] ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
+                seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${masterIdx}, ${s})" class="w-4 h-4 accent-brand-500"><span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
             }
 
             return `
@@ -1067,7 +1068,7 @@ window.handleForgotPassword = async () => {
         }).join('');
     }
 
-    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO (CORREÇÃO DA TELA QUE NÃO FUNCIONAVA) ---
+    // --- RENDERIZAÇÃO DA TELA DE EDIÇÃO ---
     editListContainer.innerHTML = currentList.length === 0 ? 
     `<div class="text-center py-10 glass-card rounded-2xl border border-slate-800"><p class="text-slate-500 italic text-xs">Vazio.</p></div>` : 
     currentList.map((item, index) => `
