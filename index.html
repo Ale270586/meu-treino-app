@@ -1027,22 +1027,33 @@ window.handleForgotPassword = async () => {
             
             // SE FOR COMBINADO
             if (isCombined) {
-                // CORREÇÃO: Acessamos o item  para pegar o número de séries real da edição
-                const masterItem = group.items; 
+                // CORREÇÃO 1: Acessamos o índice [0] do array de itens
+                const masterItem = group.items[0]; 
                 const masterIdx = masterItem.originalIndex;
                 const numSeries = parseInt(masterItem.series) || 1;
                 const restSeconds = parseInt(masterItem.restTime) || 60;
 
-                if (!currentSessionLogs[masterIdx]) {
-                    currentSessionLogs[masterIdx] = { seriesDone: new Array(numSeries).fill(false) };
-                }
+                // CORREÇÃO 2: Garante inicialização no log para TODOS os exercícios do grupo combinado
+                group.items.forEach(item => {
+                    if (!currentSessionLogs[item.originalIndex]) {
+                        currentSessionLogs[item.originalIndex] = { seriesDone: new Array(numSeries).fill(false) };
+                    }
+                });
+
                 const log = currentSessionLogs[masterIdx];
                 const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
+
+                // Guardamos os índices de todos os itens do grupo em formato JSON para atualizar juntos no toggle
+                const allGroupIndexes = JSON.stringify(group.items.map(i => i.originalIndex));
 
                 let seriesHtml = '';
                 for (let s = 0; s < numSeries; s++) {
                     const isChecked = log.seriesDone[s] || false;
-                    seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer"><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${masterIdx}, ${s})" class="w-4 h-4 accent-brand-500"><span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span></label>`;
+                    // Chama uma função genérica ou passa os índices do grupo para marcar todas as séries
+                    seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-brand-500">
+                        <span class="text-[10px] font-bold ${isChecked ? 'text-brand-400 line-through' : 'text-slate-300'}">S${s+1}</span>
+                    </label>`;
                 }
 
                 return `
