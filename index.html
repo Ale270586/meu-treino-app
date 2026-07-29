@@ -525,6 +525,23 @@
       </div>
   </div>
 
+  <!-- Modal de Vídeo (Janela interna) -->
+    <div id="videoModal" class="hidden fixed inset-0 z-[2] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
+        <div class="w-full max-w-2xl bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl relative">
+            <div class="flex items-center justify-between p-4 border-b border-slate-800">
+                <h3 class="text-white font-bold text-sm">Demonstração do Exercício</h3>
+                <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white transition w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+            <div class="aspect-video w-full bg-black">
+                <iframe id="videoIframe" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+  
+
   <!-- FIREBASE SDKS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1094,7 +1111,7 @@ function renderExercises() {
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-bold text-white text-sm">${item.name}</h4>
-                                ${item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : ''}
+                                ${item.link ? \<button onclick="openVideoModal('\${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : ''}`
                             </div>
                             <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                                 <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
@@ -1148,7 +1165,7 @@ function renderExercises() {
                     } space-y-3">
                         <div class="flex justify-between items-center">
                             <h4 class="font-bold text-white text-sm">${item.name}</h4>
-                            ${isComplete ? '<i class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>' : (item.link ? `<a href="${item.link}" target="_blank" class="text-brand-400"><i class="ph-bold ph-play-circle text-lg"></i></a>` : '')}
+                            ${isComplete ? '<i class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>' : (item.link ? \<button onclick="openVideoModal('\${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : '')`
                         </div>
                         <div class="grid grid-cols-3 gap-2 text-[10px] font-bold text-slate-500 uppercase">
                             <div>REPS: <span class="text-brand-300">${item.reps}</span></div>
@@ -1862,6 +1879,29 @@ window.deleteWeightEntry = async (id) => {
 
   // CORREÇÃO 3: Lê com suporte a UTF-8 para garantir acentuação correta
   reader.readAsText(file, 'UTF-8');
+};
+
+window.openVideoModal = (url) => {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('videoIframe');
+    
+    // Converte links normais do YT para formato Embed
+    let embedUrl = url;
+    if (url.includes('youtube.com/watch?v=')) {
+        embedUrl = url.replace('watch?v=', 'embed/');
+    } else if (url.includes('youtu.be/')) {
+        embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+    }
+    
+    iframe.src = embedUrl;
+    modal.classList.remove('hidden');
+};
+
+window.closeVideoModal = () => {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('videoIframe');
+    iframe.src = ""; // Limpa o src para o vídeo parar de tocar ao fechar
+    modal.classList.add('hidden');
 };
   </script>
 </body>
