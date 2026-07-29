@@ -1005,12 +1005,10 @@ window.handleForgotPassword = async () => {
 window.toggleCombinedSerieDone = function(indexesArray, serieIndex) {
     if (!indexesArray || indexesArray.length === 0) return;
 
-    // Pega o estado atual baseado no primeiro exercício do grupo
     const firstIdx = indexesArray[0];
     const currentVal = currentSessionLogs[firstIdx]?.seriesDone?.[serieIndex] || false;
     const newVal = !currentVal;
 
-    // Atualiza o estado da série para TODOS os exercícios pertencentes ao grupo combinado
     indexesArray.forEach(idx => {
         if (!currentSessionLogs[idx]) {
             currentSessionLogs[idx] = { seriesDone: [] };
@@ -1018,7 +1016,6 @@ window.toggleCombinedSerieDone = function(indexesArray, serieIndex) {
         currentSessionLogs[idx].seriesDone[serieIndex] = newVal;
     });
 
-    // Re-renderiza a lista para aplicar as novas classes e cores
     renderExercises();
 };
 
@@ -1028,7 +1025,7 @@ function renderExercises() {
     const execListContainer = document.getElementById('executeExerciseList');
     const editListContainer = document.getElementById('editExerciseList');
 
-    // 1. LÓGICA DE AGRUPAMENTO (PARA EXECUÇÃO)
+    // 1. LÓGICA DE AGRUPAMENTO
     const grouped = [];
     currentList.forEach((ex, idx) => {
         const lastGroup = grouped[grouped.length - 1];
@@ -1056,7 +1053,6 @@ function renderExercises() {
                 const numSeries = parseInt(masterItem.series) || 1;
                 const restSeconds = parseInt(masterItem.restTime) || 60;
 
-                // Garante que a estrutura de logs exista para todos do grupo
                 group.items.forEach(item => {
                     if (!currentSessionLogs[item.originalIndex] || !currentSessionLogs[item.originalIndex].seriesDone) {
                         currentSessionLogs[item.originalIndex] = { seriesDone: new Array(numSeries).fill(false) };
@@ -1070,11 +1066,10 @@ function renderExercises() {
                 let seriesHtml = '';
                 for (let s = 0; s < numSeries; s++) {
                     const isChecked = log.seriesDone[s] || false;
-                    
                     seriesHtml += `
                     <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
-                        <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-brand-600">
+                        <span class="text-[10px] font-bold ${isChecked ? 'text-brand-600 line-through' : 'text-slate-300'}">S${s+1}</span>
                     </label>`;
                 }
 
@@ -1089,7 +1084,9 @@ function renderExercises() {
                             <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
                         </div>
                     </div>
-                    ${group.items.map((item, i) => `
+                    ${group.items.map((item, i) => {
+                        const obsText = item.obs || item.observacao || item.notes || '';
+                        return `
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
                             <div class="flex justify-between items-center">
                                 <h4 class="font-bold text-white text-sm">${item.name}</h4>
@@ -1100,8 +1097,9 @@ function renderExercises() {
                                 <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                                 <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                             </div>
-                        </div>
-                    `).join('')}
+                            ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800/60 px-2.5 py-1.5 rounded-lg font-medium leading-relaxed mt-1"><span class="text-brand-400 font-bold uppercase text-[9px]">OBS:</span> ${obsText}</div>` : ''}
+                        </div>`;
+                    }).join('')}
                     <div class="pt-3 border-t border-slate-800/60 space-y-3">
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
                         <div class="flex items-center justify-between">
@@ -1120,6 +1118,7 @@ function renderExercises() {
                     const idx = item.originalIndex;
                     const numSeries = parseInt(item.series) || 1;
                     const restSeconds = parseInt(item.restTime) || 60;
+                    const obsText = item.obs || item.observacao || item.notes || '';
 
                     if (!currentSessionLogs[idx] || !currentSessionLogs[idx].seriesDone) {
                         currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false) };
@@ -1152,6 +1151,7 @@ function renderExercises() {
                             <div>CARGA: <span class="text-brand-300">${item.weight}</span></div>
                             <div>RITMO: <span class="text-brand-300">${item.ritmo}</span></div>
                         </div>
+                        ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800/60 px-2.5 py-1.5 rounded-lg font-medium leading-relaxed"><span class="text-brand-400 font-bold uppercase text-[9px]">OBS:</span> ${obsText}</div>` : ''}
                         <div class="flex flex-wrap gap-1">${seriesHtml}</div>
                         <div class="flex items-center justify-between pt-1">
                             <button onclick="startRestTimer(${idx}, ${restSeconds})" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex items-center gap-2">
