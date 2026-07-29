@@ -1001,7 +1001,28 @@ window.handleForgotPassword = async () => {
     };
 
     // Renderizar Exercícios
-    function renderExercises() {
+    // Função para alternar o status da série em exercícios combinados
+window.toggleCombinedSerieDone = function(indexesArray, serieIndex) {
+    if (!indexesArray || indexesArray.length === 0) return;
+
+    // Pega o estado atual baseado no primeiro exercício do grupo
+    const firstIdx = indexesArray[0];
+    const currentVal = currentSessionLogs[firstIdx]?.seriesDone?.[serieIndex] || false;
+    const newVal = !currentVal;
+
+    // Atualiza o estado da série para TODOS os exercícios pertencentes ao grupo combinado
+    indexesArray.forEach(idx => {
+        if (!currentSessionLogs[idx]) {
+            currentSessionLogs[idx] = { seriesDone: [] };
+        }
+        currentSessionLogs[idx].seriesDone[serieIndex] = newVal;
+    });
+
+    // Re-renderiza a lista para aplicar as novas classes e cores
+    renderExercises();
+};
+
+function renderExercises() {
     if (currentView === 'performance') return;
     const currentList = workouts[currentTab] || [];
     const execListContainer = document.getElementById('executeExerciseList');
@@ -1014,7 +1035,10 @@ window.handleForgotPassword = async () => {
         if (ex.combinado && ex.combinado.trim() !== "" && lastGroup && lastGroup.tag === ex.combinado) {
             lastGroup.items.push({ ...ex, originalIndex: idx });
         } else {
-            grouped.push({ tag: (ex.combinado && ex.combinado.trim() !== "") ? ex.combinado : null, items: [{ ...ex, originalIndex: idx }] });
+            grouped.push({ 
+                tag: (ex.combinado && ex.combinado.trim() !== "") ? ex.combinado : null, 
+                items: [{ ...ex, originalIndex: idx }] 
+            });
         }
     });
 
@@ -1025,31 +1049,28 @@ window.handleForgotPassword = async () => {
         execListContainer.innerHTML = grouped.map(group => {
             const isCombined = group.tag !== null;
             
-            // SE FOR COMBINADO
+            // ================= SE FOR COMBINADO =================
             if (isCombined) {
                 const masterItem = group.items[0]; 
                 const masterIdx = masterItem.originalIndex;
                 const numSeries = parseInt(masterItem.series) || 1;
                 const restSeconds = parseInt(masterItem.restTime) || 60;
 
-                // Garante inicialização no log para TODOS os exercícios do grupo combinado
+                // Garante que a estrutura de logs exista para todos do grupo
                 group.items.forEach(item => {
-                    if (!currentSessionLogs[item.originalIndex]) {
+                    if (!currentSessionLogs[item.originalIndex] || !currentSessionLogs[item.originalIndex].seriesDone) {
                         currentSessionLogs[item.originalIndex] = { seriesDone: new Array(numSeries).fill(false) };
                     }
                 });
 
                 const log = currentSessionLogs[masterIdx];
                 const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
-
-                // Array de índices para sincronizar todos do grupo ao clicar na checkbox
                 const allGroupIndexes = JSON.stringify(group.items.map(i => i.originalIndex));
 
                 let seriesHtml = '';
                 for (let s = 0; s < numSeries; s++) {
                     const isChecked = log.seriesDone[s] || false;
                     
-                    // CORREÇÃO: Aplica text-emerald-400 e line-through quando marcado
                     seriesHtml += `
                     <label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
                         <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
@@ -1060,11 +1081,13 @@ window.handleForgotPassword = async () => {
                 return `
                 <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
                     isComplete 
-                        ? 'border-emerald-500/60 bg-emerald-500/10' // VERDE COM OPACIDADE QUANDO FINALIZADO
-                        : 'border-brand-500/40 bg-brand-500/5'     // AZUL PADRÃO ENQUANTO EM ANDAMENTO
+                        ? 'border-emerald-500/60 bg-emerald-500/10' 
+                        : 'border-brand-500/40 bg-brand-500/5'
                 } space-y-4">
-                    <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-emerald-500' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white mb-2 uppercase">
-                        <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
+                    <div class="flex items-center justify-between">
+                        <div class="inline-flex items-center gap-1 ${isComplete ? 'bg-emerald-500' : 'bg-brand-500'} text-[9px] font-black px-2 py-0.5 rounded text-white uppercase">
+                            <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
+                        </div>
                     </div>
                     ${group.items.map((item, i) => `
                         <div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
@@ -1091,14 +1114,14 @@ window.handleForgotPassword = async () => {
                 </div>`;
             } 
             
-            // SE FOR INDIVIDUAL
+            // ================= SE FOR INDIVIDUAL =================
             else {
                 return group.items.map(item => {
                     const idx = item.originalIndex;
                     const numSeries = parseInt(item.series) || 1;
                     const restSeconds = parseInt(item.restTime) || 60;
 
-                    if (!currentSessionLogs[idx]) {
+                    if (!currentSessionLogs[idx] || !currentSessionLogs[idx].seriesDone) {
                         currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false) };
                     }
                     const log = currentSessionLogs[idx];
@@ -1117,7 +1140,7 @@ window.handleForgotPassword = async () => {
                     return `
                     <div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
                         isComplete 
-                            ? 'border-emerald-500/60 bg-emerald-500/10' // VERDE COM OPACIDADE QUANDO FINALIZADO
+                            ? 'border-emerald-500/60 bg-emerald-500/10' 
                             : 'border-slate-800/80'
                     } space-y-3">
                         <div class="flex justify-between items-center">
