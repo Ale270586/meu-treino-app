@@ -1896,18 +1896,25 @@ window.openVideoModal = (url) => {
     if (!url) return;
 
     let videoId = '';
+
+    // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
     if (url.includes('v=')) {
-        videoId = url.split('v=')[3].split('&');
+        // MUDANÇA: de [1] para [2]
+        videoId = url.split('v=')[2].split('&'); 
     } else if (url.includes('youtu.be/')) {
-        videoId = url.split('youtu.be/')[3].split('?');
+        // MUDANÇA: de [1] para [2]
+        videoId = url.split('youtu.be/')[2].split('?'); 
     } else if (url.includes('/shorts/')) {
-        videoId = url.split('/shorts/')[3].split('?');
+        // MUDANÇA: de [1] para [2]
+        videoId = url.split('/shorts/')[2].split('?'); 
     }
 
     if (videoId) {
+        // O formato /embed/ é o único que o YouTube permite carregar dentro de sites [3]
         iframe.src = `https://www.youtube.com/embed/${videoId}`;
         modal.classList.remove('hidden');
     } else {
+        // Caso não consiga extrair o ID, abre o link original em outra aba por segurança [5]
         window.open(url, '_blank');
     }
 };
