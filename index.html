@@ -1897,24 +1897,30 @@ window.openVideoModal = (url) => {
 
     let videoId = '';
 
-    // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
-    if (url.includes('v=')) {
-        // MUDANÇA: de [1] para [2]
-        videoId = url.split('v=')[2].split('&'); 
-    } else if (url.includes('youtu.be/')) {
-        // MUDANÇA: de [1] para [2]
-        videoId = url.split('youtu.be/')[2].split('?'); 
-    } else if (url.includes('/shorts/')) {
-        // MUDANÇA: de [1] para [2]
-        videoId = url.split('/shorts/')[2].split('?'); 
-    }
+    try {
+        // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
+        if (url.includes('v=')) {
+            // Usa [1] e pega a posição [0] do array resultante
+            videoId = url.split('v=')[1].split('&')[0]; 
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0]; 
+        } else if (url.includes('/shorts/')) {
+            videoId = url.split('/shorts/')[1].split('?')[0]; 
+        }
 
-    if (videoId) {
-        // O formato /embed/ é o único que o YouTube permite carregar dentro de sites [3]
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
-        modal.classList.remove('hidden');
-    } else {
-        // Caso não consiga extrair o ID, abre o link original em outra aba por segurança [5]
+        // Limpa possíveis barras no final do ID
+        if (videoId) {
+            videoId = videoId.replace('/', '');
+            
+            // O formato /embed/ carrega o player do YouTube dentro da aplicação
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            modal.classList.remove('hidden');
+        } else {
+            // Caso não consiga extrair o ID, abre em outra aba
+            window.open(url, '_blank');
+        }
+    } catch (error) {
+        console.error("Erro ao processar URL do vídeo:", error);
         window.open(url, '_blank');
     }
 };
