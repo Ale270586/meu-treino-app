@@ -1889,21 +1889,27 @@ window.openVideoModal = (url) => {
     let videoId = '';
 
     try {
-        // CORREÇÃO: Usamos [5] para pegar a parte após o separador, não [2]
-        if (url.includes('v=')) {
-            videoId = url.split('v=')[5].split('&');
-        } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[5].split('?');
-        } else if (url.includes('/shorts/')) {
-            videoId = url.split('/shorts/')[5].split('?');
+        const urlObj = new URL(url);
+
+        // 1. Links do tipo: youtube.com/watch?v=VIDEO_ID
+        if (urlObj.searchParams.has('v')) {
+            videoId = urlObj.searchParams.get('v');
+        } 
+        // 2. Links encurtados: youtu.be/VIDEO_ID
+        else if (urlObj.hostname.includes('youtu.be')) {
+            videoId = urlObj.pathname.slice(1); // Remove a primeira barra "/"
+        } 
+        // 3. Links de Shorts: youtube.com/shorts/VIDEO_ID
+        else if (urlObj.pathname.includes('/shorts/')) {
+            videoId = urlObj.pathname.split('/shorts/')[1].split('/')[0];
         }
 
+        // Garante que pegamos apenas o ID sem parâmetros adicionais
         if (videoId) {
-            // O formato /embed/ permite a conexão interna
-            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            videoId = videoId.split('?')[0].split('&')[0];
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
             modal.classList.remove('hidden');
         } else {
-            // Se falhar a extração, abre em nova aba como segurança
             window.open(url, '_blank');
         }
     } catch (e) {
