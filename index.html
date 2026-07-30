@@ -559,7 +559,6 @@
       signOut, 
       sendPasswordResetEmail 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
     // CONFIGURAÇÃO DO FIREBASE
     const firebaseConfig = {
@@ -575,7 +574,6 @@
     const firebaseApp = initializeApp(firebaseConfig);
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
-    const messaging = getMessaging(firebaseApp);
 
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (SUGESTÕES)
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
@@ -729,7 +727,6 @@
         document.getElementById('authScreen').classList.add('hidden');
         populatePresetsDropdown();
         await loadUserData();
-        await requestNotificationPermission();
       } else {
         currentUser = null;
         document.getElementById('authScreen').classList.remove('hidden');
@@ -1890,33 +1887,21 @@ window.openVideoModal = (url) => {
     if (!url) return;
 
     let videoId = '';
+    // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
+    if (url.includes('v=')) {
+        videoId = url.split('v=')[7].split('&');
+    } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[7].split('?');
+    } else if (url.includes('/shorts/')) {
+        videoId = url.split('/shorts/')[7].split('?');
+    }
 
-    try {
-        const urlObj = new URL(url);
-
-        // 1. Links do tipo: youtube.com/watch?v=VIDEO_ID
-        if (urlObj.searchParams.has('v')) {
-            videoId = urlObj.searchParams.get('v');
-        } 
-        // 2. Links encurtados: youtu.be/VIDEO_ID
-        else if (urlObj.hostname.includes('youtu.be')) {
-            videoId = urlObj.pathname.slice(1); // Remove a primeira barra "/"
-        } 
-        // 3. Links de Shorts: youtube.com/shorts/VIDEO_ID
-        else if (urlObj.pathname.includes('/shorts/')) {
-            videoId = urlObj.pathname.split('/shorts/')[1].split('/')[0];
-        }
-
-        // Garante que pegamos apenas o ID sem parâmetros adicionais
-        if (videoId) {
-            videoId = videoId.split('?')[0].split('&')[0];
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-            modal.classList.remove('hidden');
-        } else {
-            window.open(url, '_blank');
-        }
-    } catch (e) {
-        console.error("Erro ao processar URL:", e);
+    if (videoId) {
+        // O formato /embed/ é o único que o YouTube permite carregar no site
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        modal.classList.remove('hidden');
+    } else {
+        // Se não for YouTube, tenta abrir em nova aba como segurança
         window.open(url, '_blank');
     }
 };
@@ -1927,32 +1912,9 @@ window.closeVideoModal = () => {
     iframe.src = ""; // Para o vídeo imediatamente
     modal.classList.add('hidden');
 };
-
-// Função para solicitar permissão e salvar o Token de Notificação
-async function requestNotificationPermission() {
-    if (!currentUser) return;
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            // ATENÇÃO: Você precisa gerar esta VAPID KEY no Console do Firebase
-            // Configurações do Projeto > Cloud Messaging > Web Push certificates
-            const token = await getToken(messaging, { 
-                vapidKey: 'SUA_CHAVE_VAPID_AQUI' 
-            });
-            
-            if (token) {
-                // Salva o token no documento do usuário no Firestore [7]
-                const userDocRef = doc(db, "users", currentUser.uid);
-                await setDoc(userDocRef, { fcmToken: token }, { merge: true });
-                console.log("Token de notificação salvo com sucesso.");
-            }
-        }
-    } catch (error) {
-        console.error("Erro ao configurar notificações:", error);
-    }
-}
-    
   </script>
 </body>
 </html>
+
+
 
