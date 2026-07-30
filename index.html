@@ -525,20 +525,20 @@
       </div>
   </div>
 
-  <!-- Modal de Vídeo (Janela interna) -->
-    <div id="videoModal" class="hidden fixed inset-0 z-[2] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
-        <div class="w-full max-w-2xl bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl relative">
-            <div class="flex items-center justify-between p-4 border-b border-slate-800">
-                <h3 class="text-white font-bold text-sm">Demonstração do Exercício</h3>
-                <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white transition w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
-                    <i class="ph-bold ph-x text-lg"></i>
-                </button>
-            </div>
-            <div class="aspect-video w-full bg-black">
-                <iframe id="videoIframe" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+  <!-- Modal de Vídeo (Janela Interna) -->
+<div id="videoModal" class="hidden fixed inset-0 z-[5] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
+    <div class="w-full max-w-2xl bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl relative">
+        <div class="flex items-center justify-between p-4 border-b border-slate-800">
+            <h3 class="text-white font-bold text-sm">Demonstração</h3>
+            <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white transition w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                <i class="ph-bold ph-x text-lg"></i>
+            </button>
+        </div>
+        <div class="aspect-video w-full bg-black">
+            <iframe id="videoIframe" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
+</div>
 
   
 
@@ -1884,23 +1884,32 @@ window.deleteWeightEntry = async (id) => {
 window.openVideoModal = (url) => {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoIframe');
-    
-    // Converte links normais do YT para formato Embed
-    let embedUrl = url;
-    if (url.includes('youtube.com/watch?v=')) {
-        embedUrl = url.replace('watch?v=', 'embed/');
+    if (!url) return;
+
+    let videoId = '';
+    // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
+    if (url.includes('v=')) {
+        videoId = url.split('v=')[7].split('&');
     } else if (url.includes('youtu.be/')) {
-        embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+        videoId = url.split('youtu.be/')[7].split('?');
+    } else if (url.includes('/shorts/')) {
+        videoId = url.split('/shorts/')[7].split('?');
     }
-    
-    iframe.src = embedUrl;
-    modal.classList.remove('hidden');
+
+    if (videoId) {
+        // O formato /embed/ é o único que o YouTube permite carregar no site
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        modal.classList.remove('hidden');
+    } else {
+        // Se não for YouTube, tenta abrir em nova aba como segurança
+        window.open(url, '_blank');
+    }
 };
 
 window.closeVideoModal = () => {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoIframe');
-    iframe.src = ""; // Limpa o src para o vídeo parar de tocar ao fechar
+    iframe.src = ""; // Para o vídeo imediatamente
     modal.classList.add('hidden');
 };
   </script>
