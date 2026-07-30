@@ -1317,45 +1317,96 @@ function renderExercises() {
       renderPerformanceHistory();
   };
   
-  function renderCharts() {
-      if (weightChartInstance) weightChartInstance.destroy();
-      if (workoutChartInstance) workoutChartInstance.destroy();
-  
-      const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
-      weightChartInstance = new Chart(document.getElementById('weightChart'), {
-          type: 'line',
-          data: {
-              labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `${d}/${m}`; }),
-              datasets: [{ label: 'Peso', data: sortedW.map(w => w.weight), borderColor: '#3b82f6', tension: 0.3, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }]
-          },
-          options: {
-                      plugins: { legend: { display: false } },
-                      scales: {
-                          y: {
-                              min: 0, // Escala começando em 0
-                              max: 120, // Escala terminando em 120kg
-                              grid: { color: 'rgba(255,255,255,0.05)' },
-                              ticks: { color: '#94a3b8' }
-                          },
-                          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                      }
-                  }
-      });
-  
-      const weeks = [];
-      for (let i = 3; i >= 0; i--) {
-          const d = new Date(); d.setDate(d.getDate() - (i*7));
-          const sun = new Date(d); sun.setDate(d.getDate() - d.getDay()); sun.setHours(0,0,0,0);
-          const sat = new Date(d); sat.setDate(d.getDate() + (6 - d.getDay())); sat.setHours(23,59,59,999);
-          const count = history.filter(h => { const hd = new Date(h.dateIso); return hd >= sun && hd <= sat; }).length;
-          weeks.push({ label: `${sun.getDate()}/${sun.getMonth()+1}`, count });
-      }
-      workoutChartInstance = new Chart(document.getElementById('workoutChart'), {
-          type: 'bar',
-          data: { labels: weeks.map(w=>w.label), datasets: [{ data: weeks.map(w=>w.count), backgroundColor: '#60a5fa' }] },
-          options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-      });
-  }
+   function renderCharts() {
+    // 1. Limpa instâncias anteriores para evitar sobreposição
+    if (weightChartInstance) weightChartInstance.destroy();
+    if (workoutChartInstance) workoutChartInstance.destroy();
+
+    // --- LÓGICA DO GRÁFICO DE PESO ---
+    const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
+    const weights = sortedW.map(w => parseFloat(w.weight));
+    
+    // Valores padrão de segurança
+    let yMin = 0;
+    let yMax = 120;
+
+    if (weights.length > 0) {
+        const minRecorded = Math.min(...weights);
+        const maxRecorded = Math.max(...weights);
+        
+        // Define 10kg abaixo do mínimo (não menor que 0) e 10kg acima do máximo
+        yMin = Math.max(0, Math.floor(minRecorded - 10));
+        yMax = Math.ceil(maxRecorded + 10);
+    }
+
+    weightChartInstance = new Chart(document.getElementById('weightChart'), {
+        type: 'line',
+        data: {
+            labels: sortedW.map(w => { 
+                const [y, m, d] = w.date.split('-'); 
+                return `${d}/${m}`; 
+            }),
+            datasets: [{ 
+                label: 'Peso', 
+                data: sortedW.map(w => w.weight), 
+                borderColor: '#3b82f6', 
+                tension: 0.3, 
+                fill: true, 
+                backgroundColor: 'rgba(59, 130, 246, 0.1)' 
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    min: yMin,
+                    max: yMax,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+
+    // --- LÓGICA DO GRÁFICO DE TREINOS (MANTIDA ORIGINAL) ---
+    const weeks = [];
+    for (let i = 3; i >= 0; i--) {
+        const d = new Date(); 
+        d.setDate(d.getDate() - (i * 7));
+        const sun = new Date(d); 
+        sun.setDate(d.getDate() - d.getDay()); 
+        sun.setHours(0, 0, 0, 0);
+        const sat = new Date(d); 
+        sat.setDate(d.getDate() + (6 - d.getDay())); 
+        sat.setHours(23, 59, 59, 999);
+
+        const count = history.filter(h => { 
+            const hd = new Date(h.dateIso); 
+            return hd >= sun && hd <= sat; 
+        }).length;
+
+        weeks.push({ label: `${sun.getDate()}/${sun.getMonth() + 1}`, count });
+    }
+
+    workoutChartInstance = new Chart(document.getElementById('workoutChart'), {
+        type: 'bar',
+        data: { 
+            labels: weeks.map(w => w.label), 
+            datasets: [{ 
+                data: weeks.map(w => w.count), 
+                backgroundColor: '#60a5fa' 
+            }] 
+        },
+        options: { 
+            plugins: { legend: { display: false } }, 
+            scales: { 
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' } },
+                x: { ticks: { color: '#94a3b8' } }
+            } 
+        }
+    });
+}
 
 // 2. Renderiza as listas separadamente
 function renderPerformanceHistory() {
