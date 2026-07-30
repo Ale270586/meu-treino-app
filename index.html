@@ -559,6 +559,7 @@
       signOut, 
       sendPasswordResetEmail 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
     // CONFIGURAÇÃO DO FIREBASE
     const firebaseConfig = {
@@ -574,6 +575,7 @@
     const firebaseApp = initializeApp(firebaseConfig);
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
+    const messaging = getMessaging(firebaseApp);
 
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (SUGESTÕES)
     // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
@@ -727,6 +729,7 @@
         document.getElementById('authScreen').classList.add('hidden');
         populatePresetsDropdown();
         await loadUserData();
+        await requestNotificationPermission();
       } else {
         currentUser = null;
         document.getElementById('authScreen').classList.remove('hidden');
@@ -1924,6 +1927,31 @@ window.closeVideoModal = () => {
     iframe.src = ""; // Para o vídeo imediatamente
     modal.classList.add('hidden');
 };
+
+// Função para solicitar permissão e salvar o Token de Notificação
+async function requestNotificationPermission() {
+    if (!currentUser) return;
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            // ATENÇÃO: Você precisa gerar esta VAPID KEY no Console do Firebase
+            // Configurações do Projeto > Cloud Messaging > Web Push certificates
+            const token = await getToken(messaging, { 
+                vapidKey: 'SUA_CHAVE_VAPID_AQUI' 
+            });
+            
+            if (token) {
+                // Salva o token no documento do usuário no Firestore [7]
+                const userDocRef = doc(db, "users", currentUser.uid);
+                await setDoc(userDocRef, { fcmToken: token }, { merge: true });
+                console.log("Token de notificação salvo com sucesso.");
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao configurar notificações:", error);
+    }
+}
+    
   </script>
 </body>
 </html>
