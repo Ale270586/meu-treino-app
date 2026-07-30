@@ -1887,21 +1887,27 @@ window.openVideoModal = (url) => {
     if (!url) return;
 
     let videoId = '';
-    // Extrai o ID de links comuns, celular (youtu.be) ou Shorts
-    if (url.includes('v=')) {
-        videoId = url.split('v=')[7].split('&');
-    } else if (url.includes('youtu.be/')) {
-        videoId = url.split('youtu.be/')[7].split('?');
-    } else if (url.includes('/shorts/')) {
-        videoId = url.split('/shorts/')[7].split('?');
-    }
 
-    if (videoId) {
-        // O formato /embed/ é o único que o YouTube permite carregar no site
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
-        modal.classList.remove('hidden');
-    } else {
-        // Se não for YouTube, tenta abrir em nova aba como segurança
+    try {
+        // CORREÇÃO: Usamos [5] para pegar a parte após o separador, não [2]
+        if (url.includes('v=')) {
+            videoId = url.split('v=')[5].split('&');
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[5].split('?');
+        } else if (url.includes('/shorts/')) {
+            videoId = url.split('/shorts/')[5].split('?');
+        }
+
+        if (videoId) {
+            // O formato /embed/ permite a conexão interna
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            modal.classList.remove('hidden');
+        } else {
+            // Se falhar a extração, abre em nova aba como segurança
+            window.open(url, '_blank');
+        }
+    } catch (e) {
+        console.error("Erro ao processar URL:", e);
         window.open(url, '_blank');
     }
 };
