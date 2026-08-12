@@ -279,10 +279,6 @@
             <i class="ph-bold ph-plus"></i>
             <span>Log Peso</span>
         </button>
-        <button id="btnOpenRunForm" onclick="toggleRunForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
-            <i class="ph-bold ph-plus"></i>
-            <span>Log Corrida</span>
-        </button>
     </div>
 
     <!-- Navegação das 3 Subtelas (Treinos, Pesos e Análises) -->
@@ -292,10 +288,6 @@
         </button>
         <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
             Pesos
-        </button>
-        <!-- NOVO BOTÃO DA ABA CORRIDA -->
-        <button onclick="switchPerfTab('runs')" id="perfTabRuns" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
-            Corrida
         </button>
         <button onclick="switchPerfTab('charts')" id="perfTabCharts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
             Análises
@@ -327,61 +319,7 @@
     </div>
 
     <!-- Subtela 3: Gráficos de Análise -->
-    <!-- Subtela 4: Corrida -->
-<div id="subviewRuns" class="hidden space-y-4">
-    <!-- Formulário de Registro de Corrida -->
-    <div id="runLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
-        <div class="grid grid-cols-2 gap-2">
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
-                <input type="date" id="runDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Distância (km)</label>
-                <input type="number" id="runDistance" step="0.01" placeholder="Ex: 5.20" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-3 gap-2">
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Horas</label>
-                <input type="number" id="runHours" min="0" max="23" value="0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Minutos</label>
-                <input type="number" id="runMinutes" min="0" max="59" value="0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Segundos</label>
-                <input type="number" id="runSeconds" min="0" max="59" value="0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-            </div>
-        </div>
-        
-        <button onclick="saveRunEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
-    </div>
-
-    <!-- Tabela de Histórico de Corrida -->
-    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-900/80 border-b border-slate-800">
-                    <tr>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Data</th>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">km</th>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Tempo</th>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Pace</th>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase">Vel. Média</th>
-                        <th class="p-3 text-[10px] font-bold text-slate-500 uppercase text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="runHistoryTableBody" class="divide-y divide-slate-800/50 text-xs">
-                    <!-- Gerado via JavaScript dinamicamente -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-      <div id="subviewCharts" class="hidden space-y-4">
+    <div id="subviewCharts" class="hidden space-y-4">
         <div class="glass-card rounded-2xl p-4 border border-slate-800">
             <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Peso (kg)</h4>
             <canvas id="weightChart"></canvas>
@@ -778,7 +716,6 @@
     let workouts = { A: [], B: [], C: [], D: [], E: [] };
     let history = [];
     let weightHistory = []; // Novo: Armazena o histórico de peso
-    let runHistory = []; // Novo: Armazena o histórico de corridas
     let dietPlan = []; // Formato esperado: [{ id, time, foods: [], meds: [], done: false }]
 
     const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
@@ -964,7 +901,6 @@ window.handleForgotPassword = async () => {
           workouts = sanitizeWorkouts(data.workouts);
           history = Array.isArray(data.history) ? data.history : [];
           weightHistory = Array.isArray(data.weightHistory) ? data.weightHistory : [];
-          runHistory = Array.isArray(data.runHistory) ? data.runHistory : [];
           dietPlan = Array.isArray(data.dietPlan) ? data.dietPlan : [];
           
         } else {
@@ -994,7 +930,6 @@ window.handleForgotPassword = async () => {
         workouts: cleanWorkoutsData,
         history: history,
         weightHistory: weightHistory,
-        runHistory: runHistory
         dietPlan: dietPlan 
       }, { merge: true });
 
@@ -1370,24 +1305,20 @@ function renderExercises() {
   let workoutChartInstance = null;
   
   window.switchPerfTab = (tab) => {
-    // Adicionado 'runs' para as views e tabs
-    const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns' };
-    const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns' };
-
-    Object.keys(views).forEach(k => {
-        document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
-        document.getElementById(tabs[k]).className = k === tab
-            ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
-            : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
-    });
-
-    // Controla quais botões de log aparecem no topo
-    document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
-    document.getElementById('btnOpenRunForm').classList.toggle('hidden', tab !== 'runs');
-
-    if (tab === 'charts') renderCharts();
-    renderPerformanceHistory();
-};
+      const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts' };
+      const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts' };
+      
+      Object.keys(views).forEach(k => {
+          document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
+          document.getElementById(tabs[k]).className = k === tab 
+              ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
+              : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+      });
+  
+      document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
+      if (tab === 'charts') renderCharts();
+      renderPerformanceHistory();
+  };
   
    function renderCharts() {
     if (weightChartInstance) weightChartInstance.destroy();
@@ -1471,7 +1402,6 @@ function renderPerformanceHistory() {
                         <button onclick="deleteWeightEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash"></i></button>
                     </div>
                 </div>`;
-          
         }).join('');
 
     // Renderizar Treinos
@@ -1490,26 +1420,6 @@ function renderPerformanceHistory() {
                     ${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-b border-slate-800/40 py-1"><span class="text-slate-300">${ex.name}</span><span class="text-brand-400 font-medium">${ex.seriesCompleted}/${ex.seriesTotal} séri. • ${ex.weightUsed}</span></div>`).join('')}
                 </div>
             </div>`).join('');
-        const runContainer = document.getElementById('runHistoryTableBody');
-      if (runContainer) {
-          runContainer.innerHTML = runHistory.length === 0
-              ? `<tr><td colspan="6" class="text-center py-6 text-slate-500 text-xs italic">Nenhum registro de corrida.</td></tr>`
-              : runHistory.map(item => {
-                  const [y, m, d] = item.date.split('-');
-                  return `
-                      <tr class="transition border-b border-slate-800/50">
-                          <td class="p-3 text-slate-300 font-medium">${d}/${m}/${y}</td>
-                          <td class="p-3 text-white font-bold">${item.distance} km</td>
-                          <td class="p-3 text-slate-300 font-mono">${item.timeStr}</td>
-                          <td class="p-3 text-brand-300 font-mono font-semibold">${item.pace} <span class="text-[9px] text-slate-500 font-normal">min/km</span></td>
-                          <td class="p-3 text-emerald-400 font-mono font-semibold">${item.speed} <span class="text-[9px] text-slate-500 font-normal">km/h</span></td>
-                          <td class="p-3 text-center">
-                              <button onclick="deleteRunEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1 transition"><i class="ph-bold ph-trash"></i></button>
-                          </td>
-                      </tr>
-                  `;
-              }).join('');
-      }
 }
 
     // EXCLUIR TREINO DO HISTÓRICO
@@ -2042,88 +1952,12 @@ function checkDietTimer() {
 }
 // Verifica a cada 30 segundos
 setInterval(checkDietTimer, 30000);
-
-
-// Alternar visualização do formulário de corrida
-window.toggleRunForm = () => {
-    const form = document.getElementById('runLogForm');
-    form.classList.toggle('hidden');
-    if (!form.classList.contains('hidden')) {
-        document.getElementById('runDate').value = new Date().toISOString().split('T');
-    }
-};
-
-// Salvar registro de corrida com cálculo de Pace e Velocidade Média
-window.saveRunEntry = async () => {
-    const dateValue = document.getElementById('runDate').value;
-    const distValue = parseFloat(document.getElementById('runDistance').value);
-    const hrs = parseInt(document.getElementById('runHours').value) || 0;
-    const mins = parseInt(document.getElementById('runMinutes').value) || 0;
-    const secs = parseInt(document.getElementById('runSeconds').value) || 0;
-
-    if (!dateValue || isNaN(distValue) || distValue <= 0) {
-        alert("Por favor, preencha a data e uma distância válida (maior que 0).");
-        return;
-    }
-
-    const totalSeconds = (hrs * 3600) + (mins * 60) + secs;
-    if (totalSeconds <= 0) {
-        alert("Por favor, preencha o tempo de duração da corrida.");
-        return;
-    }
-
-    // --- CÁLCULO DO PACE (minutos por km) ---
-    const paceTotalMins = (totalSeconds / 60) / distValue;
-    let paceM = Math.floor(paceTotalMins);
-    let paceS = Math.round((paceTotalMins - paceM) * 60);
-    if (paceS === 60) {
-        paceS = 0;
-        paceM += 1;
-    }
-    const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
-
-    // --- CÁLCULO DA VELOCIDADE MÉDIA (km/h) ---
-    const totalHours = totalSeconds / 3600;
-    const speedVal = (distValue / totalHours).toFixed(2);
-
-    const entry = {
-        id: Date.now(),
-        date: dateValue,
-        distance: distValue.toFixed(2),
-        timeStr: `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`,
-        pace: paceStr,
-        speed: speedVal,
-        type: 'run'
-    };
-
-    runHistory.unshift(entry);
     
-    // Ordena por data (mais recente primeiro)
-    runHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    await saveUserData();
-
-    // Limpa campos e esconde formulário
-    document.getElementById('runDistance').value = "";
-    document.getElementById('runHours').value = "0";
-    document.getElementById('runMinutes').value = "0";
-    document.getElementById('runSeconds').value = "0";
-    document.getElementById('runLogForm').classList.add('hidden');
-
-    renderPerformanceHistory();
-};
-
-// Excluir registro de corrida
-window.deleteRunEntry = async (id) => {
-    if (confirm("Deseja apagar este registro de corrida?")) {
-        runHistory = runHistory.filter(r => r.id !== id);
-        await saveUserData();
-        renderPerformanceHistory();
-    }
-};    
   </script>
 </body>
 </html>
+
+
 
 
 
