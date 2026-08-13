@@ -9,7 +9,7 @@
 <!-- Phosphor Icons -->
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 <!-- Inter Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Chart.js para as Análises -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -75,6 +75,7 @@ border-radius: 4px;
 <h1 class="text-3xl font-extrabold tracking-tight text-white">Meu Treino Pro</h1>
 <p class="text-slate-400 text-sm mt-1" id="authSubtitle">Acesse sua ficha de treinos personalizada</p>
 </div>
+
 <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mail</label>
@@ -83,6 +84,7 @@ border-radius: 4px;
 <input type="email" id="authEmail" required placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
+
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha</label>
 <div class="relative">
@@ -90,6 +92,7 @@ border-radius: 4px;
 <input type="password" id="authPassword" required minlength="6" placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
+
 <div id="confirmPasswordGroup" class="hidden">
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Confirmar Senha</label>
 <div class="relative">
@@ -97,14 +100,17 @@ border-radius: 4px;
 <input type="password" id="authConfirmPassword" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
+
 <div class="text-right">
 <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-brand-400 transition">Esqueci minha senha</button>
 </div>
+
 <button type="submit" id="authSubmitBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/20 transition duration-200 flex items-center justify-center space-x-2 text-sm">
 <span>Entrar no App</span>
 <i class="ph-bold ph-arrow-right"></i>
 </button>
 </form>
+
 <div class="mt-6 text-center">
 <button onclick="toggleAuthMode()" id="toggleAuthBtn" class="text-xs text-brand-400 hover:text-brand-300 font-medium transition">
 Não tem uma conta? Cadastre-se
@@ -125,6 +131,7 @@ Não tem uma conta? Cadastre-se
 <h2 id="userNameHeader" class="text-base font-bold text-white truncate max-w-[160px]">Carregando...</h2>
 </div>
 </div>
+
 <div class="flex items-center space-x-2">
 <button onclick="openProfileModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-center text-slate-300 transition">
 <i class="ph-bold ph-user-gear text-lg"></i>
@@ -134,6 +141,7 @@ Não tem uma conta? Cadastre-se
 </button>
 </div>
 </div>
+
 <!-- WORKOUT TABS (5 TREINOS: A, B, C, D, E) -->
 <div id="workoutTabsHeader" class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
 <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">Treino A</button>
@@ -157,10 +165,12 @@ Não tem uma conta? Cadastre-se
 <p class="text-xs text-slate-400">Marque as séries realizadas, ajuste repetições/cargas e use o descanso</p>
 </div>
 </div>
+
 <!-- LISTA DE EXECUÇÃO -->
 <div id="executeExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
 </div>
+
 <!-- BOTÃO FINALIZAR -->
 <div class="pt-4">
 <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
@@ -184,6 +194,7 @@ Não tem uma conta? Cadastre-se
 <span>Add Exercício</span>
 </button>
 </div>
+
 <div class="flex gap-2">
 <!-- Novo botão de Importar CSV -->
 <button onclick="document.getElementById('csvFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
@@ -192,6 +203,7 @@ Não tem uma conta? Cadastre-se
 </button>
 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
 </div>
+
 <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
 <div id="editExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
@@ -204,6 +216,7 @@ Não tem uma conta? Cadastre-se
 <h3 class="text-lg font-extrabold text-white">Minha Dieta</h3>
 <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400 font-bold uppercase tracking-widest" id="dietDayLabel">Hoje</span>
 </div>
+
 <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
@@ -236,6 +249,7 @@ Não tem uma conta? Cadastre-se
 <span>Add Horário</span>
 </button>
 </div>
+
 <div class="flex gap-2 mt-2">
 <!-- Botão Secundário (Importar) seguindo estilo do 'Importar CSV' -->
 <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
@@ -244,15 +258,16 @@ Não tem uma conta? Cadastre-se
 </button>
 <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
 </div>
+
 <div id="dietEditList" class="space-y-3">
-<!-- Os itens da dieta aparecerão aqui via JavaScript [2] -->
+<!-- Os itens da dieta aparecerão aqui via JavaScript -->
 </div>
 </section>
 
 <!-- TELA 5: DESEMPENHO E HISTÓRICO -->
 <section id="viewPerformance" class="space-y-4 hidden">
 <div class="space-y-4">
-<!-- Título e Botão de Peso -->
+<!-- Título e Botões de Logs -->
 <div class="flex items-center justify-between">
 <h3 class="text-lg font-extrabold text-white">Desempenho</h3>
 <button id="btnOpenWeightForm" onclick="toggleWeightForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
@@ -264,7 +279,8 @@ Não tem uma conta? Cadastre-se
 <span>Log Corrida</span>
 </button>
 </div>
-<!-- Navegação das 3 Subtelas (Treinos, Pesos e Análises) -->
+
+<!-- Navegação das Subtelas (Treinos, Pesos, Corrida e Análises) -->
 <div class="flex bg-slate-900/50 p-1 rounded-2xl border border-slate-800">
 <button onclick="switchPerfTab('workouts')" id="perfTabWorkouts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg">
 Treinos
@@ -272,7 +288,6 @@ Treinos
 <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Pesos
 </button>
-<!-- NOVO BOTÃO DA ABA CORRIDA -->
 <button onclick="switchPerfTab('runs')" id="perfTabRuns" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Corrida
 </button>
@@ -319,6 +334,7 @@ Análises
 <input type="number" id="runDistance" step="0.01" placeholder="Ex: 5.20" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
 </div>
 </div>
+
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Horas</label>
@@ -335,6 +351,7 @@ Análises
 </div>
 <button onclick="saveRunEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2 rounded-xl">Salvar Registro</button>
 </div>
+
 <!-- Tabela de Histórico de Corrida -->
 <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
 <div class="overflow-x-auto">
@@ -363,14 +380,21 @@ Análises
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Peso (kg)</h4>
 <canvas id="weightChart"></canvas>
 </div>
+
+<!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
+<div class="glass-card rounded-2xl p-4 border border-slate-800">
+<h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
+<canvas id="runPaceChart"></canvas>
+</div>
+
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Frequência Semanal de Treinos</h4>
 <canvas id="workoutChart"></canvas>
 </div>
 </div>
-
 </div>
 </section>
+
 </main>
 
 <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
@@ -409,6 +433,7 @@ Análises
 <h3 class="text-xl font-extrabold text-white">Editar Perfil</h3>
 <p class="text-xs text-slate-400 mt-1">Atualize suas métricas e foto</p>
 </div>
+
 <form onsubmit="saveUserProfile(event)" class="space-y-4">
 <div class="flex flex-col items-center">
 <div class="relative group cursor-pointer" onclick="document.getElementById('photoInput').click()">
@@ -420,10 +445,12 @@ Análises
 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
 <span class="text-[11px] text-slate-400 mt-1 cursor-pointer" onclick="document.getElementById('photoInput').click()">Toque para alterar a foto</span>
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
 <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
+
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Idade</label>
@@ -453,6 +480,7 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="exerciseModalTitle" class="text-xl font-extrabold text-white text-center">Novo Exercício</h3>
+
 <form onsubmit="saveExercise(event)" class="space-y-3">
 <input type="hidden" id="exIndex" value="-1">
 <div>
@@ -462,10 +490,12 @@ Análises
 <!-- Preenchido via JS -->
 </select>
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome do Exercício</label>
 <input type="text" id="exName" required placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
+
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nº de Séries</label>
@@ -476,6 +506,7 @@ Análises
 <input type="text" id="exReps" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
 </div>
+
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
@@ -497,19 +528,23 @@ Análises
 </select>
 </div>
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Link do Vídeo / Execução (URL)</label>
 <input type="url" id="exLink" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Observação Geral</label>
 <input type="text" id="exObs" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Grupo Combinado (Opcional)</label>
 <input type="text" id="exCombinado" placeholder="Ex: SS1" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 <p class="text-[10px] text-slate-500 mt-1">Exercícios com o mesmo nome (ex: SS1) aparecerão juntos.</p>
 </div>
+
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Exercício</span>
@@ -525,20 +560,24 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="dietModalTitle" class="text-xl font-extrabold text-white text-center">Nova Refeição</h3>
+
 <form onsubmit="saveDietEntry(event)" class="space-y-4">
 <input type="hidden" id="dietEditId" value="">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
 <input type="time" id="dietTimeInput" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos</label>
 <textarea id="dietFoodsInput" rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Escreva como quiser..."></textarea>
 </div>
+
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações</label>
 <textarea id="dietMedsInput" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Ex: Creatina, Vitaminas..."></textarea>
 </div>
+
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Dieta</span>
@@ -565,20 +604,8 @@ Análises
 <!-- FIREBASE SDKS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import {
-getFirestore,
-doc,
-getDoc,
-setDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import {
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut,
-sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // CONFIGURAÇÃO DO FIREBASE
 const firebaseConfig = {
@@ -597,7 +624,6 @@ const db = getFirestore(firebaseApp);
 
 // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
 const presetExercisesList = [
-// --- ABDÔMEN (CORE) ---
 { group: "Abdômen (Core)", name: "Abdominal na polia alta", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Polia)", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Solo)", link: "" },
@@ -610,7 +636,6 @@ const presetExercisesList = [
 { group: "Abdômen (Core)", name: "Encolhimento polia (abdominal)", link: "" },
 { group: "Abdômen (Core)", name: "Prancha isométrica (Solo)", link: "" },
 { group: "Abdômen (Core)", name: "Roda abdominal (Ab Wheel)", link: "" },
-// --- BRAÇOS (BÍCEPS E ANTEBRAÇOS) ---
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca alternada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca concentrada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra reta)", link: "" },
@@ -621,7 +646,6 @@ const presetExercisesList = [
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Barra)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Máquina)", link: "" },
-// --- BRAÇOS (TRÍCEPS) ---
 { group: "Braços (Tríceps)", name: "Tríceps coice (Halteres)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps coice (Polia)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps francês (Halter único)", link: "" },
@@ -634,7 +658,6 @@ const presetExercisesList = [
 { group: "Braços (Tríceps)", name: "Tríceps pulley (Corda na polia alta)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Barra W)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Halteres)", link: "" },
-// --- COSTAS (DORSAIS, ROMBOIDES, TRAPÉZIO) ---
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Extensão lombar (Banco romano)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley fechado com triângulo", link: "" },
@@ -647,7 +670,6 @@ const presetExercisesList = [
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa barra reta)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa triângulo)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada unilateral / Serrote (Halteres)", link: "" },
-// --- OMBROS (DELTOIDES) ---
 { group: "Ombros (Deltoides)", name: "Abdução ombro cabo unilateral", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
@@ -664,7 +686,6 @@ const presetExercisesList = [
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Barra)", link: "" },
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Remada Alta Trapézio (Cabo)", link: "" },
-// --- PEITO (PEITORAIS) ---
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Máquina)", link: "" },
@@ -681,13 +702,11 @@ const presetExercisesList = [
 { group: "Peito (Peitorais)", name: "Supino reto (Barra)", link: "" },
 { group: "Peito (Peitorais)", name: "Supino reto (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Voador / Pec Deck (Máquina)", link: "" },
-// --- PERNAS (GLÚTEOS) ---
 { group: "Pernas (Glúteos)", name: "Cadeira abdutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Cadeira adutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Elevação pélvica (Barra ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo na polia / Cabo", link: "" },
-// --- PERNAS (MEMBROS INFERIORES) ---
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Búlgaro (Halteres)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Hack (Máquina)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento livre (Barra)", link: "" },
@@ -696,13 +715,11 @@ const presetExercisesList = [
 { group: "Pernas (Membros Inferiores)", name: "Leg Press (horizontal)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Barra)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Halteres)", link: "" },
-// --- PERNAS (PANTURRILHAS) ---
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Smith)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Step)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha sentado (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Panturrilha no Leg Press", link: "" },
-// --- PERNAS (POSTERIORES DE COXA) ---
 { group: "Pernas (Posteriores de Coxa)", name: "Cadeira flexora (Máquina sentada)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
@@ -719,7 +736,6 @@ let currentView = 'execute'; // 'execute', 'edit' ou 'performance'
 let currentSessionLogs = {};
 let activeTimers = {};
 let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
-// 5 treinos: A, B, C, D, E
 let workouts = { A: [], B: [], C: [], D: [], E: [] };
 let history = [];
 let weightHistory = []; // Novo: Armazena o histórico de peso
@@ -742,23 +758,19 @@ document.getElementById('authScreen').classList.remove('hidden');
 
 function populatePresetsDropdown() {
 const select = document.getElementById('exPresetSelect');
-// 1. Agrupa os exercícios por grupo muscular
 const groups = {};
 presetExercisesList.forEach((ex, idx) => {
 if (!groups[ex.group]) {
 groups[ex.group] = [];
 }
-// Guardamos o índice original para que a função applyPresetExercise continue funcionando
 groups[ex.group].push({ ...ex, originalIndex: idx });
 });
-// 2. Constrói o HTML usando <optgroup> para as categorias
+
 let html = '<option value="">-- Escolha um exercício ou digite abaixo --</option>';
 for (const groupName in groups) {
 html += `<optgroup label="${groupName}" class="bg-slate-800 text-brand-400 font-bold">`;
 groups[groupName].forEach(ex => {
-html += `<option value="${ex.originalIndex}" class="bg-slate-900 text-white font-normal">
-${ex.name}
-</option>`;
+html += `<option value="${ex.originalIndex}" class="bg-slate-900 text-white font-normal">${ex.name}</option>`;
 });
 html += `</optgroup>`;
 }
@@ -779,20 +791,19 @@ isRegisterMode = !isRegisterMode;
 const subtitle = document.getElementById('authSubtitle');
 const submitBtn = document.getElementById('authSubmitBtn');
 const toggleBtn = document.getElementById('toggleAuthBtn');
-const confirmGroup = document.getElementById('confirmPasswordGroup'); // Novo
+const confirmGroup = document.getElementById('confirmPasswordGroup');
 if (isRegisterMode) {
 subtitle.textContent = "Crie sua conta para salvar seus treinos";
 submitBtn.querySelector('span').textContent = "Cadastrar Conta";
-confirmGroup.classList.remove('hidden'); // Mostra o campo
+confirmGroup.classList.remove('hidden');
 } else {
 subtitle.textContent = "Acesse sua ficha de treinos personalizada";
 submitBtn.querySelector('span').textContent = "Entrar no App";
-confirmGroup.classList.add('hidden'); // Esconde o campo
+confirmGroup.classList.add('hidden');
 }
 toggleBtn.textContent = isRegisterMode ? "Já tem uma conta? Faça Login" : "Não tem uma conta? Cadastre-se";
 };
 
-// Função para Recuperação de Senha
 window.handleForgotPassword = async () => {
 const email = document.getElementById('authEmail').value;
 if (!email) {
@@ -815,9 +826,9 @@ window.handleAuth = async (e) => {
 e.preventDefault();
 const email = document.getElementById('authEmail').value.trim();
 const password = document.getElementById('authPassword').value;
-const confirmPassword = document.getElementById('authConfirmPassword').value; // Novo
+const confirmPassword = document.getElementById('authConfirmPassword').value;
 const submitBtn = document.getElementById('authSubmitBtn');
-// Validação de Senhas Iguais
+
 if (isRegisterMode && password !== confirmPassword) {
 alert("As senhas não coincidem. Por favor, tente novamente.");
 return;
@@ -840,9 +851,8 @@ case 'auth/invalid-credential': mensagem = "E-mail ou senha incorretos."; break;
 case 'auth/email-already-in-use': mensagem = "Este e-mail já está sendo usado por outra conta."; break;
 case 'auth/weak-password': mensagem = "A senha deve ter pelo menos 6 caracteres."; break;
 }
-alert(mensagem); // Exibe a mensagem amigável em português
-}
-finally {
+alert(mensagem);
+} finally {
 submitBtn.disabled = false;
 submitBtn.classList.remove('opacity-70');
 }
@@ -878,7 +888,7 @@ ritmo: String(item?.ritmo || ""),
 restTime: String(item?.restTime || "60"),
 link: String(item?.link || ""),
 obs: String(item?.obs || ""),
-combinado: String(item?.combinado || "") // NOVO CAMPO
+combinado: String(item?.combinado || "")
 }));
 });
 return cleanW;
@@ -938,27 +948,27 @@ diet: 'navDietBtn',
 editDiet: 'navEditDietBtn',
 performance: 'navPerformanceBtn'
 };
-// Esconde todas as seções
+
 views.forEach(v => {
 const el = document.getElementById(v);
 if (el) el.classList.add('hidden');
 });
-// Reseta o estilo de todos os botões da navegação
+
 Object.values(btns).forEach(b => {
 const el = document.getElementById(b);
 if (el) el.className = "flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition";
 });
-// Mostra a tela selecionada e destaca o botão correspondente
+
 const targetView = document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`);
 if (targetView) targetView.classList.remove('hidden');
 const targetBtn = document.getElementById(btns[view]);
 if (targetBtn) targetBtn.className = "flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition";
-// Controla a visibilidade do cabeçalho de treinos (A, B, C, D, E)
+
 const tabsHeader = document.getElementById('workoutTabsHeader');
 if (tabsHeader) {
 tabsHeader.classList.toggle('hidden', ['performance', 'diet', 'editDiet'].includes(view));
 }
-// Chama a renderização específica de cada tela
+
 if (view === 'diet') renderDietTable();
 if (view === 'editDiet') renderDietEditor();
 if (view === 'performance') renderPerformanceHistory();
@@ -994,8 +1004,6 @@ activeBtn.className = "workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs tr
 renderExercises();
 };
 
-// Renderizar Exercícios
-// Função para alternar o status da série em exercícios combinados
 window.toggleCombinedSerieDone = function(indexesArray, serieIndex) {
 if (!indexesArray || indexesArray.length === 0) return;
 const firstIdx = indexesArray[0];
@@ -1016,7 +1024,6 @@ const currentList = workouts[currentTab] || [];
 const execListContainer = document.getElementById('executeExerciseList');
 const editListContainer = document.getElementById('editExerciseList');
 
-// 1. LÓGICA DE AGRUPAMENTO
 const grouped = [];
 currentList.forEach((ex, idx) => {
 const lastGroup = grouped[grouped.length - 1];
@@ -1030,13 +1037,11 @@ items: [{ ...ex, originalIndex: idx }]
 }
 });
 
-// --- RENDERIZAÇÃO DA TELA DE EXECUÇÃO ---
 if (currentList.length === 0) {
 execListContainer.innerHTML = `<div class="text-center py-12 glass-card rounded-2xl border border-slate-800"><p class="text-slate-400 text-sm">Nenhum exercício cadastrado.</p></div>`;
 } else {
 execListContainer.innerHTML = grouped.map(group => {
 const isCombined = group.tag !== null;
-// ================= SE FOR COMBINADO =================
 if (isCombined) {
 const masterItem = group.items[0];
 const masterIdx = masterItem.originalIndex;
@@ -1053,31 +1058,20 @@ const allGroupIndexes = JSON.stringify(group.items.map(i => i.originalIndex));
 let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
-seriesHtml += `
-<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
 <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
 <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-500 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
-return `
-<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
-isComplete
-? 'border-emerald-500/60 bg-emerald-500/10'
-: 'border-slate-800/80'
-} space-y-4">
+return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-4">
 <div class="flex items-center justify-between">
-<div class="inline-flex items-center gap-1 ${
-isComplete
-? 'bg-emerald-500 text-slate-950'
-: 'bg-brand-500 text-white'
-} text-[9px] font-black px-2 py-0.5 rounded uppercase">
+<div class="inline-flex items-center gap-1 ${isComplete ? 'bg-emerald-500 text-slate-950' : 'bg-brand-500 text-white'} text-[9px] font-black px-2 py-0.5 rounded uppercase">
 <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
 </div>
 </div>
 ${group.items.map((item, i) => {
 const obsText = item.obs || item.observacao || item.notes || '';
-return `
-<div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
+return `<div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
 <div class="flex justify-between items-center">
 <h4 class="font-bold text-white text-sm">${item.name}</h4>
 ${item.link ? `<button onclick="openVideoModal('${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : ''}
@@ -1100,9 +1094,7 @@ ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border borde
 </div>
 </div>
 </div>`;
-}
-// ================= SE FOR INDIVIDUAL =================
-else {
+} else {
 return group.items.map(item => {
 const idx = item.originalIndex;
 const numSeries = parseInt(item.series) || 1;
@@ -1116,18 +1108,12 @@ const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === 
 let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
-seriesHtml += `
-<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
 <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-4 h-4 accent-emerald-500">
 <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
-return `
-<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
-isComplete
-? 'border-emerald-500/60 bg-emerald-500/10'
-: 'border-slate-800/80'
-} space-y-3">
+return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-3">
 <div class="flex justify-between items-center">
 <h4 class="font-bold text-white text-sm">${item.name}</h4>
 ${isComplete ? '<i class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>' : (item.link ? `<button onclick="openVideoModal('${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : '')}
@@ -1151,11 +1137,9 @@ ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border borde
 }).join('');
 }
 
-// --- RENDERIZAÇÃO DA TELA DE EDIÇÃO ---
 editListContainer.innerHTML = currentList.length === 0 ?
 `<div class="text-center py-10 glass-card rounded-2xl border border-slate-800"><p class="text-slate-500 italic text-xs">Vazio.</p></div>` :
-currentList.map((item, index) => `
-<div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between transition-all">
+currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between transition-all">
 <div class="flex-1 truncate pr-4">
 <h4 class="font-bold text-white text-sm truncate">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2 font-black uppercase">[${item.combinado}]</span>` : ''}</h4>
 <p class="text-[10px] text-slate-500 mt-1">${item.series}x ${item.reps} • ${item.weight}kg</p>
@@ -1164,11 +1148,10 @@ currentList.map((item, index) => `
 <button onclick="openExerciseModal(${index})" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700"><i class="ph-bold ph-pencil-simple text-base"></i></button>
 <button onclick="deleteExercise(${index})" class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20"><i class="ph-bold ph-trash text-base"></i></button>
 </div>
-</div>
-`).join('');
+</div>`).join('');
 }
 
-// CRONÔMETRO DE DESCANSO
+// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Alarm)
 window.startRestTimer = (index, seconds) => {
 const displayEl = document.getElementById(`timer-display-${index}`);
 if (!displayEl) return;
@@ -1189,16 +1172,40 @@ if (timeLeft <= 0) {
 clearInterval(activeTimers[index]);
 displayEl.textContent = "Pronto!";
 
-// --- NOVO: Som em volume máximo tocando por 4 segundos ---
-const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-audio.volume = 1.0;
-audio.loop = true;
-audio.play();
+// --- WEB AUDIO API BUZZER / ALARM SOUND (Sintetizador Programático) ---
+try {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) {
+const ctx = new AudioContext();
+const now = ctx.currentTime;
+const numBeeps = 5;
+const beepDuration = 0.5; // duração do apito (segundos)
+const silenceDuration = 0.2; // pausa entre apitos
+const cycle = beepDuration + silenceDuration;
 
-setTimeout(() => {
-audio.pause();
-audio.currentTime = 0;
-}, 4000);
+const osc = ctx.createOscillator();
+const gainNode = ctx.createGain();
+
+osc.type = 'sine';
+osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro)
+gainNode.gain.setValueAtTime(0, now);
+
+// Programação dos apitos para durar ~3.5 a 4 segundos
+for (let i = 0; i < numBeeps; i++) {
+const start = now + i * cycle;
+const end = start + beepDuration;
+gainNode.gain.setValueAtTime(1.0, start); // volume máximo
+gainNode.gain.setValueAtTime(0, end);     // mudo
+}
+
+osc.connect(gainNode);
+gainNode.connect(ctx.destination);
+osc.start(now);
+osc.stop(now + (numBeeps * cycle));
+}
+} catch (e) {
+console.error("Erro ao reproduzir beep programático:", e);
+}
 
 setTimeout(() => displayEl.classList.add('hidden'), 3000);
 } else {
@@ -1268,8 +1275,9 @@ alert("Erro ao salvar histórico: " + err.message);
 // RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
 let weightChartInstance = null;
 let workoutChartInstance = null;
+let runPaceChartInstance = null; // Novo: Gráfico de Pace
+
 window.switchPerfTab = (tab) => {
-// Adicionado 'runs' para as views e tabs
 const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns' };
 const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns' };
 Object.keys(views).forEach(k => {
@@ -1278,7 +1286,6 @@ document.getElementById(tabs[k]).className = k === tab
 ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
 : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
 });
-// Controla quais botões de log aparecem no topo
 document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
 document.getElementById('btnOpenRunForm').classList.toggle('hidden', tab !== 'runs');
 if (tab === 'charts') renderCharts();
@@ -1288,9 +1295,11 @@ renderPerformanceHistory();
 function renderCharts() {
 if (weightChartInstance) weightChartInstance.destroy();
 if (workoutChartInstance) workoutChartInstance.destroy();
+if (runPaceChartInstance) runPaceChartInstance.destroy();
+
+// 1. Gráfico de Peso
 const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
 const weights = sortedW.map(w => parseFloat(w.weight));
-// Cálculo dinâmico da escala
 let yMin = 0, yMax = 120;
 if (weights.length > 0) {
 yMin = Math.max(0, Math.floor(Math.min(...weights) - 10));
@@ -1310,7 +1319,65 @@ x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
 }
 }
 });
-// Mantém a lógica de treinos semanais original [7]
+
+// 2. Gráfico de Evolução de Pace
+const sortedRuns = [...runHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+const parsePaceToDecimal = (paceStr) => {
+if (!paceStr || !paceStr.includes(':')) return 0;
+const [m, s] = paceStr.split(':').map(Number);
+return m + (s / 60);
+};
+const paceData = sortedRuns.map(r => parsePaceToDecimal(r.pace));
+const paceLabels = sortedRuns.map(r => {
+const [y, m, d] = r.date.split('-');
+return `${d}/${m}`;
+});
+
+runPaceChartInstance = new Chart(document.getElementById('runPaceChart'), {
+type: 'line',
+data: {
+labels: paceLabels,
+datasets: [{
+label: 'Pace (min/km)',
+data: paceData,
+borderColor: '#10b981', // Verde esmeralda para corrida
+tension: 0.3,
+fill: true,
+backgroundColor: 'rgba(16, 185, 129, 0.1)'
+}]
+},
+options: {
+plugins: {
+legend: { display: false },
+tooltip: {
+callbacks: {
+label: function(context) {
+const val = context.parsed.y;
+const m = Math.floor(val);
+const s = Math.round((val - m) * 60);
+return `Pace: ${m}:${s.toString().padStart(2, '0')} min/km`;
+}
+}
+}
+},
+scales: {
+y: {
+grid: { color: 'rgba(255,255,255,0.05)' },
+ticks: {
+color: '#94a3b8',
+callback: function(value) {
+const m = Math.floor(value);
+const s = Math.round((value - m) * 60);
+return `${m}:${s.toString().padStart(2, '0')}`;
+}
+}
+},
+x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+}
+}
+});
+
+// 3. Gráfico de Treinos Semanais
 const weeks = [];
 for (let i = 3; i >= 0; i--) {
 const d = new Date(); d.setDate(d.getDate() - (i*7));
@@ -1326,33 +1393,26 @@ options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: 
 });
 }
 
-// 2. Renderiza as listas separadamente
+// Renderiza as listas separadamente
 function renderPerformanceHistory() {
 const workoutContainer = document.getElementById('workoutHistoryList');
 const weightContainer = document.getElementById('weightHistoryList');
+
 // Renderizar Pesos
 weightContainer.innerHTML = weightHistory.length === 0
 ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum registro de peso.</p>`
 : weightHistory.map(item => {
 const [y, m, d] = item.date.split('-');
-return `
-<div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
+return `<div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
 <div class="flex items-center space-x-3">
 <div class="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-400"><i class="ph-bold ph-scales text-lg"></i></div>
 <div>
-<p class="text-xs text-slate-400 flex items-center gap-1">
-Peso
-<span class="text-[10px] text-brand-400 font-medium">
-• IMC: ${(() => {
+<p class="text-xs text-slate-400 flex items-center gap-1">Peso <span class="text-[10px] text-brand-400 font-medium">• IMC: ${(() => {
 const h = parseFloat(userProfile.height);
-// Verifica se a altura existe e é maior que zero [1, 3]
 if (!h || h <= 0) return "0.0";
-// Calcula o IMC: peso / (altura_em_metros²)
 const imc = (parseFloat(item.weight) / ((h / 100) ** 2)).toFixed(1);
 return imc;
-})()}
-</span>
-</p>
+})()}</span></p>
 <p class="text-white font-bold">${item.weight} kg</p>
 </div>
 </div>
@@ -1366,8 +1426,7 @@ return imc;
 // Renderizar Treinos
 workoutContainer.innerHTML = history.length === 0
 ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum treino finalizado.</p>`
-: history.map((item, idx) => `
-<div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
+: history.map((item, idx) => `<div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
 <div class="flex items-center justify-between">
 <div class="flex items-center space-x-2">
 <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xs">${item.workoutTab}</div>
@@ -1380,14 +1439,14 @@ ${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-
 </div>
 </div>`).join('');
 
+// Renderizar Corrida
 const runContainer = document.getElementById('runHistoryTableBody');
 if (runContainer) {
 runContainer.innerHTML = runHistory.length === 0
 ? `<tr><td colspan="6" class="text-center py-6 text-slate-500 text-xs italic">Nenhum registro de corrida.</td></tr>`
 : runHistory.map(item => {
 const [y, m, d] = item.date.split('-');
-return `
-<tr class="transition border-b border-slate-800/50">
+return `<tr class="transition border-b border-slate-800/50">
 <td class="p-3 text-slate-300 font-medium">${d}/${m}/${y}</td>
 <td class="p-3 text-white font-bold">${item.distance} km</td>
 <td class="p-3 text-slate-300 font-mono">${item.timeStr}</td>
@@ -1396,13 +1455,11 @@ return `
 <td class="p-3 text-center">
 <button onclick="deleteRunEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1 transition"><i class="ph-bold ph-trash"></i></button>
 </td>
-</tr>
-`;
+</tr>`;
 }).join('');
 }
 }
 
-// EXCLUIR TREINO DO HISTÓRICO
 window.deleteHistorySession = async (historyIndex) => {
 if (confirm("Deseja realmente apagar o registro deste treino do histórico?")) {
 history.splice(historyIndex, 1);
@@ -1415,24 +1472,19 @@ alert("Erro ao excluir histórico: " + err.message);
 }
 };
 
-// --- FUNÇÕES DE GERENCIAMENTO DA DIETA (VERSÃO SEM TRAVAS E COM EDIÇÃO) ---
+// --- DIETA ---
 window.openDietModal = (id = null) => {
 const modal = document.getElementById('dietModal');
 const title = document.getElementById('dietModalTitle');
 const editIdField = document.getElementById('dietEditId');
 if (id) {
-// MODO EDIÇÃO: Busca o item no array para preencher o formulário
 const item = dietPlan.find(i => i.id === id);
 title.textContent = "Editar Refeição";
 editIdField.value = id;
 document.getElementById('dietTimeInput').value = item.time || "";
-// Une o array de volta em texto separado por linhas para o usuário editar
-document.getElementById('dietFoodsInput').value = item.foods.join('
-');
-document.getElementById('dietMedsInput').value = item.meds.join('
-');
+document.getElementById('dietFoodsInput').value = item.foods.join('\n');
+document.getElementById('dietMedsInput').value = item.meds.join('\n');
 } else {
-// MODO NOVO: Limpa todos os campos
 title.textContent = "Nova Refeição";
 editIdField.value = "";
 document.getElementById('dietTimeInput').value = "";
@@ -1452,9 +1504,7 @@ const editId = document.getElementById('dietEditId').value;
 const time = document.getElementById('dietTimeInput').value;
 const foodsRaw = document.getElementById('dietFoodsInput').value;
 const medsRaw = document.getElementById('dietMedsInput').value;
-// Converte o texto livre em array de linhas, preservando exatamente o que foi escrito
-const processLines = (str) => str.split('
-').map(l => l.trim()).filter(l => l !== "");
+const processLines = (str) => str.split('\n').map(l => l.trim()).filter(l => l !== "");
 const entryData = {
 id: editId ? parseInt(editId) : Date.now(),
 time,
@@ -1463,11 +1513,9 @@ meds: processLines(medsRaw),
 done: false
 };
 if (editId) {
-// Se estiver editando, substitui o item antigo
 const idx = dietPlan.findIndex(i => i.id === parseInt(editId));
 dietPlan[idx] = { ...dietPlan[idx], ...entryData };
 } else {
-// Se for novo, adiciona ao final
 dietPlan.push(entryData);
 }
 await saveUserData();
@@ -1477,37 +1525,24 @@ closeDietModal();
 };
 
 window.handleDietCSVUpload = (e) => {
-// CORREÇÃO 1: Pega o primeiro arquivo selecionado (files[0])
 const file = e.target.files && e.target.files[0];
 if (!file) return;
 const reader = new FileReader();
 reader.onload = async (event) => {
 try {
 const content = event.target.result;
-const lines = content.split(/
-|
-/);
-// CORREÇÃO 2: Pega o texto da PRIMEIRA LINHA de verdade (lines[0])
+const lines = content.split(/\r\n|\n/);
 const firstLine = lines[0] || '';
 const separator = firstLine.includes(';') ? ';' : ',';
-// Limpa a dieta atual para sobreposição total
 dietPlan = [];
-// Helper para limpar aspas e converter células com múltiplos itens
 const parseCell = (str) => {
 if (!str) return [];
-// Remove aspas do Excel e divide por vírgula, barra ou quebra interna
-return str
-.replace(/^["']|["']$/g, '') // Remove aspas externas
-.split(/,|
-/)
-.map(s => s.trim())
-.filter(s => s !== "");
+return str.replace(/^["']|["']$/g, '').split(/,|\n/).map(s => s.trim()).filter(s => s !== "");
 };
 for (let i = 1; i < lines.length; i++) {
 const row = lines[i].trim();
 if (!row) continue;
 const columns = row.split(separator);
-// Estrutura esperada: Horário; Alimentos; Medicações
 const [hora, alimentos, medicacoes] = columns;
 if (hora && hora.trim()) {
 dietPlan.push({
@@ -1520,18 +1555,17 @@ done: false
 }
 }
 if (dietPlan.length > 0) {
-if (typeof saveUserData === 'function') await saveUserData(); // Salva no Firebase
-if (typeof renderDietEditor === 'function') renderDietEditor(); // Atualiza editor
-if (typeof renderDietTable === 'function') renderDietTable();   // Atualiza tabela principal
+if (typeof saveUserData === 'function') await saveUserData();
+if (typeof renderDietEditor === 'function') renderDietEditor();
+if (typeof renderDietTable === 'function') renderDietTable();
 alert(`Sucesso! ${dietPlan.length} horários de dieta importados.`);
 } else {
-alert("Nenhum dado válido encontrado. Verifique se o arquivo segue o formato: Horário; Alimentos; Medicações");
+alert("Nenhum dado válido encontrado. Verifique o formato do arquivo.");
 }
 } catch (err) {
-console.error(err);
-alert("Erro ao processar CSV de Dieta: " + err.message);
+alert("Erro: " + err.message);
 } finally {
-e.target.value = ''; // Reseta o input de arquivo
+e.target.value = '';
 }
 };
 reader.readAsText(file, 'UTF-8');
@@ -1544,14 +1578,10 @@ if (dietPlan.length === 0) {
 container.innerHTML = `<p class="text-center py-10 text-slate-500 italic text-xs">Nenhum item cadastrado.</p>`;
 return;
 }
-container.innerHTML = dietPlan.map(i => `
-<div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
+container.innerHTML = dietPlan.map(i => `<div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
 <div class="flex-1 pr-4">
 <span class="text-brand-400 font-bold text-sm">${i.time}h</span>
-<!-- Aqui trocamos o contador pelo texto real, separado por vírgulas -->
-<p class="text-[10px] text-slate-300 mt-0.5 truncate max-w-[200px]">
-${i.foods.join(', ')}
-</p>
+<p class="text-[10px] text-slate-300 mt-0.5 truncate max-w-[200px]">${i.foods.join(', ')}</p>
 </div>
 <div class="flex gap-2">
 <button onclick="openDietModal(${i.id})" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700">
@@ -1561,55 +1591,52 @@ ${i.foods.join(', ')}
 <i class="ph-bold ph-trash"></i>
 </button>
 </div>
-</div>
-`).join('');
+</div>`).join('');
 }
 
 function renderDietTable() {
 const body = document.getElementById('dietTableBody');
 if (!body) return;
 dietPlan.sort((a,b) => a.time.localeCompare(b.time));
-body.innerHTML = dietPlan.map((entry, idx) => `
-<tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
+body.innerHTML = dietPlan.map((entry, idx) => `<tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
 <td class="p-3 text-xs font-bold text-white align-top">${entry.time}h</td>
-<td class="p-3 text-[11px] text-slate-300 align-top">
-${entry.foods.map(f => `• ${f}`).join('<br>')}
-</td>
-<td class="p-3 text-[11px] text-brand-300 align-top">
-${entry.meds.map(m => `💊 ${m}`).join('<br>')}
-</td>
+<td class="p-3 text-[11px] text-slate-300 align-top">${entry.foods.map(f => `• ${f}`).join('<br>')}</td>
+<td class="p-3 text-[11px] text-brand-300 align-top">${entry.meds.map(m => `💊 ${m}`).join('<br>')}</td>
 <td class="p-3 align-top text-center">
 <input type="checkbox" ${entry.done ? 'checked' : ''} onchange="toggleDietDone(${idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 cursor-pointer">
 </td>
-</tr>
-`).join('');
+</tr>`).join('');
 }
 
-// Função para remover um item da dieta
 window.removeDietItem = async (id) => {
-if (confirm("Deseja realmente excluir esta refeição do seu plano?")) {
-// Filtra a lista mantendo apenas os itens com ID diferente do selecionado
+if (confirm("Deseja realmente excluir esta refeição?")) {
 dietPlan = dietPlan.filter(item => item.id !== id);
 try {
-await saveUserData(); // Salva a alteração no Firebase
-renderDietEditor();    // Atualiza a lista de edição
-renderDietTable();     // Atualiza a tabela de visualização
+await saveUserData();
+renderDietEditor();
+renderDietTable();
 } catch (err) {
-alert("Erro ao excluir item da dieta: " + err.message);
+alert("Erro: " + err.message);
 }
 }
 };
 
-// Abre/Fecha o formulário de peso e define a data de hoje
+window.toggleDietDone = async (idx) => {
+if (dietPlan[idx]) {
+dietPlan[idx].done = !dietPlan[idx].done;
+await saveUserData();
+renderDietTable();
+}
+};
+
 window.toggleWeightForm = () => {
 const form = document.getElementById('weightLogForm');
 form.classList.toggle('hidden');
 if (!form.classList.contains('hidden')) {
-document.getElementById('weightDate').value = new Date().toISOString().split('T');
+document.getElementById('weightDate').value = new Date().toISOString().split('T')[0];
 }
 };
 
-// Salva um novo peso no array e envia para o Firebase
 window.saveWeightEntry = async () => {
 const dateValue = document.getElementById('weightDate').value;
 const weightValue = document.getElementById('weightValue').value;
@@ -1617,14 +1644,8 @@ if (!dateValue || !weightValue) {
 alert("Por favor, preencha a data e o peso.");
 return;
 }
-const entry = {
-id: Date.now(),
-date: dateValue,
-weight: weightValue,
-type: 'weight'
-};
+const entry = { id: Date.now(), date: dateValue, weight: weightValue, type: 'weight' };
 weightHistory.unshift(entry);
-// Ordena para que o mais recente apareça primeiro
 weightHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 await saveUserData();
 document.getElementById('weightValue').value = "";
@@ -1632,25 +1653,22 @@ document.getElementById('weightLogForm').classList.add('hidden');
 renderPerformanceHistory();
 };
 
-// Exclui um registro de peso específico
 window.deleteWeightEntry = async (id) => {
-if (confirm("Deseja apagar este registro de peso?")) {
+if (confirm("Deseja apagar este registro?")) {
 weightHistory = weightHistory.filter(w => w.id !== id);
 await saveUserData();
 renderPerformanceHistory();
 }
 };
 
-// PROFIL MODAL
+// PROFILE MODAL
 window.openProfileModal = () => {
 updateProfileHeader();
 document.getElementById('profileModal').classList.remove('hidden');
 };
-
 window.closeProfileModal = () => {
 document.getElementById('profileModal').classList.add('hidden');
 };
-
 window.saveUserProfile = async (e) => {
 e.preventDefault();
 const btn = document.getElementById('saveProfileBtn');
@@ -1667,7 +1685,7 @@ updateProfileHeader();
 closeProfileModal();
 alert("Perfil updated com sucesso!");
 } catch (err) {
-alert("Erro ao salvar perfil: " + err.message);
+alert("Erro: " + err.message);
 } finally {
 btn.disabled = false;
 btn.innerHTML = originalHtml;
@@ -1720,10 +1738,9 @@ document.getElementById('exTempo').value = item.ritmo || "";
 document.getElementById('exRestTime').value = item.restTime || "60";
 document.getElementById('exLink').value = item.link || "";
 document.getElementById('exObs').value = item.obs || "";
-document.getElementById('exCombinado').value = item.combinado || ""; // CARREGA O CAMPO
+document.getElementById('exCombinado').value = item.combinado || "";
 } else {
 title.textContent = "Novo Exercício";
-// Limpa todos os campos
 const fields = ['exName','exSeries','exReps','exWeight','exTempo','exLink','exObs','exCombinado'];
 fields.forEach(f => document.getElementById(f).value = "");
 document.getElementById('exRestTime').value = "60";
@@ -1747,7 +1764,7 @@ ritmo: document.getElementById('exTempo').value,
 restTime: document.getElementById('exRestTime').value || "0",
 link: document.getElementById('exLink').value,
 obs: document.getElementById('exObs').value,
-combinado: document.getElementById('exCombinado').value || "" // SALVA O CAMPO
+combinado: document.getElementById('exCombinado').value || ""
 };
 if (!workouts[currentTab]) workouts[currentTab] = [];
 if (index >= 0) workouts[currentTab][index] = exerciseData;
@@ -1756,7 +1773,7 @@ try {
 await saveUserData();
 renderExercises();
 closeExerciseModal();
-} catch (err) { alert("Erro ao salvar: " + err.message); }
+} catch (err) { alert("Erro: " + err.message); }
 };
 
 window.deleteExercise = async (index) => {
@@ -1766,37 +1783,29 @@ try {
 await saveUserData();
 renderExercises();
 } catch (err) {
-alert("Erro ao excluir: " + err.message);
+alert("Erro: " + err.message);
 }
 }
 };
 
-// --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
+// IMPORTAÇÃO CSV
 window.handleCSVUpload = (e) => {
-// CORREÇÃO 1: Pega o primeiro arquivo do input (files[0])
 const file = e.target.files && e.target.files[0];
 if (!file) return;
 const reader = new FileReader();
 reader.onload = async (event) => {
 try {
 const content = event.target.result;
-// Divide por quebra de linha (Windows/Mac/Linux)
-const lines = content.split(/
-|
-/);
-// CORREÇÃO 2: Pega a PRIMEIRA LINHA de verdade
+const lines = content.split(/\r\n|\n/);
 const firstLine = lines[0] || '';
 const separator = firstLine.includes(';') ? ';' : ',';
-// SOBREPOSIÇÃO: Limpa os treinos atuais antes da importação
 Object.keys(workouts).forEach(k => workouts[k] = []);
 let count = 0;
 for (let i = 1; i < lines.length; i++) {
 const row = lines[i].trim();
 if (!row) continue;
 const columns = row.split(separator);
-// Ordem: Aba;Nome;Séries;Reps;Carga;Ritmo;Descanso;Link;Obs
 const [aba, nome, series, reps, carga, ritmo, descanso, link, obs, combinado] = columns;
-// Remove aspas simples/duplas e espaços extras do nome da aba
 const abaLimpa = aba ? aba.replace(/['"]/g, '').trim().toUpperCase() : '';
 if (workouts[abaLimpa]) {
 workouts[abaLimpa].push({
@@ -1814,20 +1823,18 @@ count++;
 }
 }
 if (count > 0) {
-if (typeof saveUserData === 'function') await saveUserData(); // Salva no Firebase
-if (typeof renderExercises === 'function') renderExercises();  // Atualiza a tela imediatamente
+if (typeof saveUserData === 'function') await saveUserData();
+if (typeof renderExercises === 'function') renderExercises();
 alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
 } else {
-alert("Nenhum dado válido encontrado. Verifique se a primeira coluna contém as chaves válidas (ex: A, B, C, D ou E).");
+alert("Nenhum dado válido encontrado.");
 }
 } catch (err) {
-console.error(err);
-alert("Erro ao processar arquivo: " + err.message);
+alert("Erro: " + err.message);
 } finally {
-e.target.value = ''; // Limpa o input para permitir reenvio
+e.target.value = '';
 }
 };
-// CORREÇÃO 3: Lê com suporte a UTF-8 para garantir acentuação correta
 reader.readAsText(file, 'UTF-8');
 };
 
@@ -1837,27 +1844,22 @@ const iframe = document.getElementById('videoIframe');
 if (!url) return;
 let videoId = '';
 try {
-// Extrai o ID de links comuns, celular (youtu.be) ou Shorts
 if (url.includes('v=')) {
-// Usa [1] e pega a posição [0] do array resultante
 videoId = url.split('v=')[1].split('&')[0];
 } else if (url.includes('youtu.be/')) {
 videoId = url.split('youtu.be/')[1].split('?')[0];
 } else if (url.includes('/shorts/')) {
 videoId = url.split('/shorts/')[1].split('?')[0];
 }
-// Limpa possíveis barras no final do ID
 if (videoId) {
 videoId = videoId.replace('/', '');
-// O formato /embed/ carrega o player do YouTube dentro da aplicação
 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
 modal.classList.remove('hidden');
 } else {
-// Caso não consiga extrair o ID, abre em outra aba
 window.open(url, '_blank');
 }
 } catch (error) {
-console.error("Erro ao processar URL do vídeo:", error);
+console.error("Erro no link do vídeo:", error);
 window.open(url, '_blank');
 }
 };
@@ -1865,13 +1867,31 @@ window.open(url, '_blank');
 window.closeVideoModal = () => {
 const modal = document.getElementById('videoModal');
 const iframe = document.getElementById('videoIframe');
-iframe.src = ""; // Para o vídeo imediatamente
+iframe.src = "";
 modal.classList.add('hidden');
 };
 
 function playAlertSound() {
-const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-audio.play().catch(e => console.log("Áudio aguardando interação..."));
+try {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) {
+const ctx = new AudioContext();
+const now = ctx.currentTime;
+const osc = ctx.createOscillator();
+const gainNode = ctx.createGain();
+osc.type = 'sine';
+osc.frequency.setValueAtTime(523.25, now); // C5 note (clear alert)
+gainNode.gain.setValueAtTime(0, now);
+gainNode.gain.setValueAtTime(0.8, now);
+gainNode.gain.setValueAtTime(0, now + 0.6);
+osc.connect(gainNode);
+gainNode.connect(ctx.destination);
+osc.start(now);
+osc.stop(now + 0.7);
+}
+} catch(e) {
+console.error("Erro no som da dieta:", e);
+}
 }
 
 function checkDietTimer() {
@@ -1885,25 +1905,25 @@ refeicao.notificado = true;
 setTimeout(() => { refeicao.notificado = false; }, 61000);
 }
 }
-// Verifica a cada 30 segundos
+
 setInterval(checkDietTimer, 30000);
 
-// Alternar visualização do formulário de corrida
+// --- CORRIDA ---
 window.toggleRunForm = () => {
 const form = document.getElementById('runLogForm');
 form.classList.toggle('hidden');
 if (!form.classList.contains('hidden')) {
-document.getElementById('runDate').value = new Date().toISOString().split('T');
+document.getElementById('runDate').value = new Date().toISOString().split('T')[0];
 }
 };
 
-// Salvar registro de corrida com cálculo de Pace e Velocidade Média
 window.saveRunEntry = async () => {
 const dateValue = document.getElementById('runDate').value;
 const distValue = parseFloat(document.getElementById('runDistance').value);
 const hrs = parseInt(document.getElementById('runHours').value) || 0;
 const mins = parseInt(document.getElementById('runMinutes').value) || 0;
 const secs = parseInt(document.getElementById('runSeconds').value) || 0;
+
 if (!dateValue || isNaN(distValue) || distValue <= 0) {
 alert("Por favor, preencha a data e uma distância válida (maior que 0).");
 return;
@@ -1913,7 +1933,7 @@ if (totalSeconds <= 0) {
 alert("Por favor, preencha o tempo de duração da corrida.");
 return;
 }
-// --- CÁLCULO DO PACE (minutos por km) ---
+
 const paceTotalMins = (totalSeconds / 60) / distValue;
 let paceM = Math.floor(paceTotalMins);
 let paceS = Math.round((paceTotalMins - paceM) * 60);
@@ -1922,9 +1942,9 @@ paceS = 0;
 paceM += 1;
 }
 const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
-// --- CÁLCULO DA VELOCIDADE MÉDIA (km/h) ---
 const totalHours = totalSeconds / 3600;
 const speedVal = (distValue / totalHours).toFixed(2);
+
 const entry = {
 id: Date.now(),
 date: dateValue,
@@ -1934,11 +1954,11 @@ pace: paceStr,
 speed: speedVal,
 type: 'run'
 };
+
 runHistory.unshift(entry);
-// Ordena por data (mais recente primeiro)
 runHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 await saveUserData();
-// Limpa campos e esconde formulário
+
 document.getElementById('runDistance').value = "";
 document.getElementById('runHours').value = "0";
 document.getElementById('runMinutes').value = "0";
@@ -1947,21 +1967,11 @@ document.getElementById('runLogForm').classList.add('hidden');
 renderPerformanceHistory();
 };
 
-// Excluir registro de corrida
 window.deleteRunEntry = async (id) => {
 if (confirm("Deseja apagar este registro de corrida?")) {
 runHistory = runHistory.filter(r => r.id !== id);
 await saveUserData();
 renderPerformanceHistory();
-}
-};
-
-// CONSERTO EXTRA: Ativa o funcionamento do OK na tabela de Dieta
-window.toggleDietDone = async (idx) => {
-if (dietPlan[idx]) {
-dietPlan[idx].done = !dietPlan[idx].done;
-await saveUserData();
-renderDietTable();
 }
 };
 </script>
