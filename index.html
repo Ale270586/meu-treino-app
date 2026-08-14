@@ -9,7 +9,7 @@
 <!-- Phosphor Icons -->
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 <!-- Inter Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Chart.js para as Análises -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -267,7 +267,7 @@ Não tem uma conta? Cadastre-se
 <!-- TELA 5: DESEMPENHO E HISTÓRICO -->
 <section id="viewPerformance" class="space-y-4 hidden">
 <div class="space-y-4">
-<!-- Título e Botões de Logs -->
+<!-- Título e Botão de Peso -->
 <div class="flex items-center justify-between">
 <h3 class="text-lg font-extrabold text-white">Desempenho</h3>
 <button id="btnOpenWeightForm" onclick="toggleWeightForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
@@ -288,6 +288,7 @@ Treinos
 <button onclick="switchPerfTab('weights')" id="perfTabWeights" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Pesos
 </button>
+<!-- NOVO BOTÃO DA ABA CORRIDA -->
 <button onclick="switchPerfTab('runs')" id="perfTabRuns" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Corrida
 </button>
@@ -380,13 +381,10 @@ Análises
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Peso (kg)</h4>
 <canvas id="weightChart"></canvas>
 </div>
-
-<!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
-<h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
-<canvas id="runPaceChart"></canvas>
+<h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Ritmo (Pace - min/km)</h4>
+<canvas id="paceChart"></canvas>
 </div>
-
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Frequência Semanal de Treinos</h4>
 <canvas id="workoutChart"></canvas>
@@ -394,7 +392,6 @@ Análises
 </div>
 </div>
 </section>
-
 </main>
 
 <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
@@ -465,6 +462,7 @@ Análises
 <input type="number" step="0.1" id="profWeight" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
 </div>
+
 <button type="submit" id="saveProfileBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
 <i class="ph-bold ph-floppy-disk"></i>
 <span>Salvar Perfil</span>
@@ -553,7 +551,7 @@ Análises
 </div>
 </div>
 
-<!-- DIET MODAL (MODAL DE DIETA COM EDIÇÃO) -->
+<!-- DIET MODAL -->
 <div id="dietModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
 <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
 <button onclick="closeDietModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
@@ -624,6 +622,7 @@ const db = getFirestore(firebaseApp);
 
 // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
 const presetExercisesList = [
+// --- ABDÔMEN (CORE) ---
 { group: "Abdômen (Core)", name: "Abdominal na polia alta", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Polia)", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Solo)", link: "" },
@@ -636,6 +635,7 @@ const presetExercisesList = [
 { group: "Abdômen (Core)", name: "Encolhimento polia (abdominal)", link: "" },
 { group: "Abdômen (Core)", name: "Prancha isométrica (Solo)", link: "" },
 { group: "Abdômen (Core)", name: "Roda abdominal (Ab Wheel)", link: "" },
+// --- BRAÇOS (BÍCEPS E ANTEBRAÇOS) ---
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca alternada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca concentrada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra reta)", link: "" },
@@ -646,6 +646,7 @@ const presetExercisesList = [
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Barra)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Máquina)", link: "" },
+// --- BRAÇOS (TRÍCEPS) ---
 { group: "Braços (Tríceps)", name: "Tríceps coice (Halteres)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps coice (Polia)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps francês (Halter único)", link: "" },
@@ -658,6 +659,7 @@ const presetExercisesList = [
 { group: "Braços (Tríceps)", name: "Tríceps pulley (Corda na polia alta)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Barra W)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Halteres)", link: "" },
+// --- COSTAS (DORSAIS, ROMBOIDES, TRAPÉZIO) ---
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Extensão lombar (Banco romano)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley fechado com triângulo", link: "" },
@@ -670,6 +672,7 @@ const presetExercisesList = [
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa barra reta)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa triângulo)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada unilateral / Serrote (Halteres)", link: "" },
+// --- OMBROS (DELTOIDES) ---
 { group: "Ombros (Deltoides)", name: "Abdução ombro cabo unilateral", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
@@ -686,6 +689,7 @@ const presetExercisesList = [
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Barra)", link: "" },
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Remada Alta Trapézio (Cabo)", link: "" },
+// --- PEITO (PEITORAIS) ---
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Máquina)", link: "" },
@@ -702,11 +706,13 @@ const presetExercisesList = [
 { group: "Peito (Peitorais)", name: "Supino reto (Barra)", link: "" },
 { group: "Peito (Peitorais)", name: "Supino reto (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Voador / Pec Deck (Máquina)", link: "" },
+// --- PERNAS (GLÚTEOS) ---
 { group: "Pernas (Glúteos)", name: "Cadeira abdutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Cadeira adutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Elevação pélvica (Barra ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo na polia / Cabo", link: "" },
+// --- PERNAS (MEMBROS INFERIORES) ---
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Búlgaro (Halteres)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Hack (Máquina)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento livre (Barra)", link: "" },
@@ -715,11 +721,13 @@ const presetExercisesList = [
 { group: "Pernas (Membros Inferiores)", name: "Leg Press (horizontal)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Barra)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Halteres)", link: "" },
+// --- PERNAS (PANTURRILHAS) ---
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Smith)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Step)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha sentado (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Panturrilha no Leg Press", link: "" },
+// --- PERNAS (POSTERIORES DE COXA) ---
 { group: "Pernas (Posteriores de Coxa)", name: "Cadeira flexora (Máquina sentada)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
@@ -736,12 +744,33 @@ let currentView = 'execute'; // 'execute', 'edit' ou 'performance'
 let currentSessionLogs = {};
 let activeTimers = {};
 let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
+// 5 treinos: A, B, C, D, E
 let workouts = { A: [], B: [], C: [], D: [], E: [] };
 let history = [];
-let weightHistory = []; // Novo: Armazena o histórico de peso
-let runHistory = []; // Novo: Armazena o histórico de corridas
+let weightHistory = []; // Armazena o histórico de peso
+let runHistory = []; // Armazena o histórico de corridas
 let dietPlan = []; // Formato esperado: [{ id, time, foods: [], meds: [], done: false }]
 const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
+
+// Desbloquear áudio nativo em celulares
+let audioUnlocked = false;
+const unlockAudio = () => {
+    if (audioUnlocked) return;
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            const ctx = new AudioContext();
+            if (ctx.state === 'suspended') {
+                ctx.resume();
+            }
+        }
+        audioUnlocked = true;
+        window.removeEventListener('click', unlockAudio);
+        window.removeEventListener('touchstart', unlockAudio);
+    } catch (e) {}
+};
+window.addEventListener('click', unlockAudio);
+window.addEventListener('touchstart', unlockAudio);
 
 // Observe Auth Changes
 onAuthStateChanged(auth, async (user) => {
@@ -792,6 +821,7 @@ const subtitle = document.getElementById('authSubtitle');
 const submitBtn = document.getElementById('authSubmitBtn');
 const toggleBtn = document.getElementById('toggleAuthBtn');
 const confirmGroup = document.getElementById('confirmPasswordGroup');
+
 if (isRegisterMode) {
 subtitle.textContent = "Crie sua conta para salvar seus treinos";
 submitBtn.querySelector('span').textContent = "Cadastrar Conta";
@@ -852,7 +882,8 @@ case 'auth/email-already-in-use': mensagem = "Este e-mail já está sendo usado 
 case 'auth/weak-password': mensagem = "A senha deve ter pelo menos 6 caracteres."; break;
 }
 alert(mensagem);
-} finally {
+}
+finally {
 submitBtn.disabled = false;
 submitBtn.classList.remove('opacity-70');
 }
@@ -911,6 +942,9 @@ dietPlan = Array.isArray(data.dietPlan) ? data.dietPlan : [];
 userProfile = sanitizeProfile({});
 workouts = sanitizeWorkouts({});
 history = [];
+weightHistory = [];
+runHistory = [];
+dietPlan = [];
 await saveUserData();
 }
 updateProfileHeader();
@@ -937,7 +971,6 @@ userProfile = cleanProfileData;
 workouts = cleanWorkoutsData;
 }
 
-// Trocar Telas do App
 window.switchView = (view) => {
 currentView = view;
 const views = ['viewExecute', 'viewEdit', 'viewDiet', 'viewEditDiet', 'viewPerformance'];
@@ -1052,26 +1085,37 @@ if (!currentSessionLogs[item.originalIndex] || !currentSessionLogs[item.original
 currentSessionLogs[item.originalIndex] = { seriesDone: new Array(numSeries).fill(false) };
 }
 });
+
 const log = currentSessionLogs[masterIdx];
 const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
 const allGroupIndexes = JSON.stringify(group.items.map(i => i.originalIndex));
+
 let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
-seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+seriesHtml += `
+<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
 <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
 <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-500 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
-return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-4">
+
+return `
+<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
+isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'
+} space-y-4">
 <div class="flex items-center justify-between">
-<div class="inline-flex items-center gap-1 ${isComplete ? 'bg-emerald-500 text-slate-950' : 'bg-brand-500 text-white'} text-[9px] font-black px-2 py-0.5 rounded uppercase">
+<div class="inline-flex items-center gap-1 ${
+isComplete ? 'bg-emerald-500 text-slate-950' : 'bg-brand-500 text-white'
+} text-[9px] font-black px-2 py-0.5 rounded uppercase">
 <i class="ph-bold ${isComplete ? 'ph-check-circle' : 'ph-link'}"></i> ${isComplete ? 'CONCLUÍDO' : 'COMBINADO: ' + group.tag}
 </div>
 </div>
+
 ${group.items.map((item, i) => {
 const obsText = item.obs || item.observacao || item.notes || '';
-return `<div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
+return `
+<div class="${i > 0 ? 'pt-3 border-t border-slate-800/40' : ''} space-y-2">
 <div class="flex justify-between items-center">
 <h4 class="font-bold text-white text-sm">${item.name}</h4>
 ${item.link ? `<button onclick="openVideoModal('${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : ''}
@@ -1084,6 +1128,7 @@ ${item.link ? `<button onclick="openVideoModal('${item.link}')" class="text-bran
 ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800/60 px-2.5 py-1.5 rounded-lg font-medium leading-relaxed mt-1"><span class="text-brand-400 font-bold uppercase text-[9px]">OBS:</span> ${obsText}</div>` : ''}
 </div>`;
 }).join('')}
+
 <div class="pt-3 border-t border-slate-800/60 space-y-3">
 <div class="flex flex-wrap gap-1">${seriesHtml}</div>
 <div class="flex items-center justify-between">
@@ -1100,20 +1145,27 @@ const idx = item.originalIndex;
 const numSeries = parseInt(item.series) || 1;
 const restSeconds = parseInt(item.restTime) || 60;
 const obsText = item.obs || item.observacao || item.notes || '';
+
 if (!currentSessionLogs[idx] || !currentSessionLogs[idx].seriesDone) {
 currentSessionLogs[idx] = { seriesDone: new Array(numSeries).fill(false) };
 }
 const log = currentSessionLogs[idx];
 const isComplete = log.seriesDone.length > 0 && log.seriesDone.every(s => s === true);
+
 let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
-seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
+seriesHtml += `
+<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
 <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-4 h-4 accent-emerald-500">
 <span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
-return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-3">
+
+return `
+<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${
+isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'
+} space-y-3">
 <div class="flex justify-between items-center">
 <h4 class="font-bold text-white text-sm">${item.name}</h4>
 ${isComplete ? '<i class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>' : (item.link ? `<button onclick="openVideoModal('${item.link}')" class="text-brand-400 hover:text-brand-300 transition"><i class="ph-bold ph-play-circle text-lg"></i></button>` : '')}
@@ -1139,7 +1191,8 @@ ${obsText ? `<div class="text-[11px] text-slate-400 bg-slate-900/60 border borde
 
 editListContainer.innerHTML = currentList.length === 0 ?
 `<div class="text-center py-10 glass-card rounded-2xl border border-slate-800"><p class="text-slate-500 italic text-xs">Vazio.</p></div>` :
-currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between transition-all">
+currentList.map((item, index) => `
+<div class="glass-card rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between transition-all">
 <div class="flex-1 truncate pr-4">
 <h4 class="font-bold text-white text-sm truncate">${item.name} ${item.combinado ? `<span class="text-[9px] text-brand-400 ml-2 font-black uppercase">[${item.combinado}]</span>` : ''}</h4>
 <p class="text-[10px] text-slate-500 mt-1">${item.series}x ${item.reps} • ${item.weight}kg</p>
@@ -1148,10 +1201,11 @@ currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border 
 <button onclick="openExerciseModal(${index})" class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700"><i class="ph-bold ph-pencil-simple text-base"></i></button>
 <button onclick="deleteExercise(${index})" class="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20"><i class="ph-bold ph-trash text-base"></i></button>
 </div>
-</div>`).join('');
+</div>
+`).join('');
 }
 
-// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Alarm)
+// CRONÔMETRO DE DESCANSO COM WEB AUDIO API DE ALTA QUALIDADE
 window.startRestTimer = (index, seconds) => {
 const displayEl = document.getElementById(`timer-display-${index}`);
 if (!displayEl) return;
@@ -1160,53 +1214,20 @@ clearInterval(activeTimers[index]);
 }
 let timeLeft = parseInt(seconds) || 60;
 displayEl.classList.remove('hidden');
+
 const updateTimerText = () => {
 const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
 const s = (timeLeft % 60).toString().padStart(2, '0');
 displayEl.textContent = `${m}:${s}`;
 };
 updateTimerText();
+
 activeTimers[index] = setInterval(() => {
 timeLeft--;
 if (timeLeft <= 0) {
 clearInterval(activeTimers[index]);
 displayEl.textContent = "Pronto!";
-
-// --- WEB AUDIO API BUZZER / ALARM SOUND (Sintetizador Programático) ---
-try {
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-if (AudioContext) {
-const ctx = new AudioContext();
-const now = ctx.currentTime;
-const numBeeps = 5;
-const beepDuration = 0.5; // duração do apito (segundos)
-const silenceDuration = 0.2; // pausa entre apitos
-const cycle = beepDuration + silenceDuration;
-
-const osc = ctx.createOscillator();
-const gainNode = ctx.createGain();
-
-osc.type = 'sine';
-osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro)
-gainNode.gain.setValueAtTime(0, now);
-
-// Programação dos apitos para durar ~3.5 a 4 segundos
-for (let i = 0; i < numBeeps; i++) {
-const start = now + i * cycle;
-const end = start + beepDuration;
-gainNode.gain.setValueAtTime(1.0, start); // volume máximo
-gainNode.gain.setValueAtTime(0, end);     // mudo
-}
-
-osc.connect(gainNode);
-gainNode.connect(ctx.destination);
-osc.start(now);
-osc.stop(now + (numBeeps * cycle));
-}
-} catch (e) {
-console.error("Erro ao reproduzir beep programático:", e);
-}
-
+if (window.playSportsBeep) window.playSportsBeep();
 setTimeout(() => displayEl.classList.add('hidden'), 3000);
 } else {
 updateTimerText();
@@ -1214,7 +1235,34 @@ updateTimerText();
 }, 1000);
 };
 
-// LOGS DO TREINO
+// Gerador de Bipes de relógio esportivo de alta qualidade (Casio style) - 4 segundos no total
+window.playSportsBeep = () => {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        let count = 0;
+        const playBeep = () => {
+            if (count >= 5) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1000, ctx.currentTime);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+            count++;
+            setTimeout(playBeep, 800);
+        };
+        playBeep();
+    } catch (e) {
+        console.error("Erro de som:", e);
+    }
+};
+
 window.toggleSerieDone = (exIndex, serieIndex) => {
 if (currentSessionLogs[exIndex] && currentSessionLogs[exIndex].seriesDone) {
 currentSessionLogs[exIndex].seriesDone[serieIndex] = !currentSessionLogs[exIndex].seriesDone[serieIndex];
@@ -1240,6 +1288,7 @@ const now = new Date();
 const formattedDate = now.toLocaleDateString('pt-BR', {
 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
 });
+
 const sessionEntry = {
 id: Date.now(),
 dateFormatted: formattedDate,
@@ -1261,6 +1310,7 @@ completed: completedSeriesCount > 0
 };
 })
 };
+
 try {
 history.unshift(sessionEntry);
 await saveUserData();
@@ -1272,39 +1322,43 @@ alert("Erro ao salvar histórico: " + err.message);
 }
 };
 
-// RENDER TELA DE DESEMPENHO E APAGAR REGISTROS
+// HISTÓRICOS E GRÁFICOS
 let weightChartInstance = null;
+let paceChartInstance = null;
 let workoutChartInstance = null;
-let runPaceChartInstance = null; // Novo: Gráfico de Pace
 
 window.switchPerfTab = (tab) => {
-const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns' };
-const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns' };
+const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', runs: 'subviewRuns', charts: 'subviewCharts' };
+const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', runs: 'perfTabRuns', charts: 'perfTabCharts' };
 Object.keys(views).forEach(k => {
 document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
 document.getElementById(tabs[k]).className = k === tab
 ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
 : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
 });
+
 document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
 document.getElementById('btnOpenRunForm').classList.toggle('hidden', tab !== 'runs');
+
 if (tab === 'charts') renderCharts();
 renderPerformanceHistory();
 };
 
 function renderCharts() {
 if (weightChartInstance) weightChartInstance.destroy();
+if (paceChartInstance) paceChartInstance.destroy();
 if (workoutChartInstance) workoutChartInstance.destroy();
-if (runPaceChartInstance) runPaceChartInstance.destroy();
 
-// 1. Gráfico de Peso
 const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
 const weights = sortedW.map(w => parseFloat(w.weight));
+
+// Cálculo dinâmico da escala
 let yMin = 0, yMax = 120;
 if (weights.length > 0) {
 yMin = Math.max(0, Math.floor(Math.min(...weights) - 10));
 yMax = Math.ceil(Math.max(...weights) + 10);
 }
+
 weightChartInstance = new Chart(document.getElementById('weightChart'), {
 type: 'line',
 data: {
@@ -1320,64 +1374,62 @@ x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
 }
 });
 
-// 2. Gráfico de Evolução de Pace
-const sortedRuns = [...runHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
-const parsePaceToDecimal = (paceStr) => {
-if (!paceStr || !paceStr.includes(':')) return 0;
-const [m, s] = paceStr.split(':').map(Number);
-return m + (s / 60);
-};
-const paceData = sortedRuns.map(r => parsePaceToDecimal(r.pace));
-const paceLabels = sortedRuns.map(r => {
-const [y, m, d] = r.date.split('-');
-return `${d}/${m}`;
+// NOVO GRÁFICO DE PACE - AZUL IGUAL DE PESO
+const sortedR = [...runHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
+const pacesDecimal = sortedR.map(r => {
+    const parts = r.pace.split(':');
+    return parseFloat(parts[0]) + (parseFloat(parts[1]) / 60);
 });
 
-runPaceChartInstance = new Chart(document.getElementById('runPaceChart'), {
-type: 'line',
-data: {
-labels: paceLabels,
-datasets: [{
-label: 'Pace (min/km)',
-data: paceData,
-borderColor: '#10b981', // Verde esmeralda para corrida
-tension: 0.3,
-fill: true,
-backgroundColor: 'rgba(16, 185, 129, 0.1)'
-}]
-},
-options: {
-plugins: {
-legend: { display: false },
-tooltip: {
-callbacks: {
-label: function(context) {
-const val = context.parsed.y;
-const m = Math.floor(val);
-const s = Math.round((val - m) * 60);
-return `Pace: ${m}:${s.toString().padStart(2, '0')} min/km`;
-}
-}
-}
-},
-scales: {
-y: {
-grid: { color: 'rgba(255,255,255,0.05)' },
-ticks: {
-color: '#94a3b8',
-callback: function(value) {
-const m = Math.floor(value);
-const s = Math.round((value - m) * 60);
-return `${m}:${s.toString().padStart(2, '0')}`;
-}
-}
-},
-x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-}
-}
+paceChartInstance = new Chart(document.getElementById('paceChart'), {
+    type: 'line',
+    data: {
+        labels: sortedR.map(r => { 
+            const [y,m,d] = r.date.split('-'); 
+            return `${d}/${m}`; 
+        }),
+        datasets: [{ 
+            label: 'Pace', 
+            data: pacesDecimal, 
+            borderColor: '#3b82f6', // Padrão azul idêntico
+            tension: 0.3, 
+            fill: true, 
+            backgroundColor: 'rgba(59, 130, 246, 0.1)' // Padrão azul idêntico
+        }]
+    },
+    options: {
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const val = context.raw;
+                        const mins = Math.floor(val);
+                        const secs = Math.round((val - mins) * 60);
+                        const secsStr = secs.toString().padStart(2, '0');
+                        return `Pace: ${mins}:${secsStr} min/km`;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: { 
+                    color: '#94a3b8',
+                    callback: function(value) {
+                        const mins = Math.floor(value);
+                        const secs = Math.round((value - mins) * 60);
+                        const secsStr = secs.toString().padStart(2, '0');
+                        return `${mins}:${secsStr}`;
+                    }
+                }
+            },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        }
+    }
 });
 
-// 3. Gráfico de Treinos Semanais
 const weeks = [];
 for (let i = 3; i >= 0; i--) {
 const d = new Date(); d.setDate(d.getDate() - (i*7));
@@ -1386,6 +1438,7 @@ const sat = new Date(d); sat.setDate(d.getDate() + (6 - d.getDay())); sat.setHou
 const count = history.filter(h => { const hd = new Date(h.dateIso); return hd >= sun && hd <= sat; }).length;
 weeks.push({ label: `${sun.getDate()}/${sun.getMonth()+1}`, count });
 }
+
 workoutChartInstance = new Chart(document.getElementById('workoutChart'), {
 type: 'bar',
 data: { labels: weeks.map(w=>w.label), datasets: [{ data: weeks.map(w=>w.count), backgroundColor: '#60a5fa' }] },
@@ -1393,21 +1446,20 @@ options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: 
 });
 }
 
-// Renderiza as listas separadamente
 function renderPerformanceHistory() {
 const workoutContainer = document.getElementById('workoutHistoryList');
 const weightContainer = document.getElementById('weightHistoryList');
 
-// Renderizar Pesos
 weightContainer.innerHTML = weightHistory.length === 0
 ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum registro de peso.</p>`
 : weightHistory.map(item => {
 const [y, m, d] = item.date.split('-');
-return `<div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
+return `
+<div class="glass-card rounded-2xl p-4 border border-brand-500/20 flex items-center justify-between">
 <div class="flex items-center space-x-3">
 <div class="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-400"><i class="ph-bold ph-scales text-lg"></i></div>
 <div>
-<p class="text-xs text-slate-400 flex items-center gap-1">Peso <span class="text-[10px] text-brand-400 font-medium">• IMC: ${(() => {
+<p class="text-xs text-slate-400 flex items-center gap-1">Peso<span class="text-[10px] text-brand-400 font-medium">• IMC: ${(() => {
 const h = parseFloat(userProfile.height);
 if (!h || h <= 0) return "0.0";
 const imc = (parseFloat(item.weight) / ((h / 100) ** 2)).toFixed(1);
@@ -1423,10 +1475,10 @@ return imc;
 </div>`;
 }).join('');
 
-// Renderizar Treinos
 workoutContainer.innerHTML = history.length === 0
 ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum treino finalizado.</p>`
-: history.map((item, idx) => `<div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
+: history.map((item, idx) => `
+<div class="glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3">
 <div class="flex items-center justify-between">
 <div class="flex items-center space-x-2">
 <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xs">${item.workoutTab}</div>
@@ -1439,14 +1491,14 @@ ${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-
 </div>
 </div>`).join('');
 
-// Renderizar Corrida
 const runContainer = document.getElementById('runHistoryTableBody');
 if (runContainer) {
 runContainer.innerHTML = runHistory.length === 0
 ? `<tr><td colspan="6" class="text-center py-6 text-slate-500 text-xs italic">Nenhum registro de corrida.</td></tr>`
 : runHistory.map(item => {
 const [y, m, d] = item.date.split('-');
-return `<tr class="transition border-b border-slate-800/50">
+return `
+<tr class="transition border-b border-slate-800/50">
 <td class="p-3 text-slate-300 font-medium">${d}/${m}/${y}</td>
 <td class="p-3 text-white font-bold">${item.distance} km</td>
 <td class="p-3 text-slate-300 font-mono">${item.timeStr}</td>
@@ -1472,7 +1524,7 @@ alert("Erro ao excluir histórico: " + err.message);
 }
 };
 
-// --- DIETA ---
+// DIETA (EDIÇÃO E VISUALIZAÇÃO)
 window.openDietModal = (id = null) => {
 const modal = document.getElementById('dietModal');
 const title = document.getElementById('dietModalTitle');
@@ -1482,8 +1534,10 @@ const item = dietPlan.find(i => i.id === id);
 title.textContent = "Editar Refeição";
 editIdField.value = id;
 document.getElementById('dietTimeInput').value = item.time || "";
-document.getElementById('dietFoodsInput').value = item.foods.join('\n');
-document.getElementById('dietMedsInput').value = item.meds.join('\n');
+document.getElementById('dietFoodsInput').value = item.foods.join('
+');
+document.getElementById('dietMedsInput').value = item.meds.join('
+');
 } else {
 title.textContent = "Nova Refeição";
 editIdField.value = "";
@@ -1504,7 +1558,8 @@ const editId = document.getElementById('dietEditId').value;
 const time = document.getElementById('dietTimeInput').value;
 const foodsRaw = document.getElementById('dietFoodsInput').value;
 const medsRaw = document.getElementById('dietMedsInput').value;
-const processLines = (str) => str.split('\n').map(l => l.trim()).filter(l => l !== "");
+const processLines = (str) => str.split('
+').map(l => l.trim()).filter(l => l !== "");
 const entryData = {
 id: editId ? parseInt(editId) : Date.now(),
 time,
@@ -1512,6 +1567,7 @@ foods: processLines(foodsRaw),
 meds: processLines(medsRaw),
 done: false
 };
+
 if (editId) {
 const idx = dietPlan.findIndex(i => i.id === parseInt(editId));
 dietPlan[idx] = { ...dietPlan[idx], ...entryData };
@@ -1539,6 +1595,7 @@ const parseCell = (str) => {
 if (!str) return [];
 return str.replace(/^["']|["']$/g, '').split(/,|\n/).map(s => s.trim()).filter(s => s !== "");
 };
+
 for (let i = 1; i < lines.length; i++) {
 const row = lines[i].trim();
 if (!row) continue;
@@ -1555,15 +1612,15 @@ done: false
 }
 }
 if (dietPlan.length > 0) {
-if (typeof saveUserData === 'function') await saveUserData();
-if (typeof renderDietEditor === 'function') renderDietEditor();
-if (typeof renderDietTable === 'function') renderDietTable();
+await saveUserData();
+renderDietEditor();
+renderDietTable();
 alert(`Sucesso! ${dietPlan.length} horários de dieta importados.`);
 } else {
-alert("Nenhum dado válido encontrado. Verifique o formato do arquivo.");
+alert("Nenhum dado válido encontrado.");
 }
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao processar CSV de Dieta: " + err.message);
 } finally {
 e.target.value = '';
 }
@@ -1578,18 +1635,15 @@ if (dietPlan.length === 0) {
 container.innerHTML = `<p class="text-center py-10 text-slate-500 italic text-xs">Nenhum item cadastrado.</p>`;
 return;
 }
-container.innerHTML = dietPlan.map(i => `<div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
+container.innerHTML = dietPlan.map(i => `
+<div class="glass-card p-4 rounded-2xl flex items-center justify-between border border-slate-800">
 <div class="flex-1 pr-4">
 <span class="text-brand-400 font-bold text-sm">${i.time}h</span>
 <p class="text-[10px] text-slate-300 mt-0.5 truncate max-w-[200px]">${i.foods.join(', ')}</p>
 </div>
 <div class="flex gap-2">
-<button onclick="openDietModal(${i.id})" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700">
-<i class="ph-bold ph-pencil-simple"></i>
-</button>
-<button onclick="removeDietItem(${i.id})" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20">
-<i class="ph-bold ph-trash"></i>
-</button>
+<button onclick="openDietModal(${i.id})" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center transition hover:bg-slate-700"><i class="ph-bold ph-pencil-simple"></i></button>
+<button onclick="removeDietItem(${i.id})" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center transition hover:bg-red-500/20"><i class="ph-bold ph-trash"></i></button>
 </div>
 </div>`).join('');
 }
@@ -1598,7 +1652,8 @@ function renderDietTable() {
 const body = document.getElementById('dietTableBody');
 if (!body) return;
 dietPlan.sort((a,b) => a.time.localeCompare(b.time));
-body.innerHTML = dietPlan.map((entry, idx) => `<tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
+body.innerHTML = dietPlan.map((entry, idx) => `
+<tr class="${entry.done ? 'bg-brand-500/5' : ''} transition border-b border-slate-800/50">
 <td class="p-3 text-xs font-bold text-white align-top">${entry.time}h</td>
 <td class="p-3 text-[11px] text-slate-300 align-top">${entry.foods.map(f => `• ${f}`).join('<br>')}</td>
 <td class="p-3 text-[11px] text-brand-300 align-top">${entry.meds.map(m => `💊 ${m}`).join('<br>')}</td>
@@ -1609,23 +1664,15 @@ body.innerHTML = dietPlan.map((entry, idx) => `<tr class="${entry.done ? 'bg-bra
 }
 
 window.removeDietItem = async (id) => {
-if (confirm("Deseja realmente excluir esta refeição?")) {
+if (confirm("Deseja realmente excluir esta refeição do seu plano?")) {
 dietPlan = dietPlan.filter(item => item.id !== id);
 try {
 await saveUserData();
 renderDietEditor();
 renderDietTable();
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao excluir: " + err.message);
 }
-}
-};
-
-window.toggleDietDone = async (idx) => {
-if (dietPlan[idx]) {
-dietPlan[idx].done = !dietPlan[idx].done;
-await saveUserData();
-renderDietTable();
 }
 };
 
@@ -1654,14 +1701,14 @@ renderPerformanceHistory();
 };
 
 window.deleteWeightEntry = async (id) => {
-if (confirm("Deseja apagar este registro?")) {
+if (confirm("Deseja apagar este registro de peso?")) {
 weightHistory = weightHistory.filter(w => w.id !== id);
 await saveUserData();
 renderPerformanceHistory();
 }
 };
 
-// PROFILE MODAL
+// PERFIL MODAL
 window.openProfileModal = () => {
 updateProfileHeader();
 document.getElementById('profileModal').classList.remove('hidden');
@@ -1683,9 +1730,9 @@ userProfile.weight = document.getElementById('profWeight').value;
 await saveUserData();
 updateProfileHeader();
 closeProfileModal();
-alert("Perfil updated com sucesso!");
+alert("Perfil atualizado com sucesso!");
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao salvar perfil: " + err.message);
 } finally {
 btn.disabled = false;
 btn.innerHTML = originalHtml;
@@ -1721,7 +1768,7 @@ img.src = event.target.result;
 reader.readAsDataURL(file);
 };
 
-// EXERCISE MODAL
+// EXERCÍCIO MODAL
 window.openExerciseModal = (index = -1) => {
 const modal = document.getElementById('exerciseModal');
 const title = document.getElementById('exerciseModalTitle');
@@ -1766,6 +1813,7 @@ link: document.getElementById('exLink').value,
 obs: document.getElementById('exObs').value,
 combinado: document.getElementById('exCombinado').value || ""
 };
+
 if (!workouts[currentTab]) workouts[currentTab] = [];
 if (index >= 0) workouts[currentTab][index] = exerciseData;
 else workouts[currentTab].push(exerciseData);
@@ -1773,7 +1821,7 @@ try {
 await saveUserData();
 renderExercises();
 closeExerciseModal();
-} catch (err) { alert("Erro: " + err.message); }
+} catch (err) { alert("Erro ao salvar: " + err.message); }
 };
 
 window.deleteExercise = async (index) => {
@@ -1783,12 +1831,12 @@ try {
 await saveUserData();
 renderExercises();
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao excluir: " + err.message);
 }
 }
 };
 
-// IMPORTAÇÃO CSV
+// IMPORTAÇÃO DE PLANILHA CSV
 window.handleCSVUpload = (e) => {
 const file = e.target.files && e.target.files[0];
 if (!file) return;
@@ -1823,14 +1871,14 @@ count++;
 }
 }
 if (count > 0) {
-if (typeof saveUserData === 'function') await saveUserData();
-if (typeof renderExercises === 'function') renderExercises();
+await saveUserData();
+renderExercises();
 alert(`Sucesso! Sua ficha foi reiniciada e ${count} exercícios foram importados.`);
 } else {
 alert("Nenhum dado válido encontrado.");
 }
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao processar arquivo: " + err.message);
 } finally {
 e.target.value = '';
 }
@@ -1851,6 +1899,7 @@ videoId = url.split('youtu.be/')[1].split('?')[0];
 } else if (url.includes('/shorts/')) {
 videoId = url.split('/shorts/')[1].split('?')[0];
 }
+
 if (videoId) {
 videoId = videoId.replace('/', '');
 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
@@ -1859,7 +1908,6 @@ modal.classList.remove('hidden');
 window.open(url, '_blank');
 }
 } catch (error) {
-console.error("Erro no link do vídeo:", error);
 window.open(url, '_blank');
 }
 };
@@ -1872,26 +1920,8 @@ modal.classList.add('hidden');
 };
 
 function playAlertSound() {
-try {
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-if (AudioContext) {
-const ctx = new AudioContext();
-const now = ctx.currentTime;
-const osc = ctx.createOscillator();
-const gainNode = ctx.createGain();
-osc.type = 'sine';
-osc.frequency.setValueAtTime(523.25, now); // C5 note (clear alert)
-gainNode.gain.setValueAtTime(0, now);
-gainNode.gain.setValueAtTime(0.8, now);
-gainNode.gain.setValueAtTime(0, now + 0.6);
-osc.connect(gainNode);
-gainNode.connect(ctx.destination);
-osc.start(now);
-osc.stop(now + 0.7);
-}
-} catch(e) {
-console.error("Erro no som da dieta:", e);
-}
+const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+audio.play().catch(e => console.log("Áudio aguardando interação..."));
 }
 
 function checkDietTimer() {
@@ -1905,10 +1935,9 @@ refeicao.notificado = true;
 setTimeout(() => { refeicao.notificado = false; }, 61000);
 }
 }
-
 setInterval(checkDietTimer, 30000);
 
-// --- CORRIDA ---
+// CONTROLES DE CORRIDA
 window.toggleRunForm = () => {
 const form = document.getElementById('runLogForm');
 form.classList.toggle('hidden');
@@ -1928,12 +1957,14 @@ if (!dateValue || isNaN(distValue) || distValue <= 0) {
 alert("Por favor, preencha a data e uma distância válida (maior que 0).");
 return;
 }
+
 const totalSeconds = (hrs * 3600) + (mins * 60) + secs;
 if (totalSeconds <= 0) {
 alert("Por favor, preencha o tempo de duração da corrida.");
 return;
 }
 
+// --- CÁLCULO DO PACE (minutos por km) ---
 const paceTotalMins = (totalSeconds / 60) / distValue;
 let paceM = Math.floor(paceTotalMins);
 let paceS = Math.round((paceTotalMins - paceM) * 60);
@@ -1942,6 +1973,8 @@ paceS = 0;
 paceM += 1;
 }
 const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
+
+// --- CÁLCULO DA VELOCIDADE MÉDIA (km/h) ---
 const totalHours = totalSeconds / 3600;
 const speedVal = (distValue / totalHours).toFixed(2);
 
@@ -1959,11 +1992,13 @@ runHistory.unshift(entry);
 runHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 await saveUserData();
 
+// Limpa campos e esconde formulário
 document.getElementById('runDistance').value = "";
 document.getElementById('runHours').value = "0";
 document.getElementById('runMinutes').value = "0";
 document.getElementById('runSeconds').value = "0";
 document.getElementById('runLogForm').classList.add('hidden');
+
 renderPerformanceHistory();
 };
 
@@ -1974,8 +2009,14 @@ await saveUserData();
 renderPerformanceHistory();
 }
 };
+
+window.toggleDietDone = async (idx) => {
+if (dietPlan[idx]) {
+dietPlan[idx].done = !dietPlan[idx].done;
+await saveUserData();
+renderDietTable();
+}
+};
 </script>
 </body>
 </html>
-
-
