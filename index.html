@@ -1152,66 +1152,79 @@ currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border 
 }
 
 // CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Alarm)
+window.timerStates = window.timerStates || {};
+
 window.startRestTimer = (index, seconds) => {
-const displayEl = document.getElementById(`timer-display-${index}`);
-if (!displayEl) return;
-if (activeTimers[index]) {
-clearInterval(activeTimers[index]);
-}
-let timeLeft = parseInt(seconds) || 60;
-displayEl.classList.remove('hidden');
-const updateTimerText = () => {
-const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-const s = (timeLeft % 60).toString().padStart(2, '0');
-displayEl.textContent = `${m}:${s}`;
-};
-updateTimerText();
-activeTimers[index] = setInterval(() => {
-timeLeft--;
-if (timeLeft <= 0) {
-clearInterval(activeTimers[index]);
-displayEl.textContent = "Pronto!";
+    // Se já houver um timer ativo para este exercício, limpa o intervalo anterior
+    if (window.timerStates[index] && window.timerStates[index].intervalId) {
+        clearInterval(window.timerStates[index].intervalId);
+    }
 
-// --- WEB AUDIO API BUZZER / ALARM SOUND (Sintetizador Programático) ---
-try {
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-if (AudioContext) {
-const ctx = new AudioContext();
-const now = ctx.currentTime;
-const numBeeps = 5;
-const beepDuration = 0.5; // duração do apito (segundos)
-const silenceDuration = 0.2; // pausa entre apitos
-const cycle = beepDuration + silenceDuration;
+    const durationMs = parseInt(seconds) * 1000 || 60000;
+    const endTime = Date.now() + durationMs; // Define o timestamp exato do fim do descanso
 
-const osc = ctx.createOscillator();
-const gainNode = ctx.createGain();
+    const updateTimer = () => {
+        const now = Date.now();
+        const timeLeftMs = endTime - now;
+        const timeLeftSecs = Math.max(0, Math.round(timeLeftMs / 1000));
 
-osc.type = 'sine';
-osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro)
-gainNode.gain.setValueAtTime(0, now);
+        const m = Math.floor(timeLeftSecs / 60).toString().padStart(2, '0');
+        const s = (timeLeftSecs % 60).toString().padStart(2, '0');
 
-// Programação dos apitos para durar ~3.5 a 4 segundos
-for (let i = 0; i < numBeeps; i++) {
-const start = now + i * cycle;
-const end = start + beepDuration;
-gainNode.gain.setValueAtTime(1.0, start); // volume máximo
-gainNode.gain.setValueAtTime(0, end);     // mudo
-}
+        // Busca o elemento no DOM dinamicamente (mesmo se a página foi redesenhada após um clique)
+        const displayEl = document.getElementById(`timer-display-${index}`);
+        if (displayEl) {
+            displayEl.classList.remove('hidden');
+            displayEl.textContent = `${m}:${s}`;
+        }
 
-osc.connect(gainNode);
-gainNode.connect(ctx.destination);
-osc.start(now);
-osc.stop(now + (numBeeps * cycle));
-}
-} catch (e) {
-console.error("Erro ao reproduzir beep programático:", e);
-}
+        // Quando o tempo acabar
+        if (timeLeftMs <= 0) {
+            clearInterval(window.timerStates[index].intervalId);
+            delete window.timerStates[index]; // Remove do registro ativo
 
-setTimeout(() => displayEl.classList.add('hidden'), 3000);
-} else {
-updateTimerText();
-}
-}, 1000);
+            const finalDisplayEl = document.getElementById(`timer-display-${index}`);
+            if (finalDisplayEl) {
+                finalDisplayEl.textContent = "Pronto!";
+                setTimeout(() => {
+                    const el = document.getElementById(`timer-display-${index}`);
+                    if (el) el.classList.add('hidden');
+                }, 3000);
+            }
+
+            // --- DISPARA O SOM DO ALARME NATIVO (5 Bipes Casio Esportivos) ---
+            try {
+                const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                const playBeep = (startTime, duration, freq) => {
+                    const osc = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
+                    osc.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gainNode.gain.setValueAtTime(1.0, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration - 0.05);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                };
+
+                const audioNow = ctx.currentTime;
+                for (let i = 0; i < 5; i++) {
+                    playBeep(audioNow + (i * 0.8), 0.35, 1000);
+                }
+            } catch (e) {
+                console.error("Falha ao gerar o bipe sintetizado:", e);
+            }
+        }
+    };
+
+    // Salva o ID do intervalo e o tempo final no estado global
+    window.timerStates[index] = {
+        endTime: endTime,
+        intervalId: setInterval(updateTimer, 1000)
+    };
+
+    updateTimer(); // Executa o primeiro segundo imediatamente
 };
 
 // LOGS DO TREINO
