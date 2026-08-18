@@ -1155,6 +1155,14 @@ currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border 
 window.timerStates = window.timerStates || {};
 
 window.startRestTimer = (index, seconds) => {
+    // --- DESBLOQUEIO DE SEGURANÇA: Ativa o canal de áudio no clique do botão ---
+    if (!window.audioCtx) {
+        window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (window.audioCtx && window.audioCtx.state === 'suspended') {
+        window.audioCtx.resume();
+    }
+
     // Se já houver um timer ativo para este exercício, limpa o intervalo anterior
     if (window.timerStates[index] && window.timerStates[index].intervalId) {
         clearInterval(window.timerStates[index].intervalId);
@@ -1194,23 +1202,29 @@ window.startRestTimer = (index, seconds) => {
 
             // --- DISPARA O SOM DO ALARME NATIVO (5 Bipes Casio Esportivos) ---
             try {
-                const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-                const playBeep = (startTime, duration, freq) => {
-                    const osc = ctx.createOscillator();
-                    const gainNode = ctx.createGain();
-                    osc.connect(gainNode);
-                    gainNode.connect(ctx.destination);
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, startTime);
-                    gainNode.gain.setValueAtTime(1.0, startTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration - 0.05);
-                    osc.start(startTime);
-                    osc.stop(startTime + duration);
-                };
+                const ctx = window.audioCtx;
+                if (ctx) {
+                    if (ctx.state === 'suspended') {
+                        ctx.resume();
+                    }
 
-                const audioNow = ctx.currentTime;
-                for (let i = 0; i < 5; i++) {
-                    playBeep(audioNow + (i * 0.8), 0.35, 1000);
+                    const playBeep = (startTime, duration, freq) => {
+                        const osc = ctx.createOscillator();
+                        const gainNode = ctx.createGain();
+                        osc.connect(gainNode);
+                        gainNode.connect(ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gainNode.gain.setValueAtTime(1.0, startTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration - 0.05);
+                        osc.start(startTime);
+                        osc.stop(startTime + duration);
+                    };
+
+                    const audioNow = ctx.currentTime;
+                    for (let i = 0; i < 5; i++) {
+                        playBeep(audioNow + (i * 0.8), 0.35, 1000); // 5 Bipes limpos de 4 segundos no total
+                    }
                 }
             } catch (e) {
                 console.error("Falha ao gerar o bipe sintetizado:", e);
