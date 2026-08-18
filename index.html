@@ -75,7 +75,6 @@ border-radius: 4px;
 <h1 class="text-3xl font-extrabold tracking-tight text-white">Meu Treino Pro</h1>
 <p class="text-slate-400 text-sm mt-1" id="authSubtitle">Acesse sua ficha de treinos personalizada</p>
 </div>
-
 <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mail</label>
@@ -84,7 +83,6 @@ border-radius: 4px;
 <input type="email" id="authEmail" required placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha</label>
 <div class="relative">
@@ -92,7 +90,6 @@ border-radius: 4px;
 <input type="password" id="authPassword" required minlength="6" placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div id="confirmPasswordGroup" class="hidden">
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Confirmar Senha</label>
 <div class="relative">
@@ -100,17 +97,14 @@ border-radius: 4px;
 <input type="password" id="authConfirmPassword" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div class="text-right">
 <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-brand-400 transition">Esqueci minha senha</button>
 </div>
-
 <button type="submit" id="authSubmitBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/20 transition duration-200 flex items-center justify-center space-x-2 text-sm">
 <span>Entrar no App</span>
 <i class="ph-bold ph-arrow-right"></i>
 </button>
 </form>
-
 <div class="mt-6 text-center">
 <button onclick="toggleAuthMode()" id="toggleAuthBtn" class="text-xs text-brand-400 hover:text-brand-300 font-medium transition">
 Não tem uma conta? Cadastre-se
@@ -131,7 +125,6 @@ Não tem uma conta? Cadastre-se
 <h2 id="userNameHeader" class="text-base font-bold text-white truncate max-w-[160px]">Carregando...</h2>
 </div>
 </div>
-
 <div class="flex items-center space-x-2">
 <button onclick="openProfileModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-center text-slate-300 transition">
 <i class="ph-bold ph-user-gear text-lg"></i>
@@ -141,7 +134,6 @@ Não tem uma conta? Cadastre-se
 </button>
 </div>
 </div>
-
 <!-- WORKOUT TABS (5 TREINOS: A, B, C, D, E) -->
 <div id="workoutTabsHeader" class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
 <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">Treino A</button>
@@ -165,12 +157,10 @@ Não tem uma conta? Cadastre-se
 <p class="text-xs text-slate-400">Marque as séries realizadas, ajuste repetições/cargas e use o descanso</p>
 </div>
 </div>
-
 <!-- LISTA DE EXECUÇÃO -->
 <div id="executeExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
 </div>
-
 <!-- BOTÃO FINALIZAR -->
 <div class="pt-4">
 <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
@@ -194,7 +184,6 @@ Não tem uma conta? Cadastre-se
 <span>Add Exercício</span>
 </button>
 </div>
-
 <div class="flex gap-2">
 <!-- Novo botão de Importar CSV -->
 <button onclick="document.getElementById('csvFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
@@ -203,7 +192,6 @@ Não tem uma conta? Cadastre-se
 </button>
 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
 </div>
-
 <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
 <div id="editExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
@@ -216,7 +204,6 @@ Não tem uma conta? Cadastre-se
 <h3 class="text-lg font-extrabold text-white">Minha Dieta</h3>
 <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400 font-bold uppercase tracking-widest" id="dietDayLabel">Hoje</span>
 </div>
-
 <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
@@ -243,22 +230,20 @@ Não tem uma conta? Cadastre-se
 <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
 <p class="text-xs text-slate-400">Gerencie sua dieta</p>
 </div>
-<!-- Botão Principal (Novo Horário) seguindo estilo do 'Add Exercício' -->
+<!-- Botão Principal (Novo Horário) -->
 <button onclick="openDietModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
 <i class="ph-bold ph-plus"></i>
 <span>Add Horário</span>
 </button>
 </div>
-
 <div class="flex gap-2 mt-2">
-<!-- Botão Secundário (Importar) seguindo estilo do 'Importar CSV' -->
+<!-- Botão Secundário (Importar) -->
 <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
 <i class="ph-bold ph-file-csv"></i>
 <span>Importar csv</span>
 </button>
 <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
 </div>
-
 <div id="dietEditList" class="space-y-3">
 <!-- Os itens da dieta aparecerão aqui via JavaScript -->
 </div>
@@ -334,7 +319,6 @@ Análises
 <input type="number" id="runDistance" step="0.01" placeholder="Ex: 5.20" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
 </div>
 </div>
-
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Horas</label>
@@ -381,7 +365,7 @@ Análises
 <canvas id="weightChart"></canvas>
 </div>
 
-<!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
+<!-- NOVO GRÁFICO: Evolução de Pace de Corrida (Azul) -->
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
 <canvas id="runPaceChart"></canvas>
@@ -394,7 +378,6 @@ Análises
 </div>
 </div>
 </section>
-
 </main>
 
 <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
@@ -433,7 +416,6 @@ Análises
 <h3 class="text-xl font-extrabold text-white">Editar Perfil</h3>
 <p class="text-xs text-slate-400 mt-1">Atualize suas métricas e foto</p>
 </div>
-
 <form onsubmit="saveUserProfile(event)" class="space-y-4">
 <div class="flex flex-col items-center">
 <div class="relative group cursor-pointer" onclick="document.getElementById('photoInput').click()">
@@ -445,12 +427,10 @@ Análises
 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
 <span class="text-[11px] text-slate-400 mt-1 cursor-pointer" onclick="document.getElementById('photoInput').click()">Toque para alterar a foto</span>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
 <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Idade</label>
@@ -480,7 +460,6 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="exerciseModalTitle" class="text-xl font-extrabold text-white text-center">Novo Exercício</h3>
-
 <form onsubmit="saveExercise(event)" class="space-y-3">
 <input type="hidden" id="exIndex" value="-1">
 <div>
@@ -490,12 +469,10 @@ Análises
 <!-- Preenchido via JS -->
 </select>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome do Exercício</label>
 <input type="text" id="exName" required placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nº de Séries</label>
@@ -506,7 +483,6 @@ Análises
 <input type="text" id="exReps" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
 </div>
-
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
@@ -528,23 +504,19 @@ Análises
 </select>
 </div>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Link do Vídeo / Execução (URL)</label>
 <input type="url" id="exLink" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Observação Geral</label>
 <input type="text" id="exObs" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Grupo Combinado (Opcional)</label>
 <input type="text" id="exCombinado" placeholder="Ex: SS1" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 <p class="text-[10px] text-slate-500 mt-1">Exercícios com o mesmo nome (ex: SS1) aparecerão juntos.</p>
 </div>
-
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Exercício</span>
@@ -560,24 +532,20 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="dietModalTitle" class="text-xl font-extrabold text-white text-center">Nova Refeição</h3>
-
 <form onsubmit="saveDietEntry(event)" class="space-y-4">
 <input type="hidden" id="dietEditId" value="">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
 <input type="time" id="dietTimeInput" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos</label>
 <textarea id="dietFoodsInput" rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Escreva como quiser..."></textarea>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações</label>
 <textarea id="dietMedsInput" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Ex: Creatina, Vitaminas..."></textarea>
 </div>
-
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Dieta</span>
@@ -624,6 +592,7 @@ const db = getFirestore(firebaseApp);
 
 // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
 const presetExercisesList = [
+// --- ABDÔMEN (CORE) ---
 { group: "Abdômen (Core)", name: "Abdominal na polia alta", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Polia)", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Solo)", link: "" },
@@ -636,6 +605,7 @@ const presetExercisesList = [
 { group: "Abdômen (Core)", name: "Encolhimento polia (abdominal)", link: "" },
 { group: "Abdômen (Core)", name: "Prancha isométrica (Solo)", link: "" },
 { group: "Abdômen (Core)", name: "Roda abdominal (Ab Wheel)", link: "" },
+// --- BRAÇOS (BÍCEPS E ANTEBRAÇOS) ---
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca alternada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca concentrada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra reta)", link: "" },
@@ -646,6 +616,7 @@ const presetExercisesList = [
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Barra)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Máquina)", link: "" },
+// --- BRAÇOS (TRÍCEPS) ---
 { group: "Braços (Tríceps)", name: "Tríceps coice (Halteres)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps coice (Polia)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps francês (Halter único)", link: "" },
@@ -658,6 +629,7 @@ const presetExercisesList = [
 { group: "Braços (Tríceps)", name: "Tríceps pulley (Corda na polia alta)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Barra W)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Halteres)", link: "" },
+// --- COSTAS (DORSAIS, ROMBOIDES, TRAPÉZIO) ---
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Extensão lombar (Banco romano)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley fechado com triângulo", link: "" },
@@ -670,6 +642,7 @@ const presetExercisesList = [
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa barra reta)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa triângulo)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada unilateral / Serrote (Halteres)", link: "" },
+// --- OMBROS (DELTOIDES) ---
 { group: "Ombros (Deltoides)", name: "Abdução ombro cabo unilateral", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
@@ -686,6 +659,7 @@ const presetExercisesList = [
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Barra)", link: "" },
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Remada Alta Trapézio (Cabo)", link: "" },
+// --- PEITO (PEITORAIS) ---
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Máquina)", link: "" },
@@ -702,11 +676,13 @@ const presetExercisesList = [
 { group: "Peito (Peitorais)", name: "Supino reto (Barra)", link: "" },
 { group: "Peito (Peitorais)", name: "Supino reto (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Voador / Pec Deck (Máquina)", link: "" },
+// --- PERNAS (GLÚTEOS) ---
 { group: "Pernas (Glúteos)", name: "Cadeira abdutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Cadeira adutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Elevação pélvica (Barra ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo na polia / Cabo", link: "" },
+// --- PERNAS (MEMBROS INFERIORES) ---
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Búlgaro (Halteres)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Hack (Máquina)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento livre (Barra)", link: "" },
@@ -715,11 +691,13 @@ const presetExercisesList = [
 { group: "Pernas (Membros Inferiores)", name: "Leg Press (horizontal)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Barra)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Halteres)", link: "" },
+// --- PERNAS (PANTURRILHAS) ---
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Smith)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Step)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha sentado (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Panturrilha no Leg Press", link: "" },
+// --- PERNAS (POSTERIORES DE COXA) ---
 { group: "Pernas (Posteriores de Coxa)", name: "Cadeira flexora (Máquina sentada)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
@@ -765,7 +743,6 @@ groups[ex.group] = [];
 }
 groups[ex.group].push({ ...ex, originalIndex: idx });
 });
-
 let html = '<option value="">-- Escolha um exercício ou digite abaixo --</option>';
 for (const groupName in groups) {
 html += `<optgroup label="${groupName}" class="bg-slate-800 text-brand-400 font-bold">`;
@@ -828,7 +805,6 @@ const email = document.getElementById('authEmail').value.trim();
 const password = document.getElementById('authPassword').value;
 const confirmPassword = document.getElementById('authConfirmPassword').value;
 const submitBtn = document.getElementById('authSubmitBtn');
-
 if (isRegisterMode && password !== confirmPassword) {
 alert("As senhas não coincidem. Por favor, tente novamente.");
 return;
@@ -948,27 +924,22 @@ diet: 'navDietBtn',
 editDiet: 'navEditDietBtn',
 performance: 'navPerformanceBtn'
 };
-
 views.forEach(v => {
 const el = document.getElementById(v);
 if (el) el.classList.add('hidden');
 });
-
 Object.values(btns).forEach(b => {
 const el = document.getElementById(b);
 if (el) el.className = "flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition";
 });
-
 const targetView = document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`);
 if (targetView) targetView.classList.remove('hidden');
 const targetBtn = document.getElementById(btns[view]);
 if (targetBtn) targetBtn.className = "flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition";
-
 const tabsHeader = document.getElementById('workoutTabsHeader');
 if (tabsHeader) {
 tabsHeader.classList.toggle('hidden', ['performance', 'diet', 'editDiet'].includes(view));
 }
-
 if (view === 'diet') renderDietTable();
 if (view === 'editDiet') renderDietEditor();
 if (view === 'performance') renderPerformanceHistory();
@@ -1023,7 +994,6 @@ if (currentView === 'performance') return;
 const currentList = workouts[currentTab] || [];
 const execListContainer = document.getElementById('executeExerciseList');
 const editListContainer = document.getElementById('editExerciseList');
-
 const grouped = [];
 currentList.forEach((ex, idx) => {
 const lastGroup = grouped[grouped.length - 1];
@@ -1151,7 +1121,7 @@ currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border 
 </div>`).join('');
 }
 
-// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Alarm)
+// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Casio Alarm - 4 segundos)
 window.startRestTimer = (index, seconds) => {
 const displayEl = document.getElementById(`timer-display-${index}`);
 if (!displayEl) return;
@@ -1182,12 +1152,11 @@ const numBeeps = 5;
 const beepDuration = 0.5; // duração do apito (segundos)
 const silenceDuration = 0.2; // pausa entre apitos
 const cycle = beepDuration + silenceDuration;
-
 const osc = ctx.createOscillator();
 const gainNode = ctx.createGain();
 
 osc.type = 'sine';
-osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro)
+osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro de bip esportivo)
 gainNode.gain.setValueAtTime(0, now);
 
 // Programação dos apitos para durar ~3.5 a 4 segundos
@@ -1206,7 +1175,6 @@ osc.stop(now + (numBeeps * cycle));
 } catch (e) {
 console.error("Erro ao reproduzir beep programático:", e);
 }
-
 setTimeout(() => displayEl.classList.add('hidden'), 3000);
 } else {
 updateTimerText();
@@ -1297,7 +1265,7 @@ if (weightChartInstance) weightChartInstance.destroy();
 if (workoutChartInstance) workoutChartInstance.destroy();
 if (runPaceChartInstance) runPaceChartInstance.destroy();
 
-// 1. Gráfico de Peso
+// 1. Gráfico de Peso (Dinâmico)
 const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
 const weights = sortedW.map(w => parseFloat(w.weight));
 let yMin = 0, yMax = 120;
@@ -1320,7 +1288,7 @@ x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
 }
 });
 
-// 2. Gráfico de Evolução de Pace
+// 2. Gráfico de Evolução de Pace de Corrida (Azul Combinando com Peso)
 const sortedRuns = [...runHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
 const parsePaceToDecimal = (paceStr) => {
 if (!paceStr || !paceStr.includes(':')) return 0;
@@ -1332,7 +1300,6 @@ const paceLabels = sortedRuns.map(r => {
 const [y, m, d] = r.date.split('-');
 return `${d}/${m}`;
 });
-
 runPaceChartInstance = new Chart(document.getElementById('runPaceChart'), {
 type: 'line',
 data: {
@@ -1340,10 +1307,10 @@ labels: paceLabels,
 datasets: [{
 label: 'Pace (min/km)',
 data: paceData,
-borderColor: '#10b981', // Verde esmeralda para corrida
+borderColor: '#3b82f6', // Azul padrão combinando com peso
 tension: 0.3,
 fill: true,
-backgroundColor: 'rgba(16, 185, 129, 0.1)'
+backgroundColor: 'rgba(59, 130, 246, 0.1)' // Azul translúcido
 }]
 },
 options: {
@@ -1356,6 +1323,7 @@ const val = context.parsed.y;
 const m = Math.floor(val);
 const s = Math.round((val - m) * 60);
 return `Pace: ${m}:${s.toString().padStart(2, '0')} min/km`;
+}
 }
 }
 }
@@ -1666,9 +1634,11 @@ window.openProfileModal = () => {
 updateProfileHeader();
 document.getElementById('profileModal').classList.remove('hidden');
 };
+
 window.closeProfileModal = () => {
 document.getElementById('profileModal').classList.add('hidden');
 };
+
 window.saveUserProfile = async (e) => {
 e.preventDefault();
 const btn = document.getElementById('saveProfileBtn');
@@ -1683,7 +1653,7 @@ userProfile.weight = document.getElementById('profWeight').value;
 await saveUserData();
 updateProfileHeader();
 closeProfileModal();
-alert("Perfil updated com sucesso!");
+alert("Perfil atualizado com sucesso!");
 } catch (err) {
 alert("Erro: " + err.message);
 } finally {
@@ -1773,7 +1743,7 @@ try {
 await saveUserData();
 renderExercises();
 closeExerciseModal();
-} catch (err) { alert("Erro: " + err.message); }
+} catch (err) { alert("Erro ao salvar: " + err.message); }
 };
 
 window.deleteExercise = async (index) => {
@@ -1783,12 +1753,12 @@ try {
 await saveUserData();
 renderExercises();
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao excluir: " + err.message);
 }
 }
 };
 
-// IMPORTAÇÃO CSV
+// --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
 const file = e.target.files && e.target.files[0];
 if (!file) return;
@@ -1905,7 +1875,6 @@ refeicao.notificado = true;
 setTimeout(() => { refeicao.notificado = false; }, 61000);
 }
 }
-
 setInterval(checkDietTimer, 30000);
 
 // --- CORRIDA ---
@@ -1942,6 +1911,7 @@ paceS = 0;
 paceM += 1;
 }
 const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
+
 const totalHours = totalSeconds / 3600;
 const speedVal = (distValue / totalHours).toFixed(2);
 
@@ -1974,6 +1944,22 @@ await saveUserData();
 renderPerformanceHistory();
 }
 };
+
+// Inicializador de áudio para desbloqueio móvel
+const unlockAudio = () => {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) {
+const ctx = new AudioContext();
+if (ctx.state === 'suspended') {
+ctx.resume();
+}
+}
+document.removeEventListener('click', unlockAudio);
+document.removeEventListener('touchstart', unlockAudio);
+};
+document.addEventListener('click', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
+
 </script>
 </body>
 </html>
