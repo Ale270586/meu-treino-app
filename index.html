@@ -5,13 +5,346 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Meu Treino Pro</title>
 <!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com">// --- AI WORKOUT GENERATION FUNCTIONS ---
+window.openAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.remove('hidden');
+};
+
+window.closeAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.add('hidden');
+};
+
+window.generateAIWorkoutSubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('aiGenerateBtn');
+    const originalText = btn.innerHTML;
+    
+    const key = userProfile.geminiKey || "";
+    if (!key) {
+        alert("Por favor, configure sua Chave API Gemini nas configurações do seu Perfil antes de usar o Gerador IA.");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span>Gerando Treino...</span>`;
+    
+    const goal = document.getElementById('aiGoal').value;
+    const days = parseInt(document.getElementById('aiDays').value);
+    const duration = document.getElementById('aiDuration').value;
+    const limit = document.getElementById('aiObs').value || "Nenhuma";
+    
+    const userStats = `Nome: ${userProfile.name}, Idade: ${userProfile.age} anos, Altura: ${userProfile.height}cm, Peso atual: ${userProfile.weight}kg.`;
+    
+    // Constrói a lista simplificada de exercícios disponíveis para a IA usar
+    const exercisesText = presetExercisesList.map(ex => `- ${ex.name} (Grupo: ${ex.group})`).join('\n');
+    
+    const prompt = `Você é um personal trainer altamente qualificado. Crie uma ficha de musculação personalizada para o usuário com as seguintes metas e perfil:
+- Objetivo: ${goal}
+- Divisão de dias: ${days} dias de treino por semana (se 3 dias: use abas A, B, C; se 4 dias: use A, B, C, D; se 5 dias: use A, B, C, D, E). Deixe as demais abas de treino vazias (ex: se for 3 dias, D e E devem ser vazias []).
+- Tempo de treino pretendido: ${duration} minutos
+- Limitações físicas e observações: ${limit}
+- Perfil do usuário: ${userStats}
+
+Escolha APENAS exercícios desta lista de exercícios pré-cadastrados no sistema (não invente exercícios de fora da lista):
+${exercisesText}
+
+Você deve responder APENAS com um objeto JSON puro, sem formatação de markdown, sem caracteres extras, que corresponda exatamente a esta estrutura:
+{
+  "A": [
+    {
+      "name": "Nome do Exercício Exato da lista",
+      "series": "Número de séries (geralmente de 3 a 4)",
+      "reps": "Repetições (ex: '8-12' ou '12' ou 'Até a falha')",
+      "weight": "Sugestão de carga inicial em kg (apenas número, ex: '10')",
+      "ritmo": "Cadência sugerida (ex: '2020' ou '3010')",
+      "restTime": "Tempo de descanso em segundos. Deve ser estritamente uma destas opções: '0', '30', '45', '60', '90', '120'",
+      "link": "Mantenha vazio ''",
+      "obs": "Dica rápida de execução ou por que escolheu para o objetivo",
+      "combinado": "Vazio '' ou identificador se for supersérie combinado, ex: 'SS1'"
+    }
+  ],
+  "B": [],
+  "C": [],
+  "D": [],
+  "E": []
+}
+
+Gere um treino equilibrado e bem feito para o objetivo do usuário. Responda APENAS com o JSON puro, começando com { e terminando com }.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Erro desconhecido na API do Gemini.");
+        }
+        
+        const resData = await response.json();
+        let jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Limpa possíveis marcações de código markdown do JSON se o modelo colocá-las
+        jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        const newWorkouts = JSON.parse(jsonText);
+        
+        // Sanitiza o retorno para garantir conformidade total
+        const cleanW = sanitizeWorkouts(newWorkouts);
+        
+        // Aplica o treino e salva
+        workouts = cleanW;
+        await saveUserData();
+        
+        renderExercises();
+        closeAIWorkoutModal();
+        alert("Ficha de treinos gerada com sucesso pela IA!");
+        
+    } catch (err) {
+        console.error("Erro na geração por IA:", err);
+        alert("Erro ao gerar treino com IA: " + err.message + "\nVerifique se a sua Chave API Gemini está correta e tem saldo/permissões.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
+</script>
 <!-- Phosphor Icons -->
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<script src="https://unpkg.com/@phosphor-icons/web">// --- AI WORKOUT GENERATION FUNCTIONS ---
+window.openAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.remove('hidden');
+};
+
+window.closeAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.add('hidden');
+};
+
+window.generateAIWorkoutSubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('aiGenerateBtn');
+    const originalText = btn.innerHTML;
+    
+    const key = userProfile.geminiKey || "";
+    if (!key) {
+        alert("Por favor, configure sua Chave API Gemini nas configurações do seu Perfil antes de usar o Gerador IA.");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span>Gerando Treino...</span>`;
+    
+    const goal = document.getElementById('aiGoal').value;
+    const days = parseInt(document.getElementById('aiDays').value);
+    const duration = document.getElementById('aiDuration').value;
+    const limit = document.getElementById('aiObs').value || "Nenhuma";
+    
+    const userStats = `Nome: ${userProfile.name}, Idade: ${userProfile.age} anos, Altura: ${userProfile.height}cm, Peso atual: ${userProfile.weight}kg.`;
+    
+    // Constrói a lista simplificada de exercícios disponíveis para a IA usar
+    const exercisesText = presetExercisesList.map(ex => `- ${ex.name} (Grupo: ${ex.group})`).join('\n');
+    
+    const prompt = `Você é um personal trainer altamente qualificado. Crie uma ficha de musculação personalizada para o usuário com as seguintes metas e perfil:
+- Objetivo: ${goal}
+- Divisão de dias: ${days} dias de treino por semana (se 3 dias: use abas A, B, C; se 4 dias: use A, B, C, D; se 5 dias: use A, B, C, D, E). Deixe as demais abas de treino vazias (ex: se for 3 dias, D e E devem ser vazias []).
+- Tempo de treino pretendido: ${duration} minutos
+- Limitações físicas e observações: ${limit}
+- Perfil do usuário: ${userStats}
+
+Escolha APENAS exercícios desta lista de exercícios pré-cadastrados no sistema (não invente exercícios de fora da lista):
+${exercisesText}
+
+Você deve responder APENAS com um objeto JSON puro, sem formatação de markdown, sem caracteres extras, que corresponda exatamente a esta estrutura:
+{
+  "A": [
+    {
+      "name": "Nome do Exercício Exato da lista",
+      "series": "Número de séries (geralmente de 3 a 4)",
+      "reps": "Repetições (ex: '8-12' ou '12' ou 'Até a falha')",
+      "weight": "Sugestão de carga inicial em kg (apenas número, ex: '10')",
+      "ritmo": "Cadência sugerida (ex: '2020' ou '3010')",
+      "restTime": "Tempo de descanso em segundos. Deve ser estritamente uma destas opções: '0', '30', '45', '60', '90', '120'",
+      "link": "Mantenha vazio ''",
+      "obs": "Dica rápida de execução ou por que escolheu para o objetivo",
+      "combinado": "Vazio '' ou identificador se for supersérie combinado, ex: 'SS1'"
+    }
+  ],
+  "B": [],
+  "C": [],
+  "D": [],
+  "E": []
+}
+
+Gere um treino equilibrado e bem feito para o objetivo do usuário. Responda APENAS com o JSON puro, começando com { e terminando com }.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Erro desconhecido na API do Gemini.");
+        }
+        
+        const resData = await response.json();
+        let jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Limpa possíveis marcações de código markdown do JSON se o modelo colocá-las
+        jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        const newWorkouts = JSON.parse(jsonText);
+        
+        // Sanitiza o retorno para garantir conformidade total
+        const cleanW = sanitizeWorkouts(newWorkouts);
+        
+        // Aplica o treino e salva
+        workouts = cleanW;
+        await saveUserData();
+        
+        renderExercises();
+        closeAIWorkoutModal();
+        alert("Ficha de treinos gerada com sucesso pela IA!");
+        
+    } catch (err) {
+        console.error("Erro na geração por IA:", err);
+        alert("Erro ao gerar treino com IA: " + err.message + "\nVerifique se a sua Chave API Gemini está correta e tem saldo/permissões.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
+</script>
 <!-- Inter Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Chart.js para as Análises -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js">// --- AI WORKOUT GENERATION FUNCTIONS ---
+window.openAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.remove('hidden');
+};
+
+window.closeAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.add('hidden');
+};
+
+window.generateAIWorkoutSubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('aiGenerateBtn');
+    const originalText = btn.innerHTML;
+    
+    const key = userProfile.geminiKey || "";
+    if (!key) {
+        alert("Por favor, configure sua Chave API Gemini nas configurações do seu Perfil antes de usar o Gerador IA.");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span>Gerando Treino...</span>`;
+    
+    const goal = document.getElementById('aiGoal').value;
+    const days = parseInt(document.getElementById('aiDays').value);
+    const duration = document.getElementById('aiDuration').value;
+    const limit = document.getElementById('aiObs').value || "Nenhuma";
+    
+    const userStats = `Nome: ${userProfile.name}, Idade: ${userProfile.age} anos, Altura: ${userProfile.height}cm, Peso atual: ${userProfile.weight}kg.`;
+    
+    // Constrói a lista simplificada de exercícios disponíveis para a IA usar
+    const exercisesText = presetExercisesList.map(ex => `- ${ex.name} (Grupo: ${ex.group})`).join('\n');
+    
+    const prompt = `Você é um personal trainer altamente qualificado. Crie uma ficha de musculação personalizada para o usuário com as seguintes metas e perfil:
+- Objetivo: ${goal}
+- Divisão de dias: ${days} dias de treino por semana (se 3 dias: use abas A, B, C; se 4 dias: use A, B, C, D; se 5 dias: use A, B, C, D, E). Deixe as demais abas de treino vazias (ex: se for 3 dias, D e E devem ser vazias []).
+- Tempo de treino pretendido: ${duration} minutos
+- Limitações físicas e observações: ${limit}
+- Perfil do usuário: ${userStats}
+
+Escolha APENAS exercícios desta lista de exercícios pré-cadastrados no sistema (não invente exercícios de fora da lista):
+${exercisesText}
+
+Você deve responder APENAS com um objeto JSON puro, sem formatação de markdown, sem caracteres extras, que corresponda exatamente a esta estrutura:
+{
+  "A": [
+    {
+      "name": "Nome do Exercício Exato da lista",
+      "series": "Número de séries (geralmente de 3 a 4)",
+      "reps": "Repetições (ex: '8-12' ou '12' ou 'Até a falha')",
+      "weight": "Sugestão de carga inicial em kg (apenas número, ex: '10')",
+      "ritmo": "Cadência sugerida (ex: '2020' ou '3010')",
+      "restTime": "Tempo de descanso em segundos. Deve ser estritamente uma destas opções: '0', '30', '45', '60', '90', '120'",
+      "link": "Mantenha vazio ''",
+      "obs": "Dica rápida de execução ou por que escolheu para o objetivo",
+      "combinado": "Vazio '' ou identificador se for supersérie combinado, ex: 'SS1'"
+    }
+  ],
+  "B": [],
+  "C": [],
+  "D": [],
+  "E": []
+}
+
+Gere um treino equilibrado e bem feito para o objetivo do usuário. Responda APENAS com o JSON puro, começando com { e terminando com }.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Erro desconhecido na API do Gemini.");
+        }
+        
+        const resData = await response.json();
+        let jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Limpa possíveis marcações de código markdown do JSON se o modelo colocá-las
+        jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        const newWorkouts = JSON.parse(jsonText);
+        
+        // Sanitiza o retorno para garantir conformidade total
+        const cleanW = sanitizeWorkouts(newWorkouts);
+        
+        // Aplica o treino e salva
+        workouts = cleanW;
+        await saveUserData();
+        
+        renderExercises();
+        closeAIWorkoutModal();
+        alert("Ficha de treinos gerada com sucesso pela IA!");
+        
+    } catch (err) {
+        console.error("Erro na geração por IA:", err);
+        alert("Erro ao gerar treino com IA: " + err.message + "\nVerifique se a sua Chave API Gemini está correta e tem saldo/permissões.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
+</script>
 <script>
 tailwind.config = {
 theme: {
@@ -37,6 +370,117 @@ accent: '#2563eb'
 }
 }
 }
+// --- AI WORKOUT GENERATION FUNCTIONS ---
+window.openAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.remove('hidden');
+};
+
+window.closeAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.add('hidden');
+};
+
+window.generateAIWorkoutSubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('aiGenerateBtn');
+    const originalText = btn.innerHTML;
+    
+    const key = userProfile.geminiKey || "";
+    if (!key) {
+        alert("Por favor, configure sua Chave API Gemini nas configurações do seu Perfil antes de usar o Gerador IA.");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span>Gerando Treino...</span>`;
+    
+    const goal = document.getElementById('aiGoal').value;
+    const days = parseInt(document.getElementById('aiDays').value);
+    const duration = document.getElementById('aiDuration').value;
+    const limit = document.getElementById('aiObs').value || "Nenhuma";
+    
+    const userStats = `Nome: ${userProfile.name}, Idade: ${userProfile.age} anos, Altura: ${userProfile.height}cm, Peso atual: ${userProfile.weight}kg.`;
+    
+    // Constrói a lista simplificada de exercícios disponíveis para a IA usar
+    const exercisesText = presetExercisesList.map(ex => `- ${ex.name} (Grupo: ${ex.group})`).join('\n');
+    
+    const prompt = `Você é um personal trainer altamente qualificado. Crie uma ficha de musculação personalizada para o usuário com as seguintes metas e perfil:
+- Objetivo: ${goal}
+- Divisão de dias: ${days} dias de treino por semana (se 3 dias: use abas A, B, C; se 4 dias: use A, B, C, D; se 5 dias: use A, B, C, D, E). Deixe as demais abas de treino vazias (ex: se for 3 dias, D e E devem ser vazias []).
+- Tempo de treino pretendido: ${duration} minutos
+- Limitações físicas e observações: ${limit}
+- Perfil do usuário: ${userStats}
+
+Escolha APENAS exercícios desta lista de exercícios pré-cadastrados no sistema (não invente exercícios de fora da lista):
+${exercisesText}
+
+Você deve responder APENAS com um objeto JSON puro, sem formatação de markdown, sem caracteres extras, que corresponda exatamente a esta estrutura:
+{
+  "A": [
+    {
+      "name": "Nome do Exercício Exato da lista",
+      "series": "Número de séries (geralmente de 3 a 4)",
+      "reps": "Repetições (ex: '8-12' ou '12' ou 'Até a falha')",
+      "weight": "Sugestão de carga inicial em kg (apenas número, ex: '10')",
+      "ritmo": "Cadência sugerida (ex: '2020' ou '3010')",
+      "restTime": "Tempo de descanso em segundos. Deve ser estritamente uma destas opções: '0', '30', '45', '60', '90', '120'",
+      "link": "Mantenha vazio ''",
+      "obs": "Dica rápida de execução ou por que escolheu para o objetivo",
+      "combinado": "Vazio '' ou identificador se for supersérie combinado, ex: 'SS1'"
+    }
+  ],
+  "B": [],
+  "C": [],
+  "D": [],
+  "E": []
+}
+
+Gere um treino equilibrado e bem feito para o objetivo do usuário. Responda APENAS com o JSON puro, começando com { e terminando com }.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Erro desconhecido na API do Gemini.");
+        }
+        
+        const resData = await response.json();
+        let jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Limpa possíveis marcações de código markdown do JSON se o modelo colocá-las
+        jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        const newWorkouts = JSON.parse(jsonText);
+        
+        // Sanitiza o retorno para garantir conformidade total
+        const cleanW = sanitizeWorkouts(newWorkouts);
+        
+        // Aplica o treino e salva
+        workouts = cleanW;
+        await saveUserData();
+        
+        renderExercises();
+        closeAIWorkoutModal();
+        alert("Ficha de treinos gerada com sucesso pela IA!");
+        
+    } catch (err) {
+        console.error("Erro na geração por IA:", err);
+        alert("Erro ao gerar treino com IA: " + err.message + "\nVerifique se a sua Chave API Gemini está correta e tem saldo/permissões.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
 </script>
 <style>
 body {
@@ -75,7 +519,6 @@ border-radius: 4px;
 <h1 class="text-3xl font-extrabold tracking-tight text-white">Meu Treino Pro</h1>
 <p class="text-slate-400 text-sm mt-1" id="authSubtitle">Acesse sua ficha de treinos personalizada</p>
 </div>
-
 <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">E-mail</label>
@@ -84,7 +527,6 @@ border-radius: 4px;
 <input type="email" id="authEmail" required placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div>
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Senha</label>
 <div class="relative">
@@ -92,7 +534,6 @@ border-radius: 4px;
 <input type="password" id="authPassword" required minlength="6" placeholder="" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div id="confirmPasswordGroup" class="hidden">
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Confirmar Senha</label>
 <div class="relative">
@@ -100,17 +541,14 @@ border-radius: 4px;
 <input type="password" id="authConfirmPassword" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm">
 </div>
 </div>
-
 <div class="text-right">
 <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-brand-400 transition">Esqueci minha senha</button>
 </div>
-
 <button type="submit" id="authSubmitBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/20 transition duration-200 flex items-center justify-center space-x-2 text-sm">
 <span>Entrar no App</span>
 <i class="ph-bold ph-arrow-right"></i>
 </button>
 </form>
-
 <div class="mt-6 text-center">
 <button onclick="toggleAuthMode()" id="toggleAuthBtn" class="text-xs text-brand-400 hover:text-brand-300 font-medium transition">
 Não tem uma conta? Cadastre-se
@@ -131,7 +569,6 @@ Não tem uma conta? Cadastre-se
 <h2 id="userNameHeader" class="text-base font-bold text-white truncate max-w-[160px]">Carregando...</h2>
 </div>
 </div>
-
 <div class="flex items-center space-x-2">
 <button onclick="openProfileModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-center text-slate-300 transition">
 <i class="ph-bold ph-user-gear text-lg"></i>
@@ -141,7 +578,6 @@ Não tem uma conta? Cadastre-se
 </button>
 </div>
 </div>
-
 <!-- WORKOUT TABS (5 TREINOS: A, B, C, D, E) -->
 <div id="workoutTabsHeader" class="flex space-x-2 mt-5 overflow-x-auto custom-scrollbar pb-1 -mx-2 px-2">
 <button onclick="selectWorkoutTab('A')" id="tab-A" class="workout-tab flex-1 py-2.5 rounded-xl font-bold text-xs transition duration-200 bg-brand-500 text-white shadow-lg shadow-brand-500/20">Treino A</button>
@@ -165,12 +601,10 @@ Não tem uma conta? Cadastre-se
 <p class="text-xs text-slate-400">Marque as séries realizadas, ajuste repetições/cargas e use o descanso</p>
 </div>
 </div>
-
 <!-- LISTA DE EXECUÇÃO -->
 <div id="executeExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
 </div>
-
 <!-- BOTÃO FINALIZAR -->
 <div class="pt-4">
 <button onclick="finishCurrentSession()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
@@ -194,16 +628,18 @@ Não tem uma conta? Cadastre-se
 <span>Add Exercício</span>
 </button>
 </div>
-
 <div class="flex gap-2">
 <!-- Novo botão de Importar CSV -->
 <button onclick="document.getElementById('csvFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
 <i class="ph-bold ph-file-csv"></i>
 <span>Importar csv</span>
 </button>
+<button onclick="openAIWorkoutModal()" class="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+<i class="ph-bold ph-sparkle"></i>
+<span>Gerar Ficha com IA</span>
+</button>
 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event)">
 </div>
-
 <!-- LISTA DE CRIAÇÃO/EDIÇÃO -->
 <div id="editExerciseList" class="space-y-3">
 <!-- Renderizado Dinamicamente -->
@@ -216,7 +652,6 @@ Não tem uma conta? Cadastre-se
 <h3 class="text-lg font-extrabold text-white">Minha Dieta</h3>
 <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-lg text-slate-400 font-bold uppercase tracking-widest" id="dietDayLabel">Hoje</span>
 </div>
-
 <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
@@ -243,22 +678,20 @@ Não tem uma conta? Cadastre-se
 <h3 class="text-lg font-extrabold text-white">Configurar Dieta</h3>
 <p class="text-xs text-slate-400">Gerencie sua dieta</p>
 </div>
-<!-- Botão Principal (Novo Horário) seguindo estilo do 'Add Exercício' -->
+<!-- Botão Principal (Novo Horário) -->
 <button onclick="openDietModal()" class="bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
 <i class="ph-bold ph-plus"></i>
 <span>Add Horário</span>
 </button>
 </div>
-
 <div class="flex gap-2 mt-2">
-<!-- Botão Secundário (Importar) seguindo estilo do 'Importar CSV' -->
+<!-- Botão Secundário (Importar) -->
 <button onclick="document.getElementById('dietCsvInput').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
 <i class="ph-bold ph-file-csv"></i>
 <span>Importar csv</span>
 </button>
 <input type="file" id="dietCsvInput" accept=".csv" class="hidden" onchange="handleDietCSVUpload(event)">
 </div>
-
 <div id="dietEditList" class="space-y-3">
 <!-- Os itens da dieta aparecerão aqui via JavaScript -->
 </div>
@@ -322,6 +755,18 @@ Análises
 
 <!-- Subtela 4: Corrida -->
 <div id="subviewRuns" class="hidden space-y-4">
+
+<!-- Running Predictor Card -->
+<div id="runningPredictorCard" class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
+    <div class="flex items-center space-x-2 text-brand-400">
+        <i class="ph-bold ph-calculator text-lg"></i>
+        <h4 class="text-xs font-bold uppercase tracking-wider">Previsão de Tempo de Corrida (Riegel)</h4>
+    </div>
+    <div id="predictorContent" class="grid grid-cols-3 gap-2 text-center">
+        <!-- Preenchido via JS baseado na última corrida -->
+    </div>
+</div>
+
 <!-- Formulário de Registro de Corrida -->
 <div id="runLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
 <div class="grid grid-cols-2 gap-2">
@@ -334,7 +779,6 @@ Análises
 <input type="number" id="runDistance" step="0.01" placeholder="Ex: 5.20" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
 </div>
 </div>
-
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Horas</label>
@@ -381,7 +825,7 @@ Análises
 <canvas id="weightChart"></canvas>
 </div>
 
-<!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
+<!-- NOVO GRÁFICO: Evolução de Pace de Corrida (Azul) -->
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
 <canvas id="runPaceChart"></canvas>
@@ -394,7 +838,6 @@ Análises
 </div>
 </div>
 </section>
-
 </main>
 
 <!-- NAVEGAÇÃO INFERIOR POR TELAS -->
@@ -433,7 +876,6 @@ Análises
 <h3 class="text-xl font-extrabold text-white">Editar Perfil</h3>
 <p class="text-xs text-slate-400 mt-1">Atualize suas métricas e foto</p>
 </div>
-
 <form onsubmit="saveUserProfile(event)" class="space-y-4">
 <div class="flex flex-col items-center">
 <div class="relative group cursor-pointer" onclick="document.getElementById('photoInput').click()">
@@ -445,12 +887,10 @@ Análises
 <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
 <span class="text-[11px] text-slate-400 mt-1 cursor-pointer" onclick="document.getElementById('photoInput').click()">Toque para alterar a foto</span>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
 <input type="text" id="profName" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div class="grid grid-cols-3 gap-2">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Idade</label>
@@ -463,6 +903,20 @@ Análises
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Peso (kg)</label>
 <input type="number" step="0.1" id="profWeight" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+</div>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-400 mb-1">Chave API Gemini (Opcional p/ Treino IA)</label>
+<input type="password" id="profGeminiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block text-xs font-semibold text-slate-400 mb-1">Meta de Peso (kg)</label>
+<input type="number" step="0.1" id="profWeightGoal" placeholder="Ex: 75.0" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-400 mb-1">Meta de Pace (min/km)</label>
+<input type="text" id="profPaceGoal" placeholder="Ex: 05:30" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
 </div>
 <button type="submit" id="saveProfileBtn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
@@ -480,7 +934,6 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="exerciseModalTitle" class="text-xl font-extrabold text-white text-center">Novo Exercício</h3>
-
 <form onsubmit="saveExercise(event)" class="space-y-3">
 <input type="hidden" id="exIndex" value="-1">
 <div>
@@ -490,12 +943,10 @@ Análises
 <!-- Preenchido via JS -->
 </select>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nome do Exercício</label>
 <input type="text" id="exName" required placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Nº de Séries</label>
@@ -506,7 +957,6 @@ Análises
 <input type="text" id="exReps" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
 </div>
-
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Carga Base (kg)</label>
@@ -528,23 +978,19 @@ Análises
 </select>
 </div>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Link do Vídeo / Execução (URL)</label>
 <input type="url" id="exLink" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Observação Geral</label>
 <input type="text" id="exObs" placeholder="" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Grupo Combinado (Opcional)</label>
 <input type="text" id="exCombinado" placeholder="Ex: SS1" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
 <p class="text-[10px] text-slate-500 mt-1">Exercícios com o mesmo nome (ex: SS1) aparecerão juntos.</p>
 </div>
-
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Exercício</span>
@@ -560,30 +1006,80 @@ Análises
 <i class="ph-bold ph-x text-lg"></i>
 </button>
 <h3 id="dietModalTitle" class="text-xl font-extrabold text-white text-center">Nova Refeição</h3>
-
 <form onsubmit="saveDietEntry(event)" class="space-y-4">
 <input type="hidden" id="dietEditId" value="">
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Horário</label>
 <input type="time" id="dietTimeInput" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500 [color-scheme:dark]">
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Alimentos</label>
 <textarea id="dietFoodsInput" rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Escreva como quiser..."></textarea>
 </div>
-
 <div>
 <label class="block text-xs font-semibold text-slate-400 mb-1">Medicações</label>
 <textarea id="dietMedsInput" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500" placeholder="Ex: Creatina, Vitaminas..."></textarea>
 </div>
-
 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/20 transition text-sm flex items-center justify-center space-x-2">
 <i class="ph-bold ph-check-circle"></i>
 <span>Salvar Dieta</span>
 </button>
 </form>
 </div>
+</div>
+
+<!-- AI WORKOUT MODAL -->
+<div id="aiWorkoutModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <button onclick="closeAIWorkoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
+            <i class="ph-bold ph-x text-lg"></i>
+        </button>
+        <div class="text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 mb-2 border border-indigo-500/20 shadow-lg">
+                <i class="ph-bold ph-sparkle text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Criar Treino com IA</h3>
+            <p class="text-xs text-slate-400 mt-1">Gere uma ficha personalizada baseada nas suas metas</p>
+        </div>
+        <form onsubmit="generateAIWorkoutSubmit(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Qual é o seu Objetivo?</label>
+                <select id="aiGoal" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+                    <option value="Hipertrofia">Hipertrofia (Ganho de Massa)</option>
+                    <option value="Emagrecimento">Emagrecimento / Definição</option>
+                    <option value="Resistência">Resistência / Condicionamento</option>
+                    <option value="Força">Força Máxima</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Dias p/ Semana</label>
+                    <select id="aiDays" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+                        <option value="3">3 Dias (A, B, C)</option>
+                        <option value="4">4 Dias (A, B, C, D)</option>
+                        <option value="5">5 Dias (A, B, C, D, E)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Tempo Disponível</label>
+                    <select id="aiDuration" required class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+                        <option value="30">30 min (Rápido)</option>
+                        <option value="45">45 min (Ideal)</option>
+                        <option value="60">60 min (Completo)</option>
+                        <option value="90">90 min (Intenso)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Observações / Limitações (Opcional)</label>
+                <input type="text" id="aiObs" placeholder="Ex: Dor no joelho, treinar em casa..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3 text-white text-sm focus:outline-none focus:border-brand-500">
+            </div>
+            <button type="submit" id="aiGenerateBtn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-500/20 transition text-sm flex items-center justify-center space-x-2 mt-2">
+                <i class="ph-bold ph-sparkle"></i>
+                <span>Gerar Minha Ficha</span>
+            </button>
+        </form>
+    </div>
 </div>
 
 <!-- Modal de Vídeo (Janela Interna) -->
@@ -624,6 +1120,7 @@ const db = getFirestore(firebaseApp);
 
 // LISTA DE EXERCÍCIOS PRÉ-CADASTRADOS (COMPLETA E CATEGORIZADA)
 const presetExercisesList = [
+// --- ABDÔMEN (CORE) ---
 { group: "Abdômen (Core)", name: "Abdominal na polia alta", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Polia)", link: "" },
 { group: "Abdômen (Core)", name: "Abdominal oblíquo (Solo)", link: "" },
@@ -636,6 +1133,7 @@ const presetExercisesList = [
 { group: "Abdômen (Core)", name: "Encolhimento polia (abdominal)", link: "" },
 { group: "Abdômen (Core)", name: "Prancha isométrica (Solo)", link: "" },
 { group: "Abdômen (Core)", name: "Roda abdominal (Ab Wheel)", link: "" },
+// --- BRAÇOS (BÍCEPS E ANTEBRAÇOS) ---
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca alternada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca concentrada (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca direta (Barra reta)", link: "" },
@@ -646,6 +1144,7 @@ const presetExercisesList = [
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca martelo (Halteres)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Barra)", link: "" },
 { group: "Braços (Bíceps e Antebraços)", name: "Rosca Scott (Máquina)", link: "" },
+// --- BRAÇOS (TRÍCEPS) ---
 { group: "Braços (Tríceps)", name: "Tríceps coice (Halteres)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps coice (Polia)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps francês (Halter único)", link: "" },
@@ -658,6 +1157,7 @@ const presetExercisesList = [
 { group: "Braços (Tríceps)", name: "Tríceps pulley (Corda na polia alta)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Barra W)", link: "" },
 { group: "Braços (Tríceps)", name: "Tríceps testa (Halteres)", link: "" },
+// --- COSTAS (DORSAIS, ROMBOIDES, TRAPÉZIO) ---
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Barra fixa / Pull-up (Peso corporal)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Extensão lombar (Banco romano)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Pulley fechado com triângulo", link: "" },
@@ -670,6 +1170,7 @@ const presetExercisesList = [
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa barra reta)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada sentada (Polia baixa triângulo)", link: "" },
 { group: "Costas (Dorsais, Romboides, Trapézio)", name: "Remada unilateral / Serrote (Halteres)", link: "" },
+// --- OMBROS (DELTOIDES) ---
 { group: "Ombros (Deltoides)", name: "Abdução ombro cabo unilateral", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Crucifixo inverso / Voador inverso (Máquina)", link: "" },
@@ -686,6 +1187,7 @@ const presetExercisesList = [
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Barra)", link: "" },
 { group: "Ombros (Deltoides)", name: "Encolhimento de ombros (Halteres)", link: "" },
 { group: "Ombros (Deltoides)", name: "Remada Alta Trapézio (Cabo)", link: "" },
+// --- PEITO (PEITORAIS) ---
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Cabos/Crossover)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Crucifixo inclinado (Máquina)", link: "" },
@@ -702,11 +1204,13 @@ const presetExercisesList = [
 { group: "Peito (Peitorais)", name: "Supino reto (Barra)", link: "" },
 { group: "Peito (Peitorais)", name: "Supino reto (Halteres)", link: "" },
 { group: "Peito (Peitorais)", name: "Voador / Pec Deck (Máquina)", link: "" },
+// --- PERNAS (GLÚTEOS) ---
 { group: "Pernas (Glúteos)", name: "Cadeira abdutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Cadeira adutora (Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Elevação pélvica (Barra ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo 4 apoios (Caneleira ou Máquina)", link: "" },
 { group: "Pernas (Glúteos)", name: "Glúteo na polia / Cabo", link: "" },
+// --- PERNAS (MEMBROS INFERIORES) ---
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Búlgaro (Halteres)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento Hack (Máquina)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Agachamento livre (Barra)", link: "" },
@@ -715,11 +1219,13 @@ const presetExercisesList = [
 { group: "Pernas (Membros Inferiores)", name: "Leg Press (horizontal)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Barra)", link: "" },
 { group: "Pernas (Membros Inferiores)", name: "Passada / Avanço / Afundo (Halteres)", link: "" },
+// --- PERNAS (PANTURRILHAS) ---
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Smith)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha em pé (Step)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Elevação de panturrilha sentado (Máquina)", link: "" },
 { group: "Pernas (Panturrilhas)", name: "Panturrilha no Leg Press", link: "" },
+// --- PERNAS (POSTERIORES DE COXA) ---
 { group: "Pernas (Posteriores de Coxa)", name: "Cadeira flexora (Máquina sentada)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Barra)", link: "" },
 { group: "Pernas (Posteriores de Coxa)", name: "Levantamento Terra Romeno (RDL) (Halteres)", link: "" },
@@ -735,7 +1241,7 @@ let currentTab = 'A';
 let currentView = 'execute'; // 'execute', 'edit' ou 'performance'
 let currentSessionLogs = {};
 let activeTimers = {};
-let userProfile = { name: "", age: "", height: "", weight: "", photo: "" };
+let userProfile = { name: "", age: "", height: "", weight: "", photo: "", geminiKey: "", weightGoal: "", paceGoal: "" };
 let workouts = { A: [], B: [], C: [], D: [], E: [] };
 let history = [];
 let weightHistory = []; // Novo: Armazena o histórico de peso
@@ -765,7 +1271,6 @@ groups[ex.group] = [];
 }
 groups[ex.group].push({ ...ex, originalIndex: idx });
 });
-
 let html = '<option value="">-- Escolha um exercício ou digite abaixo --</option>';
 for (const groupName in groups) {
 html += `<optgroup label="${groupName}" class="bg-slate-800 text-brand-400 font-bold">`;
@@ -828,7 +1333,6 @@ const email = document.getElementById('authEmail').value.trim();
 const password = document.getElementById('authPassword').value;
 const confirmPassword = document.getElementById('authConfirmPassword').value;
 const submitBtn = document.getElementById('authSubmitBtn');
-
 if (isRegisterMode && password !== confirmPassword) {
 alert("As senhas não coincidem. Por favor, tente novamente.");
 return;
@@ -870,7 +1374,10 @@ name: String(prof?.name || ""),
 age: String(prof?.age || ""),
 height: String(prof?.height || ""),
 weight: String(prof?.weight || ""),
-photo: String(prof?.photo || "")
+photo: String(prof?.photo || ""),
+geminiKey: String(prof?.geminiKey || ""),
+weightGoal: String(prof?.weightGoal || ""),
+paceGoal: String(prof?.paceGoal || "")
 };
 }
 
@@ -948,27 +1455,22 @@ diet: 'navDietBtn',
 editDiet: 'navEditDietBtn',
 performance: 'navPerformanceBtn'
 };
-
 views.forEach(v => {
 const el = document.getElementById(v);
 if (el) el.classList.add('hidden');
 });
-
 Object.values(btns).forEach(b => {
 const el = document.getElementById(b);
 if (el) el.className = "flex flex-col items-center justify-center py-2 rounded-lg text-slate-400 font-bold text-[10px] transition";
 });
-
 const targetView = document.getElementById(`view${view.charAt(0).toUpperCase() + view.slice(1)}`);
 if (targetView) targetView.classList.remove('hidden');
 const targetBtn = document.getElementById(btns[view]);
 if (targetBtn) targetBtn.className = "flex flex-col items-center justify-center py-2 rounded-lg text-brand-400 bg-brand-500/10 border border-brand-500/20 font-bold text-[10px] transition";
-
 const tabsHeader = document.getElementById('workoutTabsHeader');
 if (tabsHeader) {
 tabsHeader.classList.toggle('hidden', ['performance', 'diet', 'editDiet'].includes(view));
 }
-
 if (view === 'diet') renderDietTable();
 if (view === 'editDiet') renderDietEditor();
 if (view === 'performance') renderPerformanceHistory();
@@ -988,6 +1490,9 @@ document.getElementById('profName').value = userProfile.name || "";
 document.getElementById('profAge').value = userProfile.age || "";
 document.getElementById('profHeight').value = userProfile.height || "";
 document.getElementById('profWeight').value = userProfile.weight || "";
+document.getElementById('profGeminiKey').value = userProfile.geminiKey || "";
+document.getElementById('profWeightGoal').value = userProfile.weightGoal || "";
+document.getElementById('profPaceGoal').value = userProfile.paceGoal || "";
 }
 
 window.selectWorkoutTab = (tab) => {
@@ -1015,6 +1520,9 @@ currentSessionLogs[idx] = { seriesDone: [] };
 }
 currentSessionLogs[idx].seriesDone[serieIndex] = newVal;
 });
+if (window.navigator && window.navigator.vibrate) {
+    window.navigator.vibrate(40); // Curta vibração de confirmação para treino combinado
+}
 renderExercises();
 };
 
@@ -1023,7 +1531,6 @@ if (currentView === 'performance') return;
 const currentList = workouts[currentTab] || [];
 const execListContainer = document.getElementById('executeExerciseList');
 const editListContainer = document.getElementById('editExerciseList');
-
 const grouped = [];
 currentList.forEach((ex, idx) => {
 const lastGroup = grouped[grouped.length - 1];
@@ -1151,100 +1658,74 @@ currentList.map((item, index) => `<div class="glass-card rounded-2xl p-4 border 
 </div>`).join('');
 }
 
-// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Alarm)
-window.timerStates = window.timerStates || {};
-
+// CRONÔMETRO DE DESCANSO (Com Web Audio API Synthesizer Casio Alarm - 4 segundos)
 window.startRestTimer = (index, seconds) => {
-    // --- DESBLOQUEIO DE SEGURANÇA: Ativa o canal de áudio no clique do botão ---
-    if (!window.audioCtx) {
-        window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (window.audioCtx && window.audioCtx.state === 'suspended') {
-        window.audioCtx.resume();
-    }
+const displayEl = document.getElementById(`timer-display-${index}`);
+if (!displayEl) return;
+if (activeTimers[index]) {
+clearInterval(activeTimers[index]);
+}
+let timeLeft = parseInt(seconds) || 60;
+displayEl.classList.remove('hidden');
+const updateTimerText = () => {
+const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+const s = (timeLeft % 60).toString().padStart(2, '0');
+displayEl.textContent = `${m}:${s}`;
+};
+updateTimerText();
+activeTimers[index] = setInterval(() => {
+timeLeft--;
+if (timeLeft <= 0) {
+clearInterval(activeTimers[index]);
+displayEl.textContent = "Pronto!";
 
-    // Se já houver um timer ativo para este exercício, limpa o intervalo anterior
-    if (window.timerStates[index] && window.timerStates[index].intervalId) {
-        clearInterval(window.timerStates[index].intervalId);
-    }
+// --- WEB AUDIO API BUZZER / ALARM SOUND (Sintetizador Programático) ---
+try {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) {
+const ctx = new AudioContext();
+const now = ctx.currentTime;
+const numBeeps = 5;
+const beepDuration = 0.5; // duração do apito (segundos)
+const silenceDuration = 0.2; // pausa entre apitos
+const cycle = beepDuration + silenceDuration;
+const osc = ctx.createOscillator();
+const gainNode = ctx.createGain();
 
-    const durationMs = parseInt(seconds) * 1000 || 60000;
-    const endTime = Date.now() + durationMs; // Define o timestamp exato do fim do descanso
+osc.type = 'sine';
+osc.frequency.setValueAtTime(880, now); // 880Hz (Lá agudo claro de bip esportivo)
+gainNode.gain.setValueAtTime(0, now);
 
-    const updateTimer = () => {
-        const now = Date.now();
-        const timeLeftMs = endTime - now;
-        const timeLeftSecs = Math.max(0, Math.round(timeLeftMs / 1000));
+// Programação dos apitos para durar ~3.5 a 4 segundos
+for (let i = 0; i < numBeeps; i++) {
+const start = now + i * cycle;
+const end = start + beepDuration;
+gainNode.gain.setValueAtTime(1.0, start); // volume máximo
+gainNode.gain.setValueAtTime(0, end);     // mudo
+}
 
-        const m = Math.floor(timeLeftSecs / 60).toString().padStart(2, '0');
-        const s = (timeLeftSecs % 60).toString().padStart(2, '0');
-
-        // Busca o elemento no DOM dinamicamente (mesmo se a página foi redesenhada após um clique)
-        const displayEl = document.getElementById(`timer-display-${index}`);
-        if (displayEl) {
-            displayEl.classList.remove('hidden');
-            displayEl.textContent = `${m}:${s}`;
-        }
-
-        // Quando o tempo acabar
-        if (timeLeftMs <= 0) {
-            clearInterval(window.timerStates[index].intervalId);
-            delete window.timerStates[index]; // Remove do registro ativo
-
-            const finalDisplayEl = document.getElementById(`timer-display-${index}`);
-            if (finalDisplayEl) {
-                finalDisplayEl.textContent = "Pronto!";
-                setTimeout(() => {
-                    const el = document.getElementById(`timer-display-${index}`);
-                    if (el) el.classList.add('hidden');
-                }, 3000);
-            }
-
-            // --- DISPARA O SOM DO ALARME NATIVO (5 Bipes Casio Esportivos) ---
-            try {
-                const ctx = window.audioCtx;
-                if (ctx) {
-                    if (ctx.state === 'suspended') {
-                        ctx.resume();
-                    }
-
-                    const playBeep = (startTime, duration, freq) => {
-                        const osc = ctx.createOscillator();
-                        const gainNode = ctx.createGain();
-                        osc.connect(gainNode);
-                        gainNode.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, startTime);
-                        gainNode.gain.setValueAtTime(1.0, startTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration - 0.05);
-                        osc.start(startTime);
-                        osc.stop(startTime + duration);
-                    };
-
-                    const audioNow = ctx.currentTime;
-                    for (let i = 0; i < 5; i++) {
-                        playBeep(audioNow + (i * 0.8), 0.35, 1000); // 5 Bipes limpos de 4 segundos no total
-                    }
-                }
-            } catch (e) {
-                console.error("Falha ao gerar o bipe sintetizado:", e);
-            }
-        }
-    };
-
-    // Salva o ID do intervalo e o tempo final no estado global
-    window.timerStates[index] = {
-        endTime: endTime,
-        intervalId: setInterval(updateTimer, 1000)
-    };
-
-    updateTimer(); // Executa o primeiro segundo imediatamente
+osc.connect(gainNode);
+gainNode.connect(ctx.destination);
+osc.start(now);
+osc.stop(now + (numBeeps * cycle));
+}
+} catch (e) {
+console.error("Erro ao reproduzir beep programático:", e);
+}
+setTimeout(() => displayEl.classList.add('hidden'), 3000);
+} else {
+updateTimerText();
+}
+}, 1000);
 };
 
 // LOGS DO TREINO
 window.toggleSerieDone = (exIndex, serieIndex) => {
 if (currentSessionLogs[exIndex] && currentSessionLogs[exIndex].seriesDone) {
 currentSessionLogs[exIndex].seriesDone[serieIndex] = !currentSessionLogs[exIndex].seriesDone[serieIndex];
+if (window.navigator && window.navigator.vibrate) {
+    window.navigator.vibrate(40); // Curta vibração de confirmação ao tocar na série
+}
 renderExercises();
 }
 };
@@ -1324,22 +1805,57 @@ if (weightChartInstance) weightChartInstance.destroy();
 if (workoutChartInstance) workoutChartInstance.destroy();
 if (runPaceChartInstance) runPaceChartInstance.destroy();
 
-// 1. Gráfico de Peso
+// 1. Gráfico de Peso (Dinâmico + Meta)
 const sortedW = [...weightHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
 const weights = sortedW.map(w => parseFloat(w.weight));
+
+const weightDatasets = [{
+    label: 'Peso',
+    data: sortedW.map(w => parseFloat(w.weight)),
+    borderColor: '#3b82f6',
+    tension: 0.3,
+    fill: true,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)'
+}];
+
+const goalWeight = parseFloat(userProfile.weightGoal);
+if (goalWeight > 0 && sortedW.length > 0) {
+    weightDatasets.push({
+        label: 'Meta',
+        data: new Array(sortedW.length).fill(goalWeight),
+        borderColor: '#ef4444', // Vermelho para a meta
+        borderDash: [5, 5],
+        pointRadius: 0,
+        fill: false,
+        tension: 0
+    });
+}
+
 let yMin = 0, yMax = 120;
 if (weights.length > 0) {
-yMin = Math.max(0, Math.floor(Math.min(...weights) - 10));
-yMax = Math.ceil(Math.max(...weights) + 10);
+    let minVal = Math.min(...weights);
+    let maxVal = Math.max(...weights);
+    if (goalWeight > 0) {
+        minVal = Math.min(minVal, goalWeight);
+        maxVal = Math.max(maxVal, goalWeight);
+    }
+    yMin = Math.max(0, Math.floor(minVal - 5));
+    yMax = Math.ceil(maxVal + 5);
 }
+
 weightChartInstance = new Chart(document.getElementById('weightChart'), {
 type: 'line',
 data: {
 labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `${d}/${m}`; }),
-datasets: [{ label: 'Peso', data: sortedW.map(w => w.weight), borderColor: '#3b82f6', tension: 0.3, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }]
+datasets: weightDatasets
 },
 options: {
-plugins: { legend: { display: false } },
+plugins: { 
+    legend: { 
+        display: (goalWeight > 0),
+        labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } }
+    } 
+},
 scales: {
 y: { min: yMin, max: yMax, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
 x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
@@ -1347,7 +1863,7 @@ x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
 }
 });
 
-// 2. Gráfico de Evolução de Pace
+// 2. Gráfico de Evolução de Pace de Corrida (Azul + Meta)
 const sortedRuns = [...runHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
 const parsePaceToDecimal = (paceStr) => {
 if (!paceStr || !paceStr.includes(':')) return 0;
@@ -1360,29 +1876,54 @@ const [y, m, d] = r.date.split('-');
 return `${d}/${m}`;
 });
 
+const goalPaceStr = userProfile.paceGoal || "";
+const parseGoalPaceToDecimal = (paceStr) => {
+    if (!paceStr || !paceStr.includes(':')) return 0;
+    const [m, s] = paceStr.split(':').map(Number);
+    return m + (s / 60);
+};
+const goalPaceDecimal = parseGoalPaceToDecimal(goalPaceStr);
+
+const paceDatasets = [{
+    label: 'Pace',
+    data: paceData,
+    borderColor: '#3b82f6', // Azul padrão combinando com peso
+    tension: 0.3,
+    fill: true,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)' // Azul translúcido
+}];
+
+if (goalPaceDecimal > 0 && sortedRuns.length > 0) {
+    paceDatasets.push({
+        label: 'Meta',
+        data: new Array(sortedRuns.length).fill(goalPaceDecimal),
+        borderColor: '#f59e0b', // Cor âmbar para meta do pace
+        borderDash: [5, 5],
+        pointRadius: 0,
+        fill: false,
+        tension: 0
+    });
+}
+
 runPaceChartInstance = new Chart(document.getElementById('runPaceChart'), {
 type: 'line',
 data: {
 labels: paceLabels,
-datasets: [{
-label: 'Pace (min/km)',
-data: paceData,
-borderColor: '#3b82f6', // Verde esmeralda para corrida
-tension: 0.3,
-fill: true,
-backgroundColor: 'rgba(59, 130, 246, 0.1)'
-}]
+datasets: paceDatasets
 },
 options: {
 plugins: {
-legend: { display: false },
+legend: { 
+    display: (goalPaceDecimal > 0),
+    labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } }
+},
 tooltip: {
 callbacks: {
 label: function(context) {
 const val = context.parsed.y;
 const m = Math.floor(val);
 const s = Math.round((val - m) * 60);
-return `Pace: ${m}:${s.toString().padStart(2, '0')} min/km`;
+return `${context.dataset.label}: ${m}:${s.toString().padStart(2, '0')} min/km`;
 }
 }
 }
@@ -1404,7 +1945,7 @@ x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
 }
 });
 
-// 3. Gráfico de Treinos Semanais
+// 3. Gráfico de Treinos Semanais (Original)
 const weeks = [];
 for (let i = 3; i >= 0; i--) {
 const d = new Date(); d.setDate(d.getDate() - (i*7));
@@ -1466,7 +2007,57 @@ ${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-
 </div>
 </div>`).join('');
 
-// Renderizar Corrida
+// Renderizar Corrida e Previsão de Provas
+const predictorContent = document.getElementById('predictorContent');
+if (predictorContent) {
+    if (runHistory.length === 0) {
+        predictorContent.innerHTML = `<div class="col-span-3 text-slate-500 text-xs italic py-2">Registre sua primeira corrida para ver as estimativas de prova.</div>`;
+    } else {
+        const lastRun = runHistory[0];
+        const d1 = parseFloat(lastRun.distance);
+        const [h, m, s] = lastRun.timeStr.split(':').map(Number);
+        const t1 = (h * 3600) + (m * 60) + s;
+        
+        const formatTime = (totalSecs) => {
+            const hrs = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = Math.round(totalSecs % 60);
+            if (hrs > 0) {
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        };
+        
+        const calculateRiegel = (targetDist) => {
+            const t2 = t1 * Math.pow((targetDist / d1), 1.06);
+            return formatTime(t2);
+        };
+        
+        const calculateRiegelPace = (targetDist) => {
+            const t2 = t1 * Math.pow((targetDist / d1), 1.06);
+            return formatTime(t2 / targetDist);
+        };
+        
+        predictorContent.innerHTML = `
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+                <p class="text-[9px] text-slate-500 uppercase font-bold">Meta 5k</p>
+                <p class="text-xs font-mono font-bold text-white mt-1">${calculateRiegel(5)}</p>
+                <p class="text-[8px] text-slate-400 mt-0.5">@ ${calculateRiegelPace(5)}/km</p>
+            </div>
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+                <p class="text-[9px] text-slate-500 uppercase font-bold">Meta 10k</p>
+                <p class="text-xs font-mono font-bold text-white mt-1">${calculateRiegel(10)}</p>
+                <p class="text-[8px] text-slate-400 mt-0.5">@ ${calculateRiegelPace(10)}/km</p>
+            </div>
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+                <p class="text-[9px] text-slate-500 uppercase font-bold">Meia (21k)</p>
+                <p class="text-xs font-mono font-bold text-white mt-1">${calculateRiegel(21.1)}</p>
+                <p class="text-[8px] text-slate-400 mt-0.5">@ ${calculateRiegelPace(21.1)}/km</p>
+            </div>
+        `;
+    }
+}
+
 const runContainer = document.getElementById('runHistoryTableBody');
 if (runContainer) {
 runContainer.innerHTML = runHistory.length === 0
@@ -1693,9 +2284,11 @@ window.openProfileModal = () => {
 updateProfileHeader();
 document.getElementById('profileModal').classList.remove('hidden');
 };
+
 window.closeProfileModal = () => {
 document.getElementById('profileModal').classList.add('hidden');
 };
+
 window.saveUserProfile = async (e) => {
 e.preventDefault();
 const btn = document.getElementById('saveProfileBtn');
@@ -1707,10 +2300,13 @@ userProfile.name = document.getElementById('profName').value;
 userProfile.age = document.getElementById('profAge').value;
 userProfile.height = document.getElementById('profHeight').value;
 userProfile.weight = document.getElementById('profWeight').value;
+userProfile.geminiKey = document.getElementById('profGeminiKey').value;
+userProfile.weightGoal = document.getElementById('profWeightGoal').value;
+userProfile.paceGoal = document.getElementById('profPaceGoal').value;
 await saveUserData();
 updateProfileHeader();
 closeProfileModal();
-alert("Perfil updated com sucesso!");
+alert("Perfil atualizado com sucesso!");
 } catch (err) {
 alert("Erro: " + err.message);
 } finally {
@@ -1800,7 +2396,7 @@ try {
 await saveUserData();
 renderExercises();
 closeExerciseModal();
-} catch (err) { alert("Erro: " + err.message); }
+} catch (err) { alert("Erro ao salvar: " + err.message); }
 };
 
 window.deleteExercise = async (index) => {
@@ -1810,12 +2406,12 @@ try {
 await saveUserData();
 renderExercises();
 } catch (err) {
-alert("Erro: " + err.message);
+alert("Erro ao excluir: " + err.message);
 }
 }
 };
 
-// IMPORTAÇÃO CSV
+// --- LÓGICA PARA IMPORTAÇÃO DE PLANILHA CSV ---
 window.handleCSVUpload = (e) => {
 const file = e.target.files && e.target.files[0];
 if (!file) return;
@@ -1932,7 +2528,6 @@ refeicao.notificado = true;
 setTimeout(() => { refeicao.notificado = false; }, 61000);
 }
 }
-
 setInterval(checkDietTimer, 30000);
 
 // --- CORRIDA ---
@@ -1969,6 +2564,7 @@ paceS = 0;
 paceM += 1;
 }
 const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
+
 const totalHours = totalSeconds / 3600;
 const speedVal = (distValue / totalHours).toFixed(2);
 
@@ -2001,8 +2597,134 @@ await saveUserData();
 renderPerformanceHistory();
 }
 };
+
+// Inicializador de áudio para desbloqueio móvel
+const unlockAudio = () => {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) {
+const ctx = new AudioContext();
+if (ctx.state === 'suspended') {
+ctx.resume();
+}
+}
+document.removeEventListener('click', unlockAudio);
+document.removeEventListener('touchstart', unlockAudio);
+};
+document.addEventListener('click', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
+
+// --- AI WORKOUT GENERATION FUNCTIONS ---
+window.openAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.remove('hidden');
+};
+
+window.closeAIWorkoutModal = () => {
+    document.getElementById('aiWorkoutModal').classList.add('hidden');
+};
+
+window.generateAIWorkoutSubmit = async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('aiGenerateBtn');
+    const originalText = btn.innerHTML;
+    
+    const key = userProfile.geminiKey || "";
+    if (!key) {
+        alert("Por favor, configure sua Chave API Gemini nas configurações do seu Perfil antes de usar o Gerador IA.");
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span>Gerando Treino...</span>`;
+    
+    const goal = document.getElementById('aiGoal').value;
+    const days = parseInt(document.getElementById('aiDays').value);
+    const duration = document.getElementById('aiDuration').value;
+    const limit = document.getElementById('aiObs').value || "Nenhuma";
+    
+    const userStats = `Nome: ${userProfile.name}, Idade: ${userProfile.age} anos, Altura: ${userProfile.height}cm, Peso atual: ${userProfile.weight}kg.`;
+    
+    // Constrói a lista simplificada de exercícios disponíveis para a IA usar
+    const exercisesText = presetExercisesList.map(ex => `- ${ex.name} (Grupo: ${ex.group})`).join('\n');
+    
+    const prompt = `Você é um personal trainer altamente qualificado. Crie uma ficha de musculação personalizada para o usuário com as seguintes metas e perfil:
+- Objetivo: ${goal}
+- Divisão de dias: ${days} dias de treino por semana (se 3 dias: use abas A, B, C; se 4 dias: use A, B, C, D; se 5 dias: use A, B, C, D, E). Deixe as demais abas de treino vazias (ex: se for 3 dias, D e E devem ser vazias []).
+- Tempo de treino pretendido: ${duration} minutos
+- Limitações físicas e observações: ${limit}
+- Perfil do usuário: ${userStats}
+
+Escolha APENAS exercícios desta lista de exercícios pré-cadastrados no sistema (não invente exercícios de fora da lista):
+${exercisesText}
+
+Você deve responder APENAS com um objeto JSON puro, sem formatação de markdown, sem caracteres extras, que corresponda exatamente a esta estrutura:
+{
+  "A": [
+    {
+      "name": "Nome do Exercício Exato da lista",
+      "series": "Número de séries (geralmente de 3 a 4)",
+      "reps": "Repetições (ex: '8-12' ou '12' ou 'Até a falha')",
+      "weight": "Sugestão de carga inicial em kg (apenas número, ex: '10')",
+      "ritmo": "Cadência sugerida (ex: '2020' ou '3010')",
+      "restTime": "Tempo de descanso em segundos. Deve ser estritamente uma destas opções: '0', '30', '45', '60', '90', '120'",
+      "link": "Mantenha vazio ''",
+      "obs": "Dica rápida de execução ou por que escolheu para o objetivo",
+      "combinado": "Vazio '' ou identificador se for supersérie combinado, ex: 'SS1'"
+    }
+  ],
+  "B": [],
+  "C": [],
+  "D": [],
+  "E": []
+}
+
+Gere um treino equilibrado e bem feito para o objetivo do usuário. Responda APENAS com o JSON puro, começando com { e terminando com }.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || "Erro desconhecido na API do Gemini.");
+        }
+        
+        const resData = await response.json();
+        let jsonText = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Limpa possíveis marcações de código markdown do JSON se o modelo colocá-las
+        jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        const newWorkouts = JSON.parse(jsonText);
+        
+        // Sanitiza o retorno para garantir conformidade total
+        const cleanW = sanitizeWorkouts(newWorkouts);
+        
+        // Aplica o treino e salva
+        workouts = cleanW;
+        await saveUserData();
+        
+        renderExercises();
+        closeAIWorkoutModal();
+        alert("Ficha de treinos gerada com sucesso pela IA!");
+        
+    } catch (err) {
+        console.error("Erro na geração por IA:", err);
+        alert("Erro ao gerar treino com IA: " + err.message + "\nVerifique se a sua Chave API Gemini está correta e tem saldo/permissões.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+};
+
 </script>
 </body>
 </html>
-
-
+O Gemini Notebook pode gerar respostas incorretas. Por isso, cheque o conteúdo.
