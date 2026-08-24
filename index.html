@@ -770,7 +770,7 @@ let html = '<option value="">-- Escolha um exercício ou digite abaixo --</optio
 for (const groupName in groups) {
 html += `<optgroup label="${groupName}" class="bg-slate-800 text-brand-400 font-bold">`;
 groups[groupName].forEach(ex => {
-html += `<option value="ex.originalIndex"class="bg-slate-900text-whitefont-normal">{ex.name}</option>`;
+html += `<option value="${ex.originalIndex}" class="bg-slate-900 text-white font-normal">${ex.name}</option>`;
 });
 html += `</optgroup>`;
 }
@@ -1059,8 +1059,8 @@ let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
 seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
-<input type="checkbox" isChecked?'checked':''onchange="toggleCombinedSerieDone({allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
-<span class="text-[10px] font-bold isChecked?'text-emerald-500line-through':'text-slate-300'">S{s+1}</span>
+<input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCombinedSerieDone(${allGroupIndexes}, ${s})" class="w-4 h-4 accent-emerald-500">
+<span class="text-[10px] font-bold ${isChecked ? 'text-emerald-500 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
 return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-4">
@@ -1109,8 +1109,8 @@ let seriesHtml = '';
 for (let s = 0; s < numSeries; s++) {
 const isChecked = log.seriesDone[s] || false;
 seriesHtml += `<label class="inline-flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl cursor-pointer">
-<input type="checkbox" isChecked?'checked':''onchange="toggleSerieDone({idx}, ${s})" class="w-4 h-4 accent-emerald-500">
-<span class="text-[10px] font-bold isChecked?'text-emerald-400line-through':'text-slate-300'">S{s+1}</span>
+<input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSerieDone(${idx}, ${s})" class="w-4 h-4 accent-emerald-500">
+<span class="text-[10px] font-bold ${isChecked ? 'text-emerald-400 line-through' : 'text-slate-300'}">S${s+1}</span>
 </label>`;
 }
 return `<div class="glass-card rounded-2xl p-4 border transition-all duration-300 ${isComplete ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-slate-800/80'} space-y-3">
@@ -1183,7 +1183,7 @@ window.startRestTimer = (index, seconds) => {
         const displayEl = document.getElementById(`timer-display-${index}`);
         if (displayEl) {
             displayEl.classList.remove('hidden');
-            displayEl.textContent = `m:{s}`;
+            displayEl.textContent = `${m}:${s}`;
         }
 
         // Quando o tempo acabar
@@ -1335,7 +1335,7 @@ yMax = Math.ceil(Math.max(...weights) + 10);
 weightChartInstance = new Chart(document.getElementById('weightChart'), {
 type: 'line',
 data: {
-labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `d/{m}`; }),
+labels: sortedW.map(w => { const [y,m,d] = w.date.split('-'); return `${d}/${m}`; }),
 datasets: [{ label: 'Peso', data: sortedW.map(w => w.weight), borderColor: '#3b82f6', tension: 0.3, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.1)' }]
 },
 options: {
@@ -1357,7 +1357,7 @@ return m + (s / 60);
 const paceData = sortedRuns.map(r => parsePaceToDecimal(r.pace));
 const paceLabels = sortedRuns.map(r => {
 const [y, m, d] = r.date.split('-');
-return `d/{m}`;
+return `${d}/${m}`;
 });
 
 runPaceChartInstance = new Chart(document.getElementById('runPaceChart'), {
@@ -1382,7 +1382,7 @@ label: function(context) {
 const val = context.parsed.y;
 const m = Math.floor(val);
 const s = Math.round((val - m) * 60);
-return `Pace: m:{s.toString().padStart(2, '0')} min/km`;
+return `Pace: ${m}:${s.toString().padStart(2, '0')} min/km`;
 }
 }
 }
@@ -1395,7 +1395,7 @@ color: '#94a3b8',
 callback: function(value) {
 const m = Math.floor(value);
 const s = Math.round((value - m) * 60);
-return `m:{s.toString().padStart(2, '0')}`;
+return `${m}:${s.toString().padStart(2, '0')}`;
 }
 }
 },
@@ -1411,7 +1411,7 @@ const d = new Date(); d.setDate(d.getDate() - (i*7));
 const sun = new Date(d); sun.setDate(d.getDate() - d.getDay()); sun.setHours(0,0,0,0);
 const sat = new Date(d); sat.setDate(d.getDate() + (6 - d.getDay())); sat.setHours(23,59,59,999);
 const count = history.filter(h => { const hd = new Date(h.dateIso); return hd >= sun && hd <= sat; }).length;
-weeks.push({ label: `sun.getDate()/{sun.getMonth()+1}`, count });
+weeks.push({ label: `${sun.getDate()}/${sun.getMonth()+1}`, count });
 }
 workoutChartInstance = new Chart(document.getElementById('workoutChart'), {
 type: 'bar',
@@ -1444,7 +1444,7 @@ return imc;
 </div>
 </div>
 <div class="text-right flex items-center space-x-3">
-<span class="text-[10px] text-slate-500 font-medium">d/{m}/${y}</span>
+<span class="text-[10px] text-slate-500 font-medium">${d}/${m}/${y}</span>
 <button onclick="deleteWeightEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash"></i></button>
 </div>
 </div>`;
@@ -1462,7 +1462,7 @@ workoutContainer.innerHTML = history.length === 0
 <button onclick="deleteHistorySession(${idx})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash text-sm"></i></button>
 </div>
 <div class="bg-slate-900/50 rounded-xl p-2 space-y-1">
-${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-b border-slate-800/40 py-1"><span class="text-slate-300">${ex.name}</span><span class="text-brand-400 font-medium">ex.seriesCompleted/{ex.seriesTotal} séri. • ${ex.weightUsed}</span></div>`).join('')}
+${item.exercises.map(ex => `<div class="flex justify-between text-[11px] border-b border-slate-800/40 py-1"><span class="text-slate-300">${ex.name}</span><span class="text-brand-400 font-medium">${ex.seriesCompleted}/${ex.seriesTotal} séri. • ${ex.weightUsed}</span></div>`).join('')}
 </div>
 </div>`).join('');
 
@@ -1474,7 +1474,7 @@ runContainer.innerHTML = runHistory.length === 0
 : runHistory.map(item => {
 const [y, m, d] = item.date.split('-');
 return `<tr class="transition border-b border-slate-800/50">
-<td class="p-3 text-slate-300 font-medium">d/{m}/${y}</td>
+<td class="p-3 text-slate-300 font-medium">${d}/${m}/${y}</td>
 <td class="p-3 text-white font-bold">${item.distance} km</td>
 <td class="p-3 text-slate-300 font-mono">${item.timeStr}</td>
 <td class="p-3 text-brand-300 font-mono font-semibold">${item.pace} <span class="text-[9px] text-slate-500 font-normal">min/km</span></td>
@@ -1630,7 +1630,7 @@ body.innerHTML = dietPlan.map((entry, idx) => `<tr class="${entry.done ? 'bg-bra
 <td class="p-3 text-[11px] text-slate-300 align-top">${entry.foods.map(f => `• ${f}`).join('<br>')}</td>
 <td class="p-3 text-[11px] text-brand-300 align-top">${entry.meds.map(m => `💊 ${m}`).join('<br>')}</td>
 <td class="p-3 align-top text-center">
-<input type="checkbox" entry.done?'checked':''onchange="toggleDietDone({idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 cursor-pointer">
+<input type="checkbox" ${entry.done ? 'checked' : ''} onchange="toggleDietDone(${idx})" class="w-5 h-5 rounded border-slate-700 bg-slate-900 text-brand-500 cursor-pointer">
 </td>
 </tr>`).join('');
 }
@@ -1968,7 +1968,7 @@ if (paceS === 60) {
 paceS = 0;
 paceM += 1;
 }
-const paceStr = `paceM.toString().padStart(2,'0'):{paceS.toString().padStart(2, '0')}`;
+const paceStr = `${paceM.toString().padStart(2, '0')}:${paceS.toString().padStart(2, '0')}`;
 const totalHours = totalSeconds / 3600;
 const speedVal = (distValue / totalHours).toFixed(2);
 
@@ -1976,7 +1976,7 @@ const entry = {
 id: Date.now(),
 date: dateValue,
 distance: distValue.toFixed(2),
-timeStr: `hrs.toString().padStart(2,'0'):{mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`,
+timeStr: `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`,
 pace: paceStr,
 speed: speedVal,
 type: 'run'
@@ -2004,7 +2004,5 @@ renderPerformanceHistory();
 </script>
 </body>
 </html>
-
-
 
 
