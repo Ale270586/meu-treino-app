@@ -416,52 +416,48 @@ Análises
     
 <!-- Subtela 5: Fotos de Evolução -->
 <div id="subviewPhotos" class="hidden space-y-4">
-    <!-- Formulário de Upload de Fotos (Corrigido) -->
-<div id="photoLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
-    <div>
-        <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data do Registro</label>
-        <input type="date" id="photoDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
-    </div>
-    <div>
-        <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Selecione até 4 fotos (Frente, Perfil, Costas...)</label>
-        <div class="grid grid-cols-2 gap-2 mt-1">
-            <!-- Foto 1 -->
-            <label for="slotInput0" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
-                <img id="slotImg0" class="absolute inset-0 w-full h-full object-cover hidden">
-                <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
-                <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 1</span>
-                <input type="file" id="slotInput0" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(0, event)">
-            </label>
-            <!-- Foto 2 -->
-            <label for="slotInput1" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
-                <img id="slotImg1" class="absolute inset-0 w-full h-full object-cover hidden">
-                <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
-                <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 2</span>
-                <input type="file" id="slotInput1" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(1, event)">
-            </label>
-            <!-- Foto 3 -->
-            <label for="slotInput2" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
-                <img id="slotImg2" class="absolute inset-0 w-full h-full object-cover hidden">
-                <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
-                <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 3</span>
-                <input type="file" id="slotInput2" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(2, event)">
-            </label>
-            <!-- Foto 4 -->
-            <label for="slotInput3" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
-                <img id="slotImg3" class="absolute inset-0 w-full h-full object-cover hidden">
-                <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
-                <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 4</span>
-                <input type="file" id="slotInput3" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(3, event)">
-            </label>
+    <!-- Formulário de Registro de Fotos -->
+    <div id="photoLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
+        <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data</label>
+            <input type="date" id="photoDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
         </div>
+        <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Selecione até 4 fotos (Frente, Perfil, Costas...)</label>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+                <label for="slotInput0" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg0" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 1</span>
+                    <input type="file" id="slotInput0" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(0, event)">
+                </label>
+                <label for="slotInput1" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg1" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 2</span>
+                    <input type="file" id="slotInput1" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(1, event)">
+                </label>
+                <label for="slotInput2" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg2" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 3</span>
+                    <input type="file" id="slotInput2" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(2, event)">
+                </label>
+                <label for="slotInput3" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg3" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 4</span>
+                    <input type="file" id="slotInput3" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(3, event)">
+                </label>
+            </div>
+        </div>
+        <button onclick="savePhotoEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/20">Salvar Registro de Fotos</button>
     </div>
-    <button onclick="savePhotoEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/20">Salvar Registro de Fotos</button>
-</div>
 
     <!-- Lista do Histórico de Fotos -->
     <div id="photoHistoryList" class="space-y-3"></div>
 </div>
-    
+
 <!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
@@ -1390,20 +1386,34 @@ let workoutChartInstance = null;
 let runPaceChartInstance = null; // Novo: Gráfico de Pace
 
 window.switchPerfTab = (tab) => {
-const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns', photos: 'subviewPhotos' };
-const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns', photos: 'perfTabPhotos' };
-Object.keys(views).forEach(k => {
-document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
-document.getElementById(tabs[k]).className = k === tab
-? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
-: "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
-});
-document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
-document.getElementById('btnOpenRunForm').classList.toggle('hidden', tab !== 'runs');
-document.getElementById('btnOpenPhotoForm').classList.toggle('hidden', tab !== 'photos');
-if (tab === 'charts') renderCharts();
-renderPerformanceHistory();
+    const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns', photos: 'subviewPhotos' };
+    const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns', photos: 'perfTabPhotos' };
+
+    Object.keys(views).forEach(k => {
+        const viewEl = document.getElementById(views[k]);
+        if (viewEl) viewEl.classList.toggle('hidden', k !== tab);
+
+        const tabEl = document.getElementById(tabs[k]);
+        if (tabEl) {
+            tabEl.className = k === tab
+                ? "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-brand-500 text-white shadow-lg"
+                : "flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+        }
+    });
+
+    const btnWeight = document.getElementById('btnOpenWeightForm');
+    if (btnWeight) btnWeight.classList.toggle('hidden', tab !== 'weights');
+
+    const btnRun = document.getElementById('btnOpenRunForm');
+    if (btnRun) btnRun.classList.toggle('hidden', tab !== 'runs');
+
+    const btnPhoto = document.getElementById('btnOpenPhotoForm');
+    if (btnPhoto) btnPhoto.classList.toggle('hidden', tab !== 'photos');
+
+    if (tab === 'charts') renderCharts();
+    renderPerformanceHistory();
 };
+
 
 function renderCharts() {
 if (weightChartInstance) weightChartInstance.destroy();
@@ -2124,18 +2134,32 @@ renderPerformanceHistory();
 };
 
 // --- LÓGICA DE FOTOS E COMPARADOR ---
+window.currentPhotoSlots = [null, null, null, null];
+
 window.togglePhotoForm = () => {
     const form = document.getElementById('photoLogForm');
     if (!form) return;
+
     form.classList.toggle('hidden');
+
     if (!form.classList.contains('hidden')) {
-        document.getElementById('photoDate').value = new Date().toISOString().split('T');
-        currentPhotoSlots = [null, null, null, null];
+        const dateInput = document.getElementById('photoDate');
+        if (dateInput) {
+            dateInput.value = new Date().toISOString().split('T');
+        }
+
+        window.currentPhotoSlots = [null, null, null, null];
+
         for (let i = 0; i < 4; i++) {
             const img = document.getElementById(`slotImg${i}`);
-            if (img) { img.src = ""; img.classList.add('hidden'); }
+            if (img) {
+                img.src = "";
+                img.classList.add('hidden');
+            }
             const input = document.getElementById(`slotInput${i}`);
-            if (input) input.value = "";
+            if (input) {
+                input.value = "";
+            }
         }
     }
 };
