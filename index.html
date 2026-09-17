@@ -278,6 +278,10 @@ Não tem uma conta? Cadastre-se
 <i class="ph-bold ph-plus"></i>
 <span>Log Corrida</span>
 </button>
+<button id="btnOpenPhotoForm" onclick="togglePhotoForm()" class="hidden bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
+<i class="ph-bold ph-plus"></i>
+<span>Log Fotos</span>
+</button>
 </div>
 
 <!-- Navegação das Subtelas (Treinos, Pesos, Corrida e Análises) -->
@@ -290,6 +294,9 @@ Pesos
 </button>
 <button onclick="switchPerfTab('runs')" id="perfTabRuns" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Corrida
+</button>
+<button onclick="switchPerfTab('photos')" id="perfTabPhotos" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
+Fotos
 </button>
 <button onclick="switchPerfTab('charts')" id="perfTabCharts" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
 Análises
@@ -381,6 +388,76 @@ Análises
 <canvas id="weightChart"></canvas>
 </div>
 
+<!-- Comparador Visual de Fotos -->
+<div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">
+    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Comparador de Evolução Corporal</h4>
+    <div class="grid grid-cols-2 gap-2">
+        <div>
+            <label class="block text-[9px] text-slate-400 uppercase font-semibold mb-1">Data 1 (Antes)</label>
+            <select id="compareDate1" onchange="renderPhotoComparison()" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-2 text-xs text-white">
+                <option value="">Selecione...</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-[9px] text-slate-400 uppercase font-semibold mb-1">Data 2 (Depois)</label>
+            <select id="compareDate2" onchange="renderPhotoComparison()" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-2 text-xs text-white">
+                <option value="">Selecione...</option>
+            </select>
+        </div>
+    </div>
+    <div id="comparisonContainer" class="space-y-3 pt-2">
+        <p class="text-center text-slate-500 text-xs italic py-4">Selecione duas datas com fotos cadastradas para comparar.</p>
+    </div>
+    <button id="btnExportComparison" onclick="exportPhotoComparison()" class="w-full bg-slate-800 hover:bg-slate-700 text-brand-400 border border-brand-500/30 text-xs font-bold py-2 rounded-xl hidden flex items-center justify-center gap-1.5">
+        <i class="ph-bold ph-download-simple"></i>
+        <span>Baixar Comparativo (PNG)</span>
+    </button>
+</div>
+    
+<!-- Subtela 5: Fotos de Evolução -->
+<div id="subviewPhotos" class="hidden space-y-4">
+    <!-- Formulário de Upload de Fotos -->
+    <div id="photoLogForm" class="glass-card rounded-2xl p-4 border border-brand-500/30 hidden space-y-3">
+        <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Data do Registro</label>
+            <input type="date" id="photoDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2 px-3 text-xs text-white">
+        </div>
+        <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Selecione até 4 fotos (Frente, Perfil, Costas...)</label>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+                <div onclick="document.getElementById('slotInput0').click()" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg0" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 1</span>
+                    <input type="file" id="slotInput0" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(0, event)">
+                </div>
+                <div onclick="document.getElementById('slotInput1').click()" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg1" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 2</span>
+                    <input type="file" id="slotInput1" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(1, event)">
+                </div>
+                <div onclick="document.getElementById('slotInput2').click()" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg2" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 3</span>
+                    <input type="file" id="slotInput2" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(2, event)">
+                </div>
+                <div onclick="document.getElementById('slotInput3').click()" class="aspect-square bg-slate-900/90 border border-dashed border-slate-700 rounded-xl flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group">
+                    <img id="slotImg3" class="absolute inset-0 w-full h-full object-cover hidden">
+                    <i class="ph-bold ph-camera text-slate-500 text-xl group-hover:text-brand-400"></i>
+                    <span class="text-[9px] text-slate-500 mt-1 font-semibold">Foto 4</span>
+                    <input type="file" id="slotInput3" accept="image/*" class="hidden" onchange="handlePhotoSlotUpload(3, event)">
+                </div>
+            </div>
+        </div>
+        <button onclick="savePhotoEntry()" class="w-full bg-brand-500 text-white text-xs font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/20">Salvar Registro de Fotos</button>
+    </div>
+
+    <!-- Lista do Histórico de Fotos -->
+    <div id="photoHistoryList" class="space-y-3"></div>
+</div>
+    
 <!-- NOVO GRÁFICO: Evolução de Pace de Corrida -->
 <div class="glass-card rounded-2xl p-4 border border-slate-800">
 <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-wider text-center">Evolução de Pace de Corrida (min/km)</h4>
@@ -740,6 +817,8 @@ let workouts = { A: [], B: [], C: [], D: [], E: [] };
 let history = [];
 let weightHistory = []; // Novo: Armazena o histórico de peso
 let runHistory = []; // Novo: Armazena o histórico de corridas
+let photoHistory = []; // Armazena o histórico de fotos de evolução
+let currentPhotoSlots = [null, null, null, null]; // Cache temporário do formulário
 let dietPlan = []; // Formato esperado: [{ id, time, foods: [], meds: [], done: false }]
 const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80";
 
@@ -906,6 +985,7 @@ workouts = sanitizeWorkouts(data.workouts);
 history = Array.isArray(data.history) ? data.history : [];
 weightHistory = Array.isArray(data.weightHistory) ? data.weightHistory : [];
 runHistory = Array.isArray(data.runHistory) ? data.runHistory : [];
+photoHistory = Array.isArray(data.photoHistory) ? data.photoHistory : [];
 dietPlan = Array.isArray(data.dietPlan) ? data.dietPlan : [];
 } else {
 userProfile = sanitizeProfile({});
@@ -931,6 +1011,7 @@ workouts: cleanWorkoutsData,
 history: history,
 weightHistory: weightHistory,
 runHistory: runHistory,
+photoHistory: photoHistory,
 dietPlan: dietPlan
 }, { merge: true });
 userProfile = cleanProfileData;
@@ -1305,8 +1386,8 @@ let workoutChartInstance = null;
 let runPaceChartInstance = null; // Novo: Gráfico de Pace
 
 window.switchPerfTab = (tab) => {
-const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns' };
-const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns' };
+const views = { workouts: 'subviewWorkouts', weights: 'subviewWeights', charts: 'subviewCharts', runs: 'subviewRuns', photos: 'subviewPhotos' };
+const tabs = { workouts: 'perfTabWorkouts', weights: 'perfTabWeights', charts: 'perfTabCharts', runs: 'perfTabRuns', photos: 'perfTabPhotos' };
 Object.keys(views).forEach(k => {
 document.getElementById(views[k]).classList.toggle('hidden', k !== tab);
 document.getElementById(tabs[k]).className = k === tab
@@ -1315,6 +1396,7 @@ document.getElementById(tabs[k]).className = k === tab
 });
 document.getElementById('btnOpenWeightForm').classList.toggle('hidden', tab !== 'weights');
 document.getElementById('btnOpenRunForm').classList.toggle('hidden', tab !== 'runs');
+document.getElementById('btnOpenPhotoForm').classList.toggle('hidden', tab !== 'photos');
 if (tab === 'charts') renderCharts();
 renderPerformanceHistory();
 };
@@ -1485,6 +1567,41 @@ return `<tr class="transition border-b border-slate-800/50">
 </tr>`;
 }).join('');
 }
+
+// Renderizar Fotos
+    const photoContainer = document.getElementById('photoHistoryList');
+    if (photoContainer) {
+        photoContainer.innerHTML = photoHistory.length === 0
+            ? `<p class="text-center py-6 text-slate-600 text-xs italic">Nenhum registro de foto encontrado.</p>`
+            : photoHistory.map(item => {
+                const [y, m, d] = item.date.split('-');
+                const photosGrid = item.photos.map(p => p ? `<img src="${p}" class="w-full aspect-square object-cover rounded-xl border border-slate-800">` : '').join('');
+                return `
+                <div class="glass-card rounded-2xl p-4 border border-brand-500/20 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-white">${d}/${m}/${y}</span>
+                        <button onclick="deletePhotoEntry(${item.id})" class="text-red-400/50 hover:text-red-400 p-1"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">${photosGrid}</div>
+                </div>`;
+            }).join('');
+    }
+
+    // Atualizar seletores da aba Análises
+    const sel1 = document.getElementById('compareDate1');
+    const sel2 = document.getElementById('compareDate2');
+    if (sel1 && sel2) {
+        const opts = `<option value="">Selecione...</option>` + photoHistory.map(p => {
+            const [y, m, d] = p.date.split('-');
+            return `<option value="${p.id}">${d}/${m}/${y}</option>`;
+        }).join('');
+        const val1 = sel1.value;
+        const val2 = sel2.value;
+        sel1.innerHTML = opts;
+        sel2.innerHTML = opts;
+        sel1.value = val1;
+        sel2.value = val2;
+    }
 }
 
 window.deleteHistorySession = async (historyIndex) => {
@@ -2000,6 +2117,182 @@ runHistory = runHistory.filter(r => r.id !== id);
 await saveUserData();
 renderPerformanceHistory();
 }
+};
+
+// --- LÓGICA DE FOTOS E COMPARADOR ---
+window.togglePhotoForm = () => {
+    const form = document.getElementById('photoLogForm');
+    form.classList.toggle('hidden');
+    if (!form.classList.contains('hidden')) {
+        document.getElementById('photoDate').value = new Date().toISOString().split('T');
+        currentPhotoSlots = [null, null, null, null];
+        for (let i = 0; i < 4; i++) {
+            const img = document.getElementById(`slotImg${i}`);
+            if (img) { img.src = ""; img.classList.add('hidden'); }
+        }
+    }
+};
+
+window.handlePhotoSlotUpload = (slotIndex, e) => {
+    const file = e.target.files && e.target.files;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const maxDim = 600; // Resolução otimizada
+            let width = img.width, height = img.height;
+            if (width > height) {
+                if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+            } else {
+                if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            const base64 = canvas.toDataURL('image/jpeg', 0.7);
+            currentPhotoSlots[slotIndex] = base64;
+            const imgEl = document.getElementById(`slotImg${slotIndex}`);
+            if (imgEl) { imgEl.src = base64; imgEl.classList.remove('hidden'); }
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+};
+
+window.savePhotoEntry = async () => {
+    const dateValue = document.getElementById('photoDate').value;
+    const validPhotos = currentPhotoSlots.filter(p => p !== null);
+    if (!dateValue || validPhotos.length === 0) {
+        alert("Por favor, selecione a data e pelo menos 1 foto.");
+        return;
+    }
+    const entry = { id: Date.now(), date: dateValue, photos: currentPhotoSlots };
+    photoHistory.unshift(entry);
+    photoHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+    await saveUserData();
+    document.getElementById('photoLogForm').classList.add('hidden');
+    renderPerformanceHistory();
+};
+
+window.deletePhotoEntry = async (id) => {
+    if (confirm("Deseja excluir este registro de fotos?")) {
+        photoHistory = photoHistory.filter(p => p.id !== id);
+        await saveUserData();
+        renderPerformanceHistory();
+    }
+};
+
+window.renderPhotoComparison = () => {
+    const id1 = document.getElementById('compareDate1').value;
+    const id2 = document.getElementById('compareDate2').value;
+    const container = document.getElementById('comparisonContainer');
+    const btnExport = document.getElementById('btnExportComparison');
+    
+    if (!id1 || !id2 || id1 === id2) {
+        container.innerHTML = `<p class="text-center text-slate-500 text-xs italic py-4">Selecione duas datas diferentes para comparar.</p>`;
+        if (btnExport) btnExport.classList.add('hidden');
+        return;
+    }
+    
+    const item1 = photoHistory.find(p => p.id === parseInt(id1));
+    const item2 = photoHistory.find(p => p.id === parseInt(id2));
+    if (!item1 || !item2) return;
+    
+    const [y1, m1, d1] = item1.date.split('-');
+    const [y2, m2, d2] = item2.date.split('-');
+    let html = '';
+    
+    for (let i = 0; i < 4; i++) {
+        const p1 = item1.photos[i];
+        const p2 = item2.photos[i];
+        if (p1 || p2) {
+            html += `
+            <div class="bg-slate-900/60 p-2 rounded-xl border border-slate-800 space-y-1.5">
+                <span class="text-[9px] font-bold text-brand-400 uppercase block text-center">Foto ${i + 1}</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="space-y-1">
+                        <span class="text-[8px] text-slate-400 block text-center">${d1}/${m1}/${y1}</span>
+                        ${p1 ? `<img src="\${p1}" class="w-full aspect-square object-cover rounded-lg border border-slate-800">` : `<div class="w-full aspect-square bg-slate-950 rounded-lg flex items-center justify-center text-[9px] text-slate-600">Sem foto</div>`}
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[8px] text-slate-400 block text-center">${d2}/${m2}/${y2}</span>
+                        ${p2 ? `<img src="\${p2}" class="w-full aspect-square object-cover rounded-lg border border-slate-800">` : `<div class="w-full aspect-square bg-slate-950 rounded-lg flex items-center justify-center text-[9px] text-slate-600">Sem foto</div>`}
+                    </div>
+                </div>
+            </div>`;
+        }
+    }
+    container.innerHTML = html;
+    if (btnExport) btnExport.classList.remove('hidden');
+};
+
+window.exportPhotoComparison = () => {
+    const id1 = document.getElementById('compareDate1').value;
+    const id2 = document.getElementById('compareDate2').value;
+    const item1 = photoHistory.find(p => p.id === parseInt(id1));
+    const item2 = photoHistory.find(p => p.id === parseInt(id2));
+    if (!item1 || !item2) return;
+
+    const [y1, m1, d1] = item1.date.split('-');
+    const [y2, m2, d2] = item2.date.split('-');
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 800;
+    canvas.height = 1000;
+
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Evolução Corporal - Meu Treino Pro', 400, 50);
+
+    ctx.font = '18px Inter, sans-serif';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText(`Comparativo: ${d1}/${m1}/${y1} vs ${d2}/${m2}/${y2}`, 400, 85);
+
+    let loaded = 0;
+    const pairs = [];
+    for (let i = 0; i < 4; i++) {
+        if (item1.photos[i] || item2.photos[i]) {
+            pairs.push({ p1: item1.photos[i], p2: item2.photos[i], slot: i + 1 });
+        }
+    }
+
+    if (pairs.length === 0) return;
+
+    const drawAndDownload = () => {
+        const rowHeight = 200;
+        pairs.forEach((pair, idx) => {
+            const y = 120 + idx * (rowHeight + 20);
+            if (pair.img1) ctx.drawImage(pair.img1, 100, y, rowHeight, rowHeight);
+            if (pair.img2) ctx.drawImage(pair.img2, 480, y, rowHeight, rowHeight);
+        });
+        const link = document.createElement('a');
+        link.download = `comparativo_${item1.date}_vs_${item2.date}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+
+    let totalImages = pairs.length * 2;
+    pairs.forEach(pair => {
+        if (pair.p1) {
+            const img1 = new Image();
+            img1.onload = () => { pair.img1 = img1; loaded++; if (loaded === totalImages) drawAndDownload(); };
+            img1.src = pair.p1;
+        } else { loaded++; }
+
+        if (pair.p2) {
+            const img2 = new Image();
+            img2.onload = () => { pair.img2 = img2; loaded++; if (loaded === totalImages) drawAndDownload(); };
+            img2.src = pair.p2;
+        } else { loaded++; }
+    });
 };
 </script>
 </body>
