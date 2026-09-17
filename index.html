@@ -2137,29 +2137,35 @@ renderPerformanceHistory();
 window.currentPhotoSlots = [null, null, null, null];
 
 window.togglePhotoForm = () => {
+    // 1. Garante que a subtela de Fotos fique visível na tela
+    if (typeof switchPerfTab === 'function') {
+        switchPerfTab('photos');
+    }
+
     const form = document.getElementById('photoLogForm');
     if (!form) return;
 
-    form.classList.toggle('hidden');
+    // 2. Abre o formulário
+    form.classList.remove('hidden');
 
-    if (!form.classList.contains('hidden')) {
-        const dateInput = document.getElementById('photoDate');
-        if (dateInput) {
-            dateInput.value = new Date().toISOString().split('T');
+    // 3. Preenche a data de hoje no formato YYYY-MM-DD
+    const dateInput = document.getElementById('photoDate');
+    if (dateInput) {
+        dateInput.value = new Date().toISOString().split('T');
+    }
+
+    // 4. Limpa as fotos anteriores do formulário
+    window.currentPhotoSlots = [null, null, null, null];
+
+    for (let i = 0; i < 4; i++) {
+        const img = document.getElementById(`slotImg${i}`);
+        if (img) {
+            img.src = "";
+            img.classList.add('hidden');
         }
-
-        window.currentPhotoSlots = [null, null, null, null];
-
-        for (let i = 0; i < 4; i++) {
-            const img = document.getElementById(`slotImg${i}`);
-            if (img) {
-                img.src = "";
-                img.classList.add('hidden');
-            }
-            const input = document.getElementById(`slotInput${i}`);
-            if (input) {
-                input.value = "";
-            }
+        const input = document.getElementById(`slotInput${i}`);
+        if (input) {
+            input.value = "";
         }
     }
 };
