@@ -2138,7 +2138,7 @@ renderPerformanceHistory();
 window.currentPhotoSlots = [null, null, null, null];
 
 window.togglePhotoForm = () => {
-    // 1. Garante que a subtela de Fotos fique visível na tela
+    // 1. Garante que a subtela de Fotos esteja visível
     if (typeof switchPerfTab === 'function') {
         switchPerfTab('photos');
     }
@@ -2146,34 +2146,36 @@ window.togglePhotoForm = () => {
     const form = document.getElementById('photoLogForm');
     if (!form) return;
 
-    // 2. Abre o formulário
-    form.classList.remove('hidden');
+    form.classList.toggle('hidden');
 
-    // 3. Preenche a data de hoje no formato YYYY-MM-DD
-    const dateInput = document.getElementById('photoDate');
-    if (dateInput) {
-        dateInput.value = new Date().toISOString().split('T');
-    }
-
-    // 4. Limpa as fotos anteriores do formulário
-    window.currentPhotoSlots = [null, null, null, null];
-
-    for (let i = 0; i < 4; i++) {
-        const img = document.getElementById(`slotImg${i}`);
-        if (img) {
-            img.src = "";
-            img.classList.add('hidden');
+    if (!form.classList.contains('hidden')) {
+        const dateInput = document.getElementById('photoDate');
+        if (dateInput) {
+            // CORREÇÃO: Adicionado  para obter YYYY-MM-DD
+            dateInput.value = new Date().toISOString().split('T');
         }
-        const input = document.getElementById(`slotInput${i}`);
-        if (input) {
-            input.value = "";
+
+        window.currentPhotoSlots = [null, null, null, null];
+
+        for (let i = 0; i < 4; i++) {
+            const img = document.getElementById(`slotImg${i}`);
+            if (img) {
+                img.src = "";
+                img.classList.add('hidden');
+            }
+            const input = document.getElementById(`slotInput${i}`);
+            if (input) {
+                input.value = "";
+            }
         }
     }
 };
 
 window.handlePhotoSlotUpload = (slotIndex, e) => {
-    const file = e.target.files && e.target.files; // Pegando o arquivo correto
+    // CORREÇÃO: Adicionado  para pegar o arquivo de imagem real
+    const file = e.target.files && e.target.files;
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (event) => {
         const img = new Image();
@@ -2191,9 +2193,14 @@ window.handlePhotoSlotUpload = (slotIndex, e) => {
             canvas.height = height;
             ctx.drawImage(img, 0, 0, width, height);
             const base64 = canvas.toDataURL('image/jpeg', 0.7);
+
             currentPhotoSlots[slotIndex] = base64;
+
             const imgEl = document.getElementById(`slotImg${slotIndex}`);
-            if (imgEl) { imgEl.src = base64; imgEl.classList.remove('hidden'); }
+            if (imgEl) {
+                imgEl.src = base64;
+                imgEl.classList.remove('hidden');
+            }
         };
         img.src = event.target.result;
     };
@@ -2203,20 +2210,30 @@ window.handlePhotoSlotUpload = (slotIndex, e) => {
 window.savePhotoEntry = async () => {
     const dateValue = document.getElementById('photoDate').value;
     const validPhotos = currentPhotoSlots.filter(p => p !== null);
+
     if (!dateValue || validPhotos.length === 0) {
         alert("Por favor, selecione a data e pelo menos 1 foto.");
         return;
     }
-    const entry = { id: Date.now(), date: dateValue, photos: currentPhotoSlots };
+
+    const entry = {
+        id: Date.now(),
+        date: dateValue,
+        photos: [...currentPhotoSlots]
+    };
+
     photoHistory.unshift(entry);
     photoHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     await saveUserData();
+
     document.getElementById('photoLogForm').classList.add('hidden');
     renderPerformanceHistory();
+    alert("Registro de fotos salvo com sucesso!");
 };
 
 window.deletePhotoEntry = async (id) => {
-    if (confirm("Deseja excluir este registro de fotos?")) {
+    if (confirm("Deseja realmente excluir este registro de fotos?")) {
         photoHistory = photoHistory.filter(p => p.id !== id);
         await saveUserData();
         renderPerformanceHistory();
